@@ -1,4 +1,4 @@
 {
   "cleanUrls": true,
-  "rewrites": [{ "source": "/", "destination": "/isomaker.html" }]
+  "rewrites": [{ "source": "/", "destination": "/isomaker" }]
 }

@@ -1,0 +1,4 @@
+# Deploy only the Isomaker site
+/*
+!isomaker.html
+!vercel.json

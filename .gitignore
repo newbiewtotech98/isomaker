@@ -1,0 +1,6 @@
+# Only Isomaker is versioned; older prototypes stay local
+index.html
+r3f-city/
+node_modules/
+.vercel
+.DS_Store

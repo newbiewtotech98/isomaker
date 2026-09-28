@@ -95,6 +95,8 @@
   .bl{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));padding:10px 14px;display:flex;align-items:center;gap:10px;z-index:5}
   .bl b{font-weight:600}
   .bl span{color:var(--muted);font-size:12px}
+  .bl .dotsep{width:3px;height:3px;border-radius:50%;background:var(--faint)}
+  .bl .now b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
   .pulse{width:8px;height:8px;border-radius:50%;background:#4fc3ff;box-shadow:0 0 0 0 rgba(79,195,255,.6);animation:pulse 2s infinite}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(79,195,255,.6)}70%{box-shadow:0 0 0 9px rgba(79,195,255,0)}100%{box-shadow:0 0 0 0 rgba(79,195,255,0)}}
   .br{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));padding:5px;display:flex;align-items:center;gap:2px;z-index:5}
@@ -112,6 +114,8 @@
   .dlabel .dot{width:12px;height:12px;margin-top:2px;border:2px solid rgba(255,255,255,.85)}
   .dlabel b{display:block;font-size:13px;font-weight:600}
   .dlabel span{display:block;font-size:11.5px;color:rgba(220,225,255,.72);margin-top:2px}
+  .dlabel em{display:block;font-style:normal;font-size:11px;color:rgba(150,200,255,.85);margin-top:4px;font-variant-numeric:tabular-nums}
+  body[data-mode="day"] .dlabel em{color:#3f64c8}
   body[data-mode="day"] .dlabel{background:rgba(255,255,255,.82);color:#161b36;border-color:rgba(30,40,90,.1)}
   body[data-mode="day"] .dlabel span{color:#555c80}
   .labels-dim .dlabel{opacity:.35}
@@ -183,6 +187,8 @@
   .ihint{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);color:var(--muted);font-size:12px;pointer-events:none;z-index:5}
   .ilabel{display:flex;align-items:center;gap:6px;padding:3px 9px 3px 4px;border-radius:var(--r-round);background:rgba(10,14,40,.8);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:11.5px;font-weight:600;white-space:nowrap;max-width:190px;overflow:hidden;text-overflow:ellipsis}
   .ilabel span{background:rgba(255,255,255,.16);border-radius:var(--r-round);padding:1px 6px;font-size:10.5px}
+  .ilabel i,.newtag{font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:var(--r-s);background:#3ee08f;color:#06281a;margin-left:6px;vertical-align:1px}
+  .meta .crowned{color:#e9a92e;font-weight:600}
   .ilabel.first{font-size:13px;border-color:rgba(255,207,92,.6)} .ilabel.first span{background:linear-gradient(135deg,#ffcf5c,#ff8a3d);color:#1a1300}
   .btn.vote b{font-weight:600} .btn.vote.on{background:rgba(255,120,80,.16);border-color:rgba(255,140,90,.55);color:#ff9d76}
   .meta .hint{color:var(--faint);font-size:11px}
@@ -278,7 +284,7 @@
   <div class="results" id="results"></div>
 </div>
 
-<div class="bl panel"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">clustered in 5 districts</span></div>
+<div class="bl panel"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div>
 
 <div class="br panel">
   <div class="seg">
@@ -878,7 +884,8 @@ function buildDistrict(key){
   world.districts[key]={ key, group:g, cells, cx, cz, landmark:lmPlace, outline, r };
   // district label
   const el=document.createElement('div'); el.className='dlabel'; el.style.setProperty('--c',D.color);
-  el.innerHTML=`<div class="dot" style="color:${D.color}"></div><div><b>${D.name}</b><span>${D.tag}</span></div>`;
+  el.innerHTML=`<div class="dot" style="color:${D.color}"></div><div><b>${D.name}</b><span>${D.tag}</span><em class="dvisits"></em></div>`;
+  world.districts[key].visitsEl=el.querySelector('.dvisits');
   el.addEventListener('pointerdown',e=>e.stopPropagation());
   el.addEventListener('click',()=>{ openDistrict(key); flyTo(V3(cx,0,cz), 1.9); panelOffset(); });
   const lab=new CSS2DObject(el); scene.add(lab); labels.push({ o:lab, x:cx, z:cz, back:15, y:7 });
@@ -1190,6 +1197,12 @@ function placeBuilding(p, animate=false){
 }
 function removeBuilding(p){ if(!p.obj) return; p.obj.parent.remove(p.obj); world.pickables=world.pickables.filter(o=>o!==p.obj);
   if(p.cell){ p.cell.occupied=null; setTreesHidden(p.cell.trees,false); } p.obj=null; }
+// last week's #1 in a district wears a floating gold crown over its building
+function addCrown(p){ if(!p.obj) return; const g=new THREE.Group(), gold=glowMat('#ffcf5c',2.2,'neon',{ side:THREE.DoubleSide });
+  g.add(new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.16,20,1,true),gold));
+  for(let i=0;i<5;i++){ const a=i/5*Math.PI*2; g.add(at(new THREE.Mesh(new THREE.ConeGeometry(.1,.32,6),gold),Math.cos(a)*.42,.24,Math.sin(a)*.42));
+    g.add(at(new THREE.Mesh(new THREE.SphereGeometry(.055,8,6),glowMat('#ff6b8b',2.6,'neon')),Math.cos(a)*.42,.42,Math.sin(a)*.42)); }
+  g.scale.setScalar(1.7); g.position.y=(p.height||4)+1.1; p.obj.add(noPick(g)); spinners.push({ o:g, sy:.8 }); p.crowned=true; }
 function spawnAnim(g,color){ const t0=performance.now(); g.scale.set(1,.01,1);
   const wp=new THREE.Vector3(); g.getWorldPosition(wp);
   const ring=noPick(new THREE.Mesh(new THREE.RingGeometry(.8,1.1,48).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({ color:new THREE.Color(color).multiplyScalar(3), transparent:true, blending:THREE.AdditiveBlending, depthWrite:false })));
@@ -1217,6 +1230,7 @@ function build(){
   for(const p of SEED) places.push(p);
   for(const p of loadUser()) places.push({ ...p, user:true });
   for(const p of places) placeBuilding(p,false);
+  for(const k of ORDER){ const w=Data.lastWeekWinner(k); if(w) addCrown(w); }
   for(const k of ORDER) scatterDistrictTrees(k);
   scatterCommonsTrees();
   buildInstanced();
@@ -1337,7 +1351,7 @@ function hoverAt(x,y){ if(hoverRaf) return; hoverRaf=requestAnimationFrame(()=>{
     else hideTooltip(); return; }
   const p=pickAt(x,y); setHover(p);
   if(p){ const d=DISTRICTS[p.district]; tooltip.hidden=false; tooltip.style.left=x+'px'; tooltip.style.top=y+'px';
-    tooltip.innerHTML=`<em><span class="dot" style="color:${d?d.color:COMMONS.color};width:6px;height:6px"></span>${d? (p.landmark?'Landmark · ':'')+d.short : 'The Commons'}</em><b>${esc(p.name)}</b><span>${p.landmark? 'Step inside for this week’s top 10' : esc(p.tagline||'')}</span>`; }
+    tooltip.innerHTML=`<em><span class="dot" style="color:${d?d.color:COMMONS.color};width:6px;height:6px"></span>${d? (p.landmark?'Landmark · ':'')+d.short : 'The Commons'}${p.crowned?' · Last week’s #1':''}</em><b>${esc(p.name)}</b><span>${p.landmark? 'Step inside for this week’s top 10' : esc(p.tagline||'')}</span>`; }
   else hideTooltip(); }); }
 function hideTooltip(){ tooltip.hidden=true; }
 function setHover(p){ if(p===hovered) return; hovered=p; cvs.classList.toggle('hovering',!!p);
@@ -1415,7 +1429,7 @@ function openPlace(p){
     <div><h2>${esc(p.name)}</h2></div>
     <div class="sub">${esc(p.tagline||'')}</div>
     ${p.desc?`<p class="desc">${esc(p.desc)}</p>`:''}
-    <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}<dt>This week</dt><dd>#${rk} in ${d.short} · ${st.visits} visits${Data.preview?' <span class="hint">(preview)</span>':''}</dd></dl>
+    <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}<dt>This week</dt><dd id="weekStat">#${rk} in ${d.short} · ${st.visits} visits${Data.preview?' <span class="hint">(preview)</span>':''}</dd>${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
     ${p.tags?.length?`<div class="tags">${p.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
     <div class="actions">
       ${url?`<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Visit website ${icon('ext')}</a>`:''}
@@ -1428,6 +1442,8 @@ function openPlace(p){
   bindRows(side);
   $('copyLink').onclick=async()=>{ try{ await navigator.clipboard.writeText(p.url); toast(p,'Link copied',host(p.url)); }catch(e){ toast(p,'Copy failed',p.url); } };
   if($('focusBtn')) $('focusBtn').onclick=()=>flyToPlace(p);
+  const visitA=side.querySelector('a.btn.primary'); if(visitA) visitA.addEventListener('click',()=>{ if(!Data.recordVisit(p)) return; const s2=Data.stats(p);
+    $('weekStat').innerHTML=`#${Data.rank(p)} in ${d.short} · ${s2.visits} visits${Data.preview?' <span class="hint">(preview)</span>':''}`; updateMetrics(); if(interior.active) renderRankList(); });
   $('voteBtn').onclick=()=>{ const on=Data.toggleVote(p), s2=Data.stats(p), b=$('voteBtn'); b.classList.toggle('on',on); b.title=on?'Remove upvote':'Upvote'; b.querySelector('b').textContent=s2.upvotes; if(interior.active) renderRankList(); };
   if(p.user) $('removeBtn').onclick=()=>{ const b=$('removeBtn'); if(!b.dataset.confirm){ b.dataset.confirm='1'; b.innerHTML=`${icon('trash')} Click again to remove`; return; }
     removeBuilding(p); places.splice(places.indexOf(p),1); saveUser(); updateCount(); closeSide(); toast(p,'Removed',p.name); };
@@ -1465,7 +1481,11 @@ function toast(p,title,sub,action){ const t=$('toast'); t.innerHTML=`${p?mono(p)
   t.classList.add('show'); if(action) $('toastAct').onclick=action.fn; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'), action?4200:2600); }
 
 /* count */
+const kfmt=n=>n>=1000? (n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,'')+'k' : String(n);
 function updateCount(){ $('count').textContent=`${places.length+1} places`; }
+function updateMetrics(){ $('nowCount').querySelector('b').textContent=Data.exploringNow();
+  for(const k of ORDER){ const el=world.districts[k]?.visitsEl; if(el) el.textContent=`${kfmt(Data.districtVisits(k))} visits this week`; } }
+setInterval(updateMetrics,30000);
 
 /* search */
 const search=$('search'), sInput=$('searchInput'), results=$('results'); let sel=0, found=[];
@@ -1559,25 +1579,45 @@ function chime(){ if(!audio?.on || Math.random()<.35) return; const c=audio.ctx;
    browser plus generated sample traffic, so the top 10 has something to show.
    ===================================================================== */
 const Data = (() => {
-  const VOTE_KEY='isomaker.votes.v1', DAY=864e5;
-  let voted=new Set(); try{ voted=new Set(JSON.parse(localStorage.getItem(VOTE_KEY)||'[]')); }catch(e){}
+  const VOTE_KEY='isomaker.votes.v1', VISIT_KEY='isomaker.visits.v1', SEEN_KEY='isomaker.seen.v1', DAY=864e5;
+  const load=(k,d)=>{ try{ return JSON.parse(localStorage.getItem(k)) ?? d; }catch(e){ return d; } };
+  const save=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} };
+  const voted=new Set(load(VOTE_KEY,[]));
   const now=new Date(); const dow=(now.getUTCDay()+6)%7;
-  const weekStart=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()-dow);
-  const weekKey=new Date(weekStart).toISOString().slice(0,10);
+  const weekStart=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()-dow), lastWeekStart=weekStart-7*DAY;
+  const keyOf=ms=>new Date(ms).toISOString().slice(0,10), weekKey=keyOf(weekStart), lastWeekKey=keyOf(lastWeekStart);
   const daysIn=Math.min(7,Math.floor((Date.now()-weekStart)/DAY)+1);
+  // this device's own website visits this week: { week, byId:{ id:{ count, last } } }
+  let visits=load(VISIT_KEY,null); if(!visits || visits.week!==weekKey) visits={ week:weekKey, byId:{} };
+  const seen=load(SEEN_KEY,{});
+  // generated sample traffic, stable within a week
   const cache=new Map();
-  const sample=p=>{ if(cache.has(p.id)) return cache.get(p.id); const r=mulberry32(hashStr(p.id+'|'+weekKey));
-    const perDay=p.user? rr(r,1,6) : 6+Math.pow(r(),1.5)*55; const visits=Math.round(perDay*daysIn*rr(r,.75,1.25));
-    const s={ visits, upvotes:Math.round(visits*rr(r,.05,.2)) }; cache.set(p.id,s); return s; };
+  const sample=(p,wk=weekKey,days=daysIn)=>{ const key=p.id+'|'+wk+'|'+days; if(cache.has(key)) return cache.get(key); const r=mulberry32(hashStr(p.id+'|'+wk));
+    const perDay=p.user? rr(r,1,6) : 6+Math.pow(r(),1.5)*55; const v=Math.round(perDay*days*rr(r,.75,1.25));
+    const s={ visits:v, upvotes:Math.round(v*rr(r,.05,.2)) }; cache.set(key,s); return s; };
+  const score=s=>3*s.upvotes+s.visits;
+  const rankBy=(list,statFn)=>list.map((p,i)=>({ p, i, s:statFn(p) })).sort((a,b)=>score(b.s)-score(a.s) || b.s.upvotes-a.s.upvotes || a.i-b.i).map(x=>x.p);
   const fmt=ms=>new Date(ms).toLocaleDateString(undefined,{ month:'short', day:'numeric', timeZone:'UTC' });
   const api={
     preview:true,
     weekLabel:()=>`${fmt(weekStart)} – ${fmt(weekStart+6*DAY)}`,
-    stats(p){ const s=sample(p), v=voted.has(p.id); return { visits:s.visits, upvotes:s.upvotes+(v?1:0), voted:v }; },
-    top(k,n=10){ return places.map((p,i)=>({ p, i, s:api.stats(p) })).filter(x=>x.p.district===k)
-      .sort((a,b)=>(3*b.s.upvotes+b.s.visits)-(3*a.s.upvotes+a.s.visits) || b.s.upvotes-a.s.upvotes || a.i-b.i).slice(0,n).map(x=>x.p); },
+    stats(p){ const s=sample(p), v=voted.has(p.id); return { visits:s.visits+(visits.byId[p.id]?.count||0), upvotes:s.upvotes+(v?1:0), voted:v }; },
+    top(k,n=10){ return rankBy(places.filter(p=>p.district===k),api.stats).slice(0,n); },
     rank(p){ const i=api.top(p.district,1e4).indexOf(p); return i<0? null : i+1; },
-    toggleVote(p){ voted.has(p.id)? voted.delete(p.id) : voted.add(p.id); try{ localStorage.setItem(VOTE_KEY,JSON.stringify([...voted])); }catch(e){} return voted.has(p.id); },
+    toggleVote(p){ voted.has(p.id)? voted.delete(p.id) : voted.add(p.id); save(VOTE_KEY,[...voted]); return voted.has(p.id); },
+    // one website visit per tool per device per day
+    recordVisit(p){ const today=keyOf(Date.now()), v=visits.byId[p.id]||{ count:0, last:'' }; if(v.last===today) return false;
+      v.count++; v.last=today; visits.byId[p.id]=v; save(VISIT_KEY,visits); return true; },
+    districtVisits(k){ return places.filter(p=>p.district===k).reduce((a,p)=>a+api.stats(p).visits,0); },
+    // last week's #1: full-week sample, only places that existed before this week
+    lastWeekWinner(k){ const list=places.filter(p=>p.district===k && !(p.added && Date.parse(p.added)>=weekStart));
+      return rankBy(list,p=>sample(p,lastWeekKey,7))[0]||null; },
+    // tools in this week's top 10 that were not in it the last time this device stepped inside
+    fresh(k,top){ const prev=seen[k]; if(!prev) return new Set(); const old=new Set(prev.ids); return new Set(top.filter(p=>!old.has(p.id)).map(p=>p.id)); },
+    markSeen(k,top){ seen[k]={ week:weekKey, ids:top.map(p=>p.id) }; save(SEEN_KEY,seen); },
+    // people exploring right now: sample figure that follows the time of day
+    exploringNow(){ const d=new Date(), h=d.getHours()+d.getMinutes()/60; const base=9+13*Math.max(0,Math.sin((h-7)/24*Math.PI*2));
+      const r=mulberry32(Math.floor(Date.now()/30000)); return Math.max(2,Math.round(base+rr(r,-3,3))); },
   };
   return api;
 })();
@@ -1636,7 +1676,7 @@ function roomShell(ctx,{ shape='square', size=17, h=5.2, wall, floor, wallOpacit
   S.add(noPick(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts),rimM)));
 }
 function label(ctx,g,p,rank,y){ const el=document.createElement('div'); el.className='ilabel'+(rank===1?' first':'');
-  el.innerHTML=`<span>#${rank}</span>${esc(p? p.name : 'Open spot')}`; const o=new CSS2DObject(el); o.position.y=y; g.add(o); }
+  el.innerHTML=`<span>#${rank}</span>${esc(p? p.name : 'Open spot')}${p&&ctx.fresh.has(p.id)?'<i>New</i>':''}`; const o=new CSS2DObject(el); o.position.y=y; g.add(o); }
 function spotCone(ctx,g,h,r,color){ const m=new THREE.Mesh(new THREE.CylinderGeometry(.25,r,h,24,1,true).translate(0,h/2,0), new THREE.MeshBasicMaterial({ color:new THREE.Color(color).multiplyScalar(.5), transparent:true, opacity:.14, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide }));
   ctx.own.push(m.material); g.add(noPick(m)); }
 
@@ -1726,7 +1766,7 @@ function buildInterior(k){
   const fill=new THREE.PointLight(ctx.D.color,6,24,1.2); fill.position.set(0,4.5,0); S.add(fill); ctx.fill=fill;
   const warm=new THREE.PointLight('#ffd9b0',2,20,1.4); warm.position.set(-5,4,-5); S.add(warm);
   THEME[k].room(ctx);
-  const top=Data.top(k,10);
+  const top=Data.top(k,10); ctx.fresh=Data.fresh(k,top);
   for(let i=0;i<10;i++){ const p=top[i]||null, sl=SLOTS[i], rank=i+1;
     const { g, top:ty }= p? THEME[k].item(ctx,p,rank) : emptySlot(ctx,rank);
     g.position.set(sl.x,0,sl.z); if(i>0) g.rotation.y=Math.atan2(-sl.x,-sl.z);
@@ -1751,7 +1791,7 @@ function pickInterior(x,y){ if(!interior.ctx) return null; raycaster.setFromCame
   const hit=raycaster.intersectObjects(interior.ctx.pick,true)[0]; if(!hit) return null; let o=hit.object; while(o && !o.userData.slot) o=o.parent; return o? o.userData.slot : null; }
 
 function renderRankList(){ const k=interior.key, D=DISTRICTS[k], el=$('irank');
-  const rows=interior.top.map((p,i)=>{ const s=Data.stats(p); return `<div class="rrow" data-id="${esc(p.id)}"><span class="rn${i<3?' podium':''}">${i+1}</span>${mono(p)}<div class="rt"><b>${esc(p.name)}</b><small>${esc(p.tagline||host(p.url))}</small></div><div class="rs"><b>▲ ${s.upvotes}</b><small>${s.visits} visits</small></div></div>`; });
+  const rows=interior.top.map((p,i)=>{ const s=Data.stats(p); return `<div class="rrow" data-id="${esc(p.id)}"><span class="rn${i<3?' podium':''}">${i+1}</span>${mono(p)}<div class="rt"><b>${esc(p.name)}${interior.ctx?.fresh.has(p.id)?'<i class="newtag">New</i>':''}</b><small>${esc(p.tagline||host(p.url))}</small></div><div class="rs"><b>▲ ${s.upvotes}</b><small>${s.visits} visits</small></div></div>`; });
   for(let i=interior.top.length;i<10;i++) rows.push(`<div class="rrow empty" data-empty="1"><span class="rn">${i+1}</span><div class="mono ghost">+</div><div class="rt"><b>Open spot</b><small>Add your tool to ${D.short}</small></div></div>`);
   el.innerHTML=`<div class="rhead"><h4>Top 10 this week</h4><small>${Data.weekLabel()}</small></div><div class="rlist">${rows.join('')}</div><p class="rnote">Score = 3 × upvotes + website visits. Resets every Monday.</p>`;
   el.querySelectorAll('.rrow[data-id]').forEach(r=>{ const p=places.find(x=>x.id===r.dataset.id);
@@ -1778,7 +1818,7 @@ function showInterior(k,built){
   const { ctx, top }=built||buildInterior(k); Object.assign(interior,{ ctx, scene:ctx.S, top, key:k, active:true, hl:null, sel:null });
   interior.az=Math.PI/4-.9; interior.goalAz=Math.PI/4; interior.goalZoom=intFit(); interior.zoom=interior.goalZoom*.5; interior.shift=0;
   renderPass.scene=ctx.S; renderPass.camera=interior.cam;
-  document.body.classList.add('in-interior'); $('ihud').hidden=false; renderInteriorTitle(); renderRankList();
+  document.body.classList.add('in-interior'); $('ihud').hidden=false; renderInteriorTitle(); renderRankList(); Data.markSeen(k,top);
 }
 function exitInterior(){
   if(!interior.active||interior.busy) return; interior.busy=true; closeSide(); hideTooltip(); $('faderMsg').textContent=''; fadeTo(true);
@@ -1849,7 +1889,7 @@ addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); compos
    BOOT
    ===================================================================== */
 try{
-  build(); updateCount(); setMode('night',true); stepMode(performance.now());
+  build(); updateCount(); updateMetrics(); setMode('night',true); stepMode(performance.now());
   goal.zoom=fitZoom(); cam.zoom=goal.zoom*.62; cam.az=Math.PI/4-.7; cam.target.copy(HOME);
   updateCamera(); animate();
   setTimeout(()=>$('loader').classList.add('done'),120);

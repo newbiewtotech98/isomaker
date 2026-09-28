@@ -143,6 +143,7 @@
   .side p.desc{margin:0;line-height:1.55;color:var(--text);opacity:.9;font-size:13.5px}
   .meta{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:12.5px;padding:12px;border-radius:var(--r);border:1px solid var(--line);background:rgba(255,255,255,.02)}
   .meta dt{color:var(--faint)} .meta dd{margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .meta #weekStat{white-space:normal}
   .tags{display:flex;gap:6px;flex-wrap:wrap}
   .tag{font-size:11.5px;padding:4px 9px;border-radius:var(--r-round);border:1px solid var(--line);color:var(--muted)}
   .actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -184,6 +185,9 @@
   .rs{text-align:right;flex:none} .rs b{display:block;font-size:12px;font-weight:600} .rs small{color:var(--faint);font-size:10.5px}
   .rrow.empty{opacity:.7}
   .rnote{margin:8px 8px 0;font-size:11px;color:var(--faint)}
+  .rempty{padding:10px 8px 6px;display:flex;flex-direction:column;gap:8px}
+  .rempty b{font-size:14px;font-weight:600} .rempty p{margin:0;color:var(--muted);line-height:1.5;font-size:12.5px} .rempty .btn{justify-content:center;margin-top:4px}
+  .cl-note{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:-6px;padding:8px 10px;border-radius:var(--r);border:1px dashed var(--line-strong)}
   .ihint{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);color:var(--muted);font-size:12px;pointer-events:none;z-index:5}
   .ilabel{display:flex;align-items:center;gap:6px;padding:3px 9px 3px 4px;border-radius:var(--r-round);background:rgba(10,14,40,.8);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:11.5px;font-weight:600;white-space:nowrap;max-width:190px;overflow:hidden;text-overflow:ellipsis}
   .ilabel span{background:rgba(255,255,255,.16);border-radius:var(--r-round);padding:1px 6px;font-size:10.5px}
@@ -1351,7 +1355,7 @@ function hoverAt(x,y){ if(hoverRaf) return; hoverRaf=requestAnimationFrame(()=>{
     else hideTooltip(); return; }
   const p=pickAt(x,y); setHover(p);
   if(p){ const d=DISTRICTS[p.district]; tooltip.hidden=false; tooltip.style.left=x+'px'; tooltip.style.top=y+'px';
-    tooltip.innerHTML=`<em><span class="dot" style="color:${d?d.color:COMMONS.color};width:6px;height:6px"></span>${d? (p.landmark?'Landmark · ':'')+d.short : 'The Commons'}${p.crowned?' · Last week’s #1':''}</em><b>${esc(p.name)}</b><span>${p.landmark? 'Step inside for this week’s top 10' : esc(p.tagline||'')}</span>`; }
+    tooltip.innerHTML=`<em><span class="dot" style="color:${d?d.color:COMMONS.color};width:6px;height:6px"></span>${d? (p.landmark?'Landmark · ':'')+d.short : 'The Commons'}${p.seed?' · Classic':''}${p.crowned?' · Last week’s #1':''}</em><b>${esc(p.name)}</b><span>${p.landmark? 'Step inside for this week’s top 10' : esc(p.tagline||'')}</span>`; }
   else hideTooltip(); }); }
 function hideTooltip(){ tooltip.hidden=true; }
 function setHover(p){ if(p===hovered) return; hovered=p; cvs.classList.toggle('hovering',!!p);
@@ -1420,20 +1424,23 @@ function closeSide(){ side.classList.remove('open'); select(null);
 function placeRow(p){ const d=DISTRICTS[p.district]; return `<div class="result" data-id="${esc(p.id)}">${mono(p)}<div><b>${esc(p.name)}</b><small>${esc(p.tagline||host(p.url))}</small></div>${d?`<span class="d"><span class="dot" style="color:${d.color};width:6px;height:6px"></span>${d.short}</span>`:''}</div>`; }
 function bindRows(root){ root.querySelectorAll('.result[data-id]').forEach(el=>el.onclick=()=>{ const p=places.find(x=>x.id===el.dataset.id); if(p){ openPlace(p); } }); }
 
+function weekLine(p,d){ const s=Data.stats(p), pv=Data.preview?' <span class="hint">(preview)</span>':'';
+  return p.seed? `${s.visits} visits${pv}` : `#${Data.rank(p)} of ${d.short}’s community tools · ${s.visits} visits${pv}`; }
 function openPlace(p){
   if(p.id==='observatory') return openAbout();
   const d=DISTRICTS[p.district]; const url=safeUrl(p.url);
-  const nearby=places.filter(x=>x.district===p.district && x.id!==p.id).slice(0,4); const st=Data.stats(p), rk=Data.rank(p);
+  const nearby=places.filter(x=>x.district===p.district && x.id!==p.id).slice(0,4); const st=Data.stats(p);
   sideShell(d.color, mono(p), `
-    <div class="tagline-row"><span class="dot" style="color:${d.color};width:7px;height:7px"></span>${d.name}${p.user?' · Community':''}</div>
+    <div class="tagline-row"><span class="dot" style="color:${d.color};width:7px;height:7px"></span>${d.name} · ${p.seed?'Classic':'Community'}</div>
     <div><h2>${esc(p.name)}</h2></div>
     <div class="sub">${esc(p.tagline||'')}</div>
+    ${p.seed?`<div class="cl-note">A hand-picked Classic. Classics aren’t ranked — the top 10 inside ${d.lm} is for makers.</div>`:''}
     ${p.desc?`<p class="desc">${esc(p.desc)}</p>`:''}
-    <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}<dt>This week</dt><dd id="weekStat">#${rk} in ${d.short} · ${st.visits} visits${Data.preview?' <span class="hint">(preview)</span>':''}</dd>${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
+    <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
     ${p.tags?.length?`<div class="tags">${p.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
     <div class="actions">
       ${url?`<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Visit website ${icon('ext')}</a>`:''}
-      <button class="btn ghost vote${st.voted?' on':''}" id="voteBtn" title="${st.voted?'Remove upvote':'Upvote'}">▲ <b>${st.upvotes}</b></button>
+      ${p.seed?'':`<button class="btn ghost vote${st.voted?' on':''}" id="voteBtn" title="${st.voted?'Remove upvote':'Upvote'}">▲ <b>${st.upvotes}</b></button>`}
       <button class="btn ghost" id="copyLink" title="Copy link">${icon('link')}</button>
       ${interior.active?'':`<button class="btn ghost" id="focusBtn" title="Fly to">${icon('target')}</button>`}
     </div>
@@ -1443,8 +1450,8 @@ function openPlace(p){
   $('copyLink').onclick=async()=>{ try{ await navigator.clipboard.writeText(p.url); toast(p,'Link copied',host(p.url)); }catch(e){ toast(p,'Copy failed',p.url); } };
   if($('focusBtn')) $('focusBtn').onclick=()=>flyToPlace(p);
   const visitA=side.querySelector('a.btn.primary'); if(visitA) visitA.addEventListener('click',()=>{ if(!Data.recordVisit(p)) return; const s2=Data.stats(p);
-    $('weekStat').innerHTML=`#${Data.rank(p)} in ${d.short} · ${s2.visits} visits${Data.preview?' <span class="hint">(preview)</span>':''}`; updateMetrics(); if(interior.active) renderRankList(); });
-  $('voteBtn').onclick=()=>{ const on=Data.toggleVote(p), s2=Data.stats(p), b=$('voteBtn'); b.classList.toggle('on',on); b.title=on?'Remove upvote':'Upvote'; b.querySelector('b').textContent=s2.upvotes; if(interior.active) renderRankList(); };
+    $('weekStat').innerHTML=weekLine(p,d); updateMetrics(); if(interior.active) renderRankList(); });
+  if($('voteBtn')) $('voteBtn').onclick=()=>{ const on=Data.toggleVote(p), s2=Data.stats(p), b=$('voteBtn'); b.classList.toggle('on',on); b.title=on?'Remove upvote':'Upvote'; b.querySelector('b').textContent=s2.upvotes; if(interior.active) renderRankList(); };
   if(p.user) $('removeBtn').onclick=()=>{ const b=$('removeBtn'); if(!b.dataset.confirm){ b.dataset.confirm='1'; b.innerHTML=`${icon('trash')} Click again to remove`; return; }
     removeBuilding(p); places.splice(places.indexOf(p),1); saveUser(); updateCount(); closeSide(); toast(p,'Removed',p.name); };
   if(interior.active) focusInterior(p); else { select(p); flyToPlace(p); }
@@ -1602,7 +1609,8 @@ const Data = (() => {
     preview:true,
     weekLabel:()=>`${fmt(weekStart)} – ${fmt(weekStart+6*DAY)}`,
     stats(p){ const s=sample(p), v=voted.has(p.id); return { visits:s.visits+(visits.byId[p.id]?.count||0), upvotes:s.upvotes+(v?1:0), voted:v }; },
-    top(k,n=10){ return rankBy(places.filter(p=>p.district===k),api.stats).slice(0,n); },
+    // only community-submitted tools are ranked; Classics (the hand-picked seeds) are not
+    top(k,n=10){ return rankBy(places.filter(p=>p.district===k && !p.seed),api.stats).slice(0,n); },
     rank(p){ const i=api.top(p.district,1e4).indexOf(p); return i<0? null : i+1; },
     toggleVote(p){ voted.has(p.id)? voted.delete(p.id) : voted.add(p.id); save(VOTE_KEY,[...voted]); return voted.has(p.id); },
     // one website visit per tool per device per day
@@ -1610,8 +1618,8 @@ const Data = (() => {
       v.count++; v.last=today; visits.byId[p.id]=v; save(VISIT_KEY,visits); return true; },
     districtVisits(k){ return places.filter(p=>p.district===k).reduce((a,p)=>a+api.stats(p).visits,0); },
     // last week's #1: full-week sample, only places that existed before this week
-    lastWeekWinner(k){ const list=places.filter(p=>p.district===k && !(p.added && Date.parse(p.added)>=weekStart));
-      return rankBy(list,p=>sample(p,lastWeekKey,7))[0]||null; },
+    lastWeekWinner(k){ const list=places.filter(p=>p.district===k && !p.seed && !(p.added && Date.parse(p.added)>=weekStart));
+      const w=rankBy(list,p=>sample(p,lastWeekKey,7))[0]; return w && sample(w,lastWeekKey,7).upvotes>=5? w : null; },
     // tools in this week's top 10 that were not in it the last time this device stepped inside
     fresh(k,top){ const prev=seen[k]; if(!prev) return new Set(); const old=new Set(prev.ids); return new Set(top.filter(p=>!old.has(p.id)).map(p=>p.id)); },
     markSeen(k,top){ seen[k]={ week:weekKey, ids:top.map(p=>p.id) }; save(SEEN_KEY,seen); },
@@ -1792,11 +1800,14 @@ function pickInterior(x,y){ if(!interior.ctx) return null; raycaster.setFromCame
 
 function renderRankList(){ const k=interior.key, D=DISTRICTS[k], el=$('irank');
   const rows=interior.top.map((p,i)=>{ const s=Data.stats(p); return `<div class="rrow" data-id="${esc(p.id)}"><span class="rn${i<3?' podium':''}">${i+1}</span>${mono(p)}<div class="rt"><b>${esc(p.name)}${interior.ctx?.fresh.has(p.id)?'<i class="newtag">New</i>':''}</b><small>${esc(p.tagline||host(p.url))}</small></div><div class="rs"><b>▲ ${s.upvotes}</b><small>${s.visits} visits</small></div></div>`; });
-  for(let i=interior.top.length;i<10;i++) rows.push(`<div class="rrow empty" data-empty="1"><span class="rn">${i+1}</span><div class="mono ghost">+</div><div class="rt"><b>Open spot</b><small>Add your tool to ${D.short}</small></div></div>`);
-  el.innerHTML=`<div class="rhead"><h4>Top 10 this week</h4><small>${Data.weekLabel()}</small></div><div class="rlist">${rows.join('')}</div><p class="rnote">Score = 3 × upvotes + website visits. Resets every Monday.</p>`;
+  const open=10-interior.top.length;
+  if(open && rows.length) rows.push(`<div class="rrow empty" data-empty="1"><span class="rn">+</span><div class="mono ghost">+</div><div class="rt"><b>${open} open spot${open>1?'s':''}</b><small>Add your tool to ${D.short}</small></div></div>`);
+  const body= rows.length? `<div class="rlist">${rows.join('')}</div>`
+    : `<div class="rempty"><b>The top 10 is waiting for its first maker</b><p>Every spot in ${D.lm} goes to tools the community adds. Add yours and it takes #1 until someone out-votes it.</p><button class="btn primary" data-empty="1">${icon('plus')} Add your tool to ${D.short}</button></div>`;
+  el.innerHTML=`<div class="rhead"><h4>Top 10 this week</h4><small>${Data.weekLabel()}</small></div>${body}<p class="rnote">Community tools only, ranked by 3 × upvotes + website visits. Resets every Monday.</p>`;
   el.querySelectorAll('.rrow[data-id]').forEach(r=>{ const p=places.find(x=>x.id===r.dataset.id);
     r.onmouseenter=()=>interiorHighlight(p); r.onmouseleave=()=>interiorHighlight(null); r.onclick=()=>openPlace(p); });
-  el.querySelectorAll('.rrow.empty').forEach(r=>r.onclick=()=>openModal(k));
+  el.querySelectorAll('[data-empty]').forEach(r=>r.onclick=()=>openModal(k));
   if(interior.sel) focusInterior(interior.sel);
 }
 function renderInteriorTitle(){ const D=DISTRICTS[interior.key];

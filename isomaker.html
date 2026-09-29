@@ -1590,7 +1590,11 @@ modal.addEventListener('click',e=>{ if(e.target===modal || e.target.closest('[da
    tool to a Google Form (a sheet the owner reviews) instead of placing a building
    only this browser would see. Paste the form's formResponse URL and entry ids
    below to switch it on. */
-const RESERVE={ action:null, fields:{ name:'', url:'', tagline:'', desc:'', by:'', email:'', district:'', ref:'', referredBy:'' } };
+const RESERVE={ action:'https://docs.google.com/forms/d/e/1FAIpQLSdyrfi_r2FXPuKscShukCCS1dNyfRavl1t1oJBeTBh5dx0MtQ/formResponse',
+  fields:{ name:'entry.373336187', url:'entry.1258281', tagline:'entry.690535857', desc:'entry.126154266', by:'entry.676589832',
+    email:'entry.529579268', district:'entry.1936815047', ref:'entry.1844525740', referredBy:'entry.596905363' },
+  // the form's District options, where they differ from the district's short name
+  districtLabel:{ experiment:'Experimental' } };
 const Referral=(()=>{ const K='isomaker.ref', F='isomaker.referredBy', N='isomaker.reserved';
   const get=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } }, put=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
   let mine=get(K); if(!mine){ mine=Math.random().toString(36).slice(2,8); put(K,mine); }
@@ -1614,7 +1618,7 @@ form.addEventListener('submit',async e=>{ e.preventDefault(); const f=new FormDa
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent='Add an email so we can tell you when it’s live.'; form.elements.email.focus(); return; }
   const k=String(f.get('district')), D=DISTRICTS[k];
   const data={ name, url:safeUrl(url), tagline:String(f.get('tagline')||'').trim(), desc:String(f.get('desc')||'').trim(), by:String(f.get('by')||'').trim(),
-    email, district:D.short, ref:Referral.mine(), referredBy:Referral.from() };
+    email, district:RESERVE.districtLabel[k]||D.short, ref:Referral.mine(), referredBy:Referral.from() };
   const btn=form.querySelector('[type=submit]'), lbl=btn.querySelector('.lbl'); btn.disabled=true; lbl.textContent='Reserving…';
   try{ await sendReservation(data); }
   catch(x){ err.textContent= x.message==='closed'? 'Reservations open very soon — check back shortly.' : 'Couldn’t reach the reservation list. Check your connection and try again.'; return; }

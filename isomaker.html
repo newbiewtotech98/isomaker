@@ -4,6 +4,21 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Isomaker — Living World of Indie Tools</title>
+<meta name="description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and reserve a spot for your tool." />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Isomaker" />
+<meta property="og:url" content="https://isomaker.vercel.app/" />
+<meta property="og:title" content="Isomaker — Living World of Indie Tools" />
+<meta property="og:description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and reserve a spot for your tool." />
+<meta property="og:image" content="https://isomaker.vercel.app/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="An isometric night-time world of glowing islands, each a district of indie tools, around a central observatory." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Isomaker — Living World of Indie Tools" />
+<meta name="twitter:description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and reserve a spot for your tool." />
+<meta name="twitter:image" content="https://isomaker.vercel.app/og.png" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff3d7f'/%3E%3Cstop offset='1' stop-color='%23ffcf5c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -254,6 +269,12 @@
   .choice label:hover{background:var(--hover)}
   .choice input:checked + label{border-color:var(--c, #8c96ff);background:color-mix(in srgb, var(--c, #8c96ff) 18%, transparent);box-shadow:0 0 0 1px var(--c, #8c96ff) inset}
   .choice input:focus-visible + label{outline:2px solid #8c96ff;outline-offset:2px}
+  .modal-card.done .modal-head > div{visibility:hidden}
+  .modal-card.done .modal-head{margin-bottom:-24px}
+  .reserved{display:flex;flex-direction:column;gap:12px;text-align:left}
+  .reserved .ok{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:700;color:#06281a;background:#3ee08f;box-shadow:0 0 24px rgba(62,224,143,.5)}
+  .reserved h2{margin:0;font-size:20px} .reserved p{margin:0;color:var(--muted);line-height:1.5}
+  .refbox{display:flex;gap:8px} .refbox input{flex:1;min-width:0}
   .form-error{color:#ff7a8a;margin:0;min-height:1em;font-size:12.5px}
   .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
   .hint{font-size:11.5px;color:var(--faint)}
@@ -308,7 +329,7 @@
 <div class="tr panel">
   <button class="btn" id="findBtn" title="Find a place (/)"><span data-i="search"></span><span class="t">Find place</span><span class="kbd">/</span></button>
   <button class="btn" id="wanderBtn" title="Wander (W)"><span data-i="shuffle"></span><span class="t">Wander</span></button>
-  <button class="btn primary" id="addBtn"><span data-i="plus"></span><span class="t">Add your tool</span></button>
+  <button class="btn primary" id="addBtn"><span data-i="plus"></span><span class="t">Reserve your spot</span></button>
 </div>
 
 <div class="search panel" id="search" hidden>
@@ -348,7 +369,7 @@
 <div class="modal" id="modal" hidden>
   <div class="modal-card panel" role="dialog" aria-modal="true" aria-labelledby="addTitle">
     <div class="modal-head">
-      <div><h2 id="addTitle">Add your tool</h2><p>Plant your place in the world. Pick a district and your building rises from the ground for everyone exploring to discover.</p></div>
+      <div><h2 id="addTitle">Reserve your spot</h2><p>Isomaker opens to makers soon. Reserve a spot now and your tool will be among the first buildings in its district, with a shot at the landmark’s top 10.</p></div>
       <button class="icon-btn" data-close title="Close"><span data-i="x"></span></button>
     </div>
     <form id="addForm" novalidate>
@@ -358,16 +379,26 @@
       </div>
       <label class="f">Tagline<input name="tagline" maxlength="60" placeholder="One line about what it does"></label>
       <label class="f">Description<textarea name="desc" maxlength="240" rows="3" placeholder="What makes it worth a visit?"></textarea></label>
-      <label class="f">Made by<input name="by" maxlength="40" placeholder="@you"></label>
+      <div class="row2">
+        <label class="f">Made by<input name="by" maxlength="40" placeholder="@you"></label>
+        <label class="f">Email<input name="email" type="email" maxlength="120" placeholder="you@yourtool.com" required autocomplete="email"></label>
+      </div>
       <fieldset><legend>District</legend><div class="choice" id="districtChoice"></div></fieldset>
-      <fieldset><legend>Building</legend><div class="choice" id="styleChoice"></div></fieldset>
       <p class="form-error" id="formError"></p>
       <div class="modal-actions">
-        <span class="hint" style="margin-right:auto;align-self:center">Saved in this browser</span>
+        <span class="hint" style="margin-right:auto;align-self:center">Your email is only used to tell you when it’s live</span>
         <button type="button" class="btn ghost" data-close>Cancel</button>
-        <button type="submit" class="btn primary"><span data-i="plus"></span>Place it in the world</button>
+        <button type="submit" class="btn primary"><span data-i="plus"></span><span class="lbl">Reserve my spot</span></button>
       </div>
     </form>
+    <div class="reserved" id="reserved" hidden>
+      <div class="ok">✓</div>
+      <h2>You’re on the list</h2>
+      <p id="reservedMsg"></p>
+      <label class="f">Your referral link<div class="refbox"><input id="refLink" readonly><button type="button" class="btn ghost" id="copyRef">Copy</button></div></label>
+      <p class="hint">Makers who reserve through your link are credited to you. Top referrers get the first spotlight weeks at launch.</p>
+      <div class="modal-actions"><button type="button" class="btn primary" data-close>Back to exploring</button></div>
+    </div>
   </div>
 </div>
 
@@ -1382,7 +1413,7 @@ let hovered=null, hoverRaf=0;
 function hoverAt(x,y){ if(hoverRaf) return; hoverRaf=requestAnimationFrame(()=>{ hoverRaf=0;
   if(interior.active){ const sl=pickInterior(x,y); cvs.classList.toggle('hovering',!!sl); interiorHighlight(sl?.p||null); if(sl) markSlot(interior.ctx.hover,sl);
     if(sl){ const d=DISTRICTS[interior.key]; tooltip.hidden=false; tooltip.style.left=x+'px'; tooltip.style.top=y+'px';
-      tooltip.innerHTML=`<em><span class="dot" style="color:${d.color};width:6px;height:6px"></span>#${sl.rank} this week · ${d.short}</em><b>${esc(sl.p? sl.p.name : 'Open spot')}</b><span>${sl.p? esc(sl.p.tagline||'') : 'Add your tool to claim it'}</span>`; }
+      tooltip.innerHTML=`<em><span class="dot" style="color:${d.color};width:6px;height:6px"></span>#${sl.rank} this week · ${d.short}</em><b>${esc(sl.p? sl.p.name : 'Open spot')}</b><span>${sl.p? esc(sl.p.tagline||'') : 'Reserve a spot to claim it'}</span>`; }
     else hideTooltip(); return; }
   const p=pickAt(x,y); setHover(p);
   if(p){ const d=DISTRICTS[p.district]; tooltip.hidden=false; tooltip.style.left=x+'px'; tooltip.style.top=y+'px';
@@ -1495,7 +1526,7 @@ function openDistrict(k){
     <div><h2>${d.name}</h2></div><div class="sub">${d.tag}</div>
     <p class="desc">${d.desc}</p>
     <div class="stats"><div class="stat"><b>${ps.length}</b><span>places</span></div><div class="stat"><b>${ps.filter(p=>p.user).length}</b><span>community</span></div><div class="stat"><b>${free}</b><span>open lots</span></div></div>
-    <div class="actions"><button class="btn primary" id="enterLm">Step inside ${d.lm}</button><button class="btn ghost" id="addHere">${icon('plus')} Add yours</button></div>
+    <div class="actions"><button class="btn primary" id="enterLm">Step inside ${d.lm}</button><button class="btn ghost" id="addHere">${icon('plus')} Reserve a spot</button></div>
     <div class="list"><h4>Places</h4>${ps.map(placeRow).join('')}</div>`);
   bindRows(side); $('addHere').onclick=()=>openModal(k); $('enterLm').onclick=()=>enterInterior(k); select(world.districts[k].landmark);
 }
@@ -1549,26 +1580,51 @@ $('homeBtn').onclick=()=>{ if(interior.active) return exitInterior(); stopWander
 
 /* modal */
 const modal=$('modal'), form=$('addForm');
-const dc=$('districtChoice'), sc=$('styleChoice');
+const dc=$('districtChoice');
 dc.innerHTML=ORDER.map((k,i)=>`<input type="radio" name="district" id="d-${k}" value="${k}" ${i===0?'checked':''}><label for="d-${k}" style="--c:${DISTRICTS[k].color}"><span class="dot" style="color:${DISTRICTS[k].color}"></span>${DISTRICTS[k].short}</label>`).join('');
-sc.innerHTML=[['auto','Auto (district style)'],['tower','Tower'],['studio','Studio'],['house','House'],['dome','Dome']].map(([v,l],i)=>`<input type="radio" name="style" id="st-${v}" value="${v}" ${i===0?'checked':''}><label for="st-${v}">${l}</label>`).join('');
-function openModal(k){ form.reset(); $('formError').textContent=''; if(k) $('d-'+k).checked=true; modal.hidden=false; stopWander(); setTimeout(()=>form.elements.name.focus(),30); }
+function openModal(k){ form.reset(); form.hidden=false; $('reserved').hidden=true; modal.querySelector('.modal-card').classList.remove('done'); $('formError').textContent=''; if(k) $('d-'+k).checked=true; modal.hidden=false; stopWander(); setTimeout(()=>form.elements.name.focus(),30); }
 function closeModal(){ modal.hidden=true; }
 $('addBtn').onclick=()=>openModal();
 modal.addEventListener('click',e=>{ if(e.target===modal || e.target.closest('[data-close]')) closeModal(); });
-form.addEventListener('submit',e=>{ e.preventDefault(); const f=new FormData(form); const err=$('formError');
-  const name=String(f.get('name')||'').trim(); let url=String(f.get('url')||'').trim();
+/* Reservations. Until the shared backend exists, "Reserve your spot" sends the
+   tool to a Google Form (a sheet the owner reviews) instead of placing a building
+   only this browser would see. Paste the form's formResponse URL and entry ids
+   below to switch it on. */
+const RESERVE={ action:null, fields:{ name:'', url:'', tagline:'', desc:'', by:'', email:'', district:'', ref:'', referredBy:'' } };
+const Referral=(()=>{ const K='isomaker.ref', F='isomaker.referredBy', N='isomaker.reserved';
+  const get=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } }, put=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
+  let mine=get(K); if(!mine){ mine=Math.random().toString(36).slice(2,8); put(K,mine); }
+  // first referral link a visitor arrived through is the one credited
+  const inbound=(new URLSearchParams(location.search).get('ref')||'').toLowerCase();
+  if(/^[a-z0-9]{4,12}$/.test(inbound) && inbound!==mine && !get(F)) put(F,inbound);
+  return { mine:()=>mine, from:()=>get(F)||'', link:()=>`https://isomaker.vercel.app/?ref=${mine}`,
+    count:()=>Number(get(N)||0), noteReserved:()=>put(N,String(Number(get(N)||0)+1)) };
+})();
+async function sendReservation(data){
+  if(!RESERVE.action){ if(new URLSearchParams(location.search).has('debug')) return; throw new Error('closed'); }
+  const body=new URLSearchParams(); for(const [k,id] of Object.entries(RESERVE.fields)) if(id) body.append(id,data[k]||'');
+  // Google Forms accepts a plain form post; the response is opaque, so a network failure is the only error we can see
+  await fetch(RESERVE.action,{ method:'POST', mode:'no-cors', body });
+}
+form.addEventListener('submit',async e=>{ e.preventDefault(); const f=new FormData(form); const err=$('formError'); err.textContent='';
+  const name=String(f.get('name')||'').trim(); let url=String(f.get('url')||'').trim(); const email=String(f.get('email')||'').trim();
   if(!name){ err.textContent='Give your tool a name.'; form.elements.name.focus(); return; }
   if(url && !/^https?:\/\//i.test(url)) url='https://'+url;
   if(!safeUrl(url) || !/\./.test(host(url))){ err.textContent='That website doesn’t look right — try something like yourtool.com'; form.elements.url.focus(); return; }
-  const district=String(f.get('district')); if(!world.districts[district].cells.some(c=>!c.occupied)){ err.textContent=`${DISTRICTS[district].name} is full right now — try another district.`; return; }
-  const p={ id:'u-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), district, name, url:safeUrl(url), tagline:String(f.get('tagline')||'').trim(), desc:String(f.get('desc')||'').trim(),
-    by:String(f.get('by')||'').trim(), tags:['community'], style:String(f.get('style')||'auto'), added:new Date().toISOString(), user:true };
-  places.push(p); placeBuilding(p,true); saveUser(); updateCount(); closeModal(); closeSide();
-  if(interior.active){ if(interior.key===district) rebuildInterior(); else exitInterior(); } else { select(p); flyToPlace(p); }
-  toast(p,`Welcome to the ${DISTRICTS[district].short} District!`,`${name} just rose from the ground.`,{ label:'Open', fn:()=>openPlace(p) });
-  setTimeout(()=>{ if(!side.classList.contains('open')) openPlace(p); },1700);
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent='Add an email so we can tell you when it’s live.'; form.elements.email.focus(); return; }
+  const k=String(f.get('district')), D=DISTRICTS[k];
+  const data={ name, url:safeUrl(url), tagline:String(f.get('tagline')||'').trim(), desc:String(f.get('desc')||'').trim(), by:String(f.get('by')||'').trim(),
+    email, district:D.short, ref:Referral.mine(), referredBy:Referral.from() };
+  const btn=form.querySelector('[type=submit]'), lbl=btn.querySelector('.lbl'); btn.disabled=true; lbl.textContent='Reserving…';
+  try{ await sendReservation(data); }
+  catch(x){ err.textContent= x.message==='closed'? 'Reservations open very soon — check back shortly.' : 'Couldn’t reach the reservation list. Check your connection and try again.'; return; }
+  finally{ btn.disabled=false; lbl.textContent='Reserve my spot'; }
+  Referral.noteReserved();
+  form.hidden=true; $('reserved').hidden=false; modal.querySelector('.modal-card').classList.add('done');
+  $('reservedMsg').textContent=`${name} is reserved in the ${D.name}. We’ll email ${email} when Isomaker opens to makers, and it will be among the first tools inside ${D.lm}.`;
+  $('refLink').value=Referral.link();
 });
+$('copyRef').onclick=async()=>{ const b=$('copyRef'); try{ await navigator.clipboard.writeText($('refLink').value); b.textContent='Copied'; }catch(e){ $('refLink').select(); b.textContent='Press ⌘C'; } setTimeout(()=>b.textContent='Copy',1800); };
 
 /* keyboard */
 addEventListener('keydown',e=>{ const typing=/INPUT|TEXTAREA/.test(document.activeElement?.tagName);
@@ -1833,9 +1889,9 @@ function pickInterior(x,y){ if(!interior.ctx) return null; raycaster.setFromCame
 function renderRankList(){ const k=interior.key, D=DISTRICTS[k], el=$('irank');
   const rows=interior.top.map((p,i)=>{ const s=Data.stats(p); return `<div class="rrow" data-id="${esc(p.id)}"><span class="rn${i<3?' podium':''}">${i+1}</span>${mono(p)}<div class="rt"><b>${esc(p.name)}${interior.ctx?.fresh.has(p.id)?'<i class="newtag">New</i>':''}</b><small>${esc(p.tagline||host(p.url))}</small></div><div class="rs"><b>▲ ${s.upvotes}</b><small>${s.visits} visits</small></div></div>`; });
   const open=10-interior.top.length;
-  if(open && rows.length) rows.push(`<div class="rrow empty" data-empty="1"><span class="rn">+</span><div class="mono ghost">+</div><div class="rt"><b>${open} open spot${open>1?'s':''}</b><small>Add your tool to ${D.short}</small></div></div>`);
+  if(open && rows.length) rows.push(`<div class="rrow empty" data-empty="1"><span class="rn">+</span><div class="mono ghost">+</div><div class="rt"><b>${open} open spot${open>1?'s':''}</b><small>Reserve a spot in ${D.short}</small></div></div>`);
   const body= rows.length? `<div class="rlist">${rows.join('')}</div>`
-    : `<div class="rempty"><b>The top 10 is waiting for its first maker</b><p>Every spot in ${D.lm} goes to tools the community adds. Add yours and it takes #1 until someone out-votes it.</p><button class="btn primary" data-empty="1">${icon('plus')} Add your tool to ${D.short}</button></div>`;
+    : `<div class="rempty"><b>The top 10 is waiting for its first maker</b><p>Every spot in ${D.lm} goes to tools the community adds. Reserve a spot now and yours will be among the first inside when makers are let in.</p><button class="btn primary" data-empty="1">${icon('plus')} Reserve a spot in ${D.short}</button></div>`;
   el.innerHTML=`<div class="rhead"><h4>Top 10 this week</h4><small>${Data.weekLabel()}</small></div>${body}<p class="rnote">Community tools only, ranked by 3 × upvotes + website visits. Resets every Monday.</p>`;
   el.querySelectorAll('.rrow[data-id]').forEach(r=>{ const p=places.find(x=>x.id===r.dataset.id);
     r.onmouseenter=()=>interiorHighlight(p); r.onmouseleave=()=>interiorHighlight(null); r.onclick=()=>openPlace(p); });
@@ -1939,8 +1995,8 @@ function openObservatoryPanel(){
     <div class="list"><h4>Last week’s crowns</h4>${crowns.length? crowns.map(placeRow).join('') : '<p class="empty-note">Crowns go to a district’s community #1 with 5 or more upvotes in a week.</p>'}</div>
     <div class="list"><h4>Your trail</h4>
       <div class="trail">${ORDER.map(k=>`<span class="tdot${seenD.has(k)?' on':''}" style="--c:${DISTRICTS[k].color}">${DISTRICTS[k].short}</span>`).join('')}</div>
-      <div class="stats"><div class="stat"><b>${seenD.size}/5</b><span>rooms entered</span></div><div class="stat"><b>${Data.votedCount()}</b><span>upvotes given</span></div><div class="stat"><b>${places.filter(p=>p.user).length}</b><span>tools added</span></div></div></div>
-    <div class="actions"><button class="btn primary" id="addAbout">${icon('plus')} Add your tool</button></div>
+      <div class="stats"><div class="stat"><b>${seenD.size}/5</b><span>rooms entered</span></div><div class="stat"><b>${Data.votedCount()}</b><span>upvotes given</span></div><div class="stat"><b>${Referral.count()}</b><span>spots reserved</span></div></div></div>
+    <div class="actions"><button class="btn primary" id="addAbout">${icon('plus')} Reserve your spot</button></div>
     <details class="about"><summary>About Isomaker and controls</summary>
       <p class="desc">Isomaker is a living world of indie tools, plugins and delightful websites. Classics are hand-picked; each landmark’s top 10 belongs to tools the community adds.</p>
       <div class="meta" style="grid-template-columns:auto 1fr"><dt>Drag</dt><dd>Pan the world</dd><dt>Scroll / pinch</dt><dd>Zoom</dd><dt>Right-drag, Q / E</dt><dd>Rotate</dd><dt>Click</dt><dd>Open any building</dd><dt>Landmarks</dt><dd>Step inside for the top 10</dd><dt>/ · W · H</dt><dd>Find · Wander · Home</dd></div></details>`);

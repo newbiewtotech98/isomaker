@@ -714,11 +714,11 @@ B.glass = (r,pal)=>{ const g=new THREE.Group(); const w=rr(r,2.1,2.6), d=w*rr(r,
   else { g.add(at(box(w*.6,.6,d*.6,roofM(pal)),0,h,0)); top+=.6; }
   top+=addAntenna(g,top,r); g.userData.h=top; return g; };
 B.stepped = (r,pal)=>{ const g=new THREE.Group(); const mat=winMat(pickR(r,pal.tint), pickR(r,pal.win), r()*3|0); let y=0, w=rr(r,2.5,2.8), d=rr(r,2.4,2.8);
-  for(let i=0;i<3;i++){ const h=i===0?rr(r,3,4):rr(r,1.6,2.8); g.add(at(facadeBox(w,h,d,mat,roofM(pal),5.6,r),0,y,0)); g.add(noPick(at(box(w+.06,.06,d+.06,glowMat(pal.accent,1.6)),0,y+h-.03,0))); y+=h; w*=.74; d*=.74; }
+  for(let i=0;i<3;i++){ const h=i===0?rr(r,3,4):rr(r,1.6,2.8); g.add(at(facadeBox(w,h,d,mat,roofM(pal),5.6,r),0,y,0)); g.add(noPick(at(box(w+.06,.06,d+.06,glowMat(pal.accent,1.6)),0,y+h-.075,0))); y+=h; w*=.74; d*=.74; }
   y+=addAntenna(g,y,r); g.userData.h=y; return g; };
 B.lab = (r,pal)=>{ const g=new THREE.Group(); const w=rr(r,2.4,2.8), d=rr(r,2.1,2.6), h=rr(r,2,3.6);
   const mat=winMat(pickR(r,pal.tint), pickR(r,pal.win), r()*3|0); g.add(facadeBox(w,h,d,mat,roofM(pal),5.6,r));
-  g.add(noPick(at(box(w+.06,.07,d+.06,glowMat(pal.accent,2.2)),0,h-.07,0)));
+  g.add(noPick(at(box(w+.06,.07,d+.06,glowMat(pal.accent,2.2)),0,h-.085,0)));
   const dish=shadow(new THREE.Mesh(new THREE.SphereGeometry(.65,14,8,0,Math.PI*2,0,Math.PI/3.2), stdMat('#e6e3f5',{side:THREE.DoubleSide})));
   dish.rotation.x=Math.PI*.8; dish.rotation.z=.4; g.add(at(cyl(.05,.07,.5,darkMetal,6),w*.2,h,-d*.15)); g.add(at(dish,w*.2,h+.95,-d*.15));
   g.add(at(cyl(.12,.12,.9,stdMat('#8a86b0'),8),-w*.3,h,d*.25));

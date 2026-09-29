@@ -128,14 +128,15 @@
   .side{position:fixed;top:calc(76px + env(safe-area-inset-top,0px));right:16px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:360px;max-width:calc(100vw - 32px);z-index:6;
     display:flex;flex-direction:column;overflow:hidden;transform:translateX(calc(100% + 24px));opacity:0;transition:transform .45s cubic-bezier(.2,.9,.2,1),opacity .3s;background:var(--glass-strong)}
   .side.open{transform:none;opacity:1}
-  .side .hero{position:relative;height:130px;flex:none;overflow:hidden}
-  .side .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%, var(--accent) 0%, transparent 60%),radial-gradient(circle at 90% 90%, rgba(80,120,255,.5), transparent 55%),#0c1030;opacity:.9}
+  .side .hero{position:relative;height:130px;flex:none;overflow:visible;z-index:1}
+  /* banner tinted from the icon's own colour */
+  .side .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 22% 10%, color-mix(in srgb, var(--accent) 70%, #fff) 0%, transparent 55%),linear-gradient(135deg, color-mix(in srgb, var(--accent) 78%, #0c1030), color-mix(in srgb, var(--accent) 30%, #0c1030));opacity:.95}
   body[data-mode="day"] .side .hero::before{opacity:.55}
   .side .hero .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:18px 18px;mask-image:linear-gradient(to bottom,#000,transparent)}
   .side .close{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.25);color:#fff}
   .side .close:hover{background:rgba(0,0,0,.45);color:#fff}
   .mono{display:grid;place-items:center;border-radius:var(--r-m);font-weight:700;color:#fff;flex:none;background:var(--accent);box-shadow:0 0 0 1px rgba(255,255,255,.2) inset}
-  .side .hero .mono{position:absolute;left:18px;bottom:-22px;width:60px;height:60px;font-size:24px;border-radius:var(--r-l);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 3px var(--glass-strong)}
+  .side .hero .mono{position:absolute;z-index:2;left:18px;bottom:-22px;width:60px;height:60px;font-size:24px;border-radius:var(--r-l);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 3px var(--glass-strong)}
   .side .body{padding:34px 18px 18px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:14px}
   .tagline-row{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
   .side h2{margin:0;font-size:22px;letter-spacing:-.02em;font-weight:700}
@@ -1469,7 +1470,7 @@ function openDistrict(k){
 }
 function openAbout(){
   const total=places.length+1;
-  sideShell(COMMONS.color, `<div class="mono" style="background:conic-gradient(from 210deg,#ff3d7f,#ff8a3d,#ffcf5c,#ff3d7f)">◎</div>`, `
+  sideShell('#ff6a4d', `<div class="mono" style="background:conic-gradient(from 210deg,#ff3d7f,#ff8a3d,#ffcf5c,#ff3d7f)">◎</div>`, `
     <div class="tagline-row"><span class="dot" style="color:${COMMONS.color};width:7px;height:7px"></span>The Commons · Core</div>
     <div><h2>The Observatory</h2></div><div class="sub">The heart of Isomaker</div>
     <p class="desc">Isomaker is a living world of indie tools, plugins and delightful websites. Every building is a place you can visit. Each district gathers a different kind of thing, and anyone can plant their own tool — the world grows as people add to it.</p>

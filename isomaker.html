@@ -1306,7 +1306,7 @@ function build(){
   for(const p of SEED) places.push(p);
   for(const p of loadUser()) places.push({ ...p, user:true });
   for(const p of places) placeBuilding(p,false);
-  for(const k of ORDER){ const w=Data.lastWeekWinner(k); if(w) addCrown(w); }
+  if(Data.numbers) for(const k of ORDER){ const w=Data.lastWeekWinner(k); if(w) addCrown(w); }
   for(const k of ORDER) scatterDistrictTrees(k);
   scatterCommonsTrees();
   buildInstanced();
@@ -1497,7 +1497,7 @@ function closeSide(){ side.classList.remove('open'); select(null); exitObservato
 function placeRow(p){ const d=DISTRICTS[p.district]; return `<div class="result" data-id="${esc(p.id)}">${mono(p)}<div><b>${esc(p.name)}</b><small>${esc(p.tagline||host(p.url))}</small></div>${d?`<span class="d"><span class="dot" style="color:${d.color};width:6px;height:6px"></span>${d.short}</span>`:''}</div>`; }
 function bindRows(root){ root.querySelectorAll('.result[data-id]').forEach(el=>el.onclick=()=>{ const p=places.find(x=>x.id===el.dataset.id); if(p){ openPlace(p); } }); }
 
-function weekLine(p,d){ const s=Data.stats(p), pv=Data.preview?' <span class="hint">(preview)</span>':'';
+function weekLine(p,d){ if(!Data.numbers) return ''; const s=Data.stats(p), pv=Data.preview?' <span class="hint">(preview)</span>':'';
   return p.seed? `${s.visits} visits${pv}` : `#${Data.rank(p)} of ${d.short}’s community tools · ${s.visits} visits${pv}`; }
 function openPlace(p){
   if(p.id==='observatory') return openAbout();
@@ -1510,11 +1510,11 @@ function openPlace(p){
     <div class="sub">${esc(p.tagline||'')}</div>
     ${p.seed?`<div class="cl-note">A hand-picked Classic. Classics aren’t ranked — the top 10 inside ${d.lm} is for makers.</div>`:''}
     ${p.desc?`<p class="desc">${esc(p.desc)}</p>`:''}
-    <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
+    <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}${Data.numbers?`<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>`:''}${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
     ${p.tags?.length?`<div class="tags">${p.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
     <div class="actions">
       ${url?`<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Visit website ${icon('ext')}</a>`:''}
-      ${p.seed?'':`<button class="btn ghost vote${st.voted?' on':''}" id="voteBtn" title="${st.voted?'Remove upvote':'Upvote'}">▲ <b>${st.upvotes}</b></button>`}
+      ${p.seed?'':`<button class="btn ghost vote${st.voted?' on':''}" id="voteBtn" title="${st.voted?'Remove upvote':'Upvote'}">▲ ${Data.numbers?`<b>${st.upvotes}</b>`:'Upvote'}</button>`}
       <button class="btn ghost" id="copyLink" title="Copy link">${icon('link')}</button>
       ${interior.active?'':`<button class="btn ghost" id="focusBtn" title="Fly to">${icon('target')}</button>`}
     </div>
@@ -1524,8 +1524,8 @@ function openPlace(p){
   $('copyLink').onclick=async()=>{ try{ await navigator.clipboard.writeText(p.url); toast(p,'Link copied',host(p.url)); }catch(e){ toast(p,'Copy failed',p.url); } };
   if($('focusBtn')) $('focusBtn').onclick=()=>flyToPlace(p);
   const visitA=side.querySelector('a.btn.primary'); if(visitA) visitA.addEventListener('click',()=>{ if(!Data.recordVisit(p)) return; const s2=Data.stats(p);
-    $('weekStat').innerHTML=weekLine(p,d); updateMetrics(); if(interior.active) renderRankList(); });
-  if($('voteBtn')) $('voteBtn').onclick=()=>{ const on=Data.toggleVote(p), s2=Data.stats(p), b=$('voteBtn'); b.classList.toggle('on',on); b.title=on?'Remove upvote':'Upvote'; b.querySelector('b').textContent=s2.upvotes; if(interior.active) renderRankList(); };
+    if($('weekStat')) $('weekStat').innerHTML=weekLine(p,d); updateMetrics(); if(interior.active) renderRankList(); });
+  if($('voteBtn')) $('voteBtn').onclick=()=>{ const on=Data.toggleVote(p), s2=Data.stats(p), b=$('voteBtn'); b.classList.toggle('on',on); b.title=on?'Remove upvote':'Upvote'; if(b.querySelector('b')) b.querySelector('b').textContent=s2.upvotes; if(interior.active) renderRankList(); };
   if(p.user) $('removeBtn').onclick=()=>{ const b=$('removeBtn'); if(!b.dataset.confirm){ b.dataset.confirm='1'; b.innerHTML=`${icon('trash')} Click again to remove`; return; }
     removeBuilding(p); places.splice(places.indexOf(p),1); saveUser(); updateCount(); closeSide(); toast(p,'Removed',p.name); };
   if(interior.active) focusInterior(p); else { select(p); flyToPlace(p); }
@@ -1552,8 +1552,9 @@ function toast(p,title,sub,action){ const t=$('toast'); t.innerHTML=`${p?mono(p)
 /* count */
 const kfmt=n=>n>=1000? (n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,'')+'k' : String(n);
 function updateCount(){ $('count').textContent=`${places.length+1} places`; }
-function updateMetrics(){ $('nowCount').querySelector('b').textContent=Data.exploringNow();
-  for(const k of ORDER){ const el=world.districts[k]?.visitsEl; if(el) el.textContent=`${kfmt(Data.districtVisits(k))} visits this week`; }
+function updateMetrics(){ const show=Data.numbers; $('nowCount').hidden=!show; document.querySelector('.bl .dotsep').hidden=!show;
+  if(show) $('nowCount').querySelector('b').textContent=Data.exploringNow();
+  for(const k of ORDER){ const el=world.districts[k]?.visitsEl; if(!el) continue; el.hidden=!show; if(show) el.textContent=`${kfmt(Data.districtVisits(k))} visits this week`; }
   if(obs.active) renderObservatoryCards(); }
 setInterval(updateMetrics,30000);
 
@@ -1709,7 +1710,9 @@ const Data = (() => {
   const rankBy=(list,statFn)=>list.map((p,i)=>({ p, i, s:statFn(p) })).sort((a,b)=>score(b.s)-score(a.s) || b.s.upvotes-a.s.upvotes || a.i-b.i).map(x=>x.p);
   const fmt=ms=>new Date(ms).toLocaleDateString(undefined,{ month:'short', day:'numeric', timeZone:'UTC' });
   const api={
-    preview:true,
+    // sample traffic stays hidden until the shared backend supplies real numbers;
+    // flip `numbers` on to see the stand-in figures again while developing
+    numbers:new URLSearchParams(location.search).has('sample'), get preview(){ return this.numbers; },
     weekLabel:()=>`${fmt(weekStart)} – ${fmt(weekStart+6*DAY)}`,
     stats(p){ const s=sample(p), v=voted.has(p.id); return { visits:s.visits+(visits.byId[p.id]?.count||0), upvotes:s.upvotes+(v?1:0), voted:v }; },
     // only community-submitted tools are ranked; Classics (the hand-picked seeds) are not
@@ -1913,7 +1916,7 @@ function pickInterior(x,y){ if(!interior.ctx) return null; raycaster.setFromCame
   const hit=raycaster.intersectObjects(interior.ctx.pick,true)[0]; if(!hit) return null; let o=hit.object; while(o && !o.userData.slot) o=o.parent; return o? o.userData.slot : null; }
 
 function renderRankList(){ const k=interior.key, D=DISTRICTS[k], el=$('irank');
-  const rows=interior.top.map((p,i)=>{ const s=Data.stats(p); return `<div class="rrow" data-id="${esc(p.id)}"><span class="rn${i<3?' podium':''}">${i+1}</span>${mono(p)}<div class="rt"><b>${esc(p.name)}${interior.ctx?.fresh.has(p.id)?'<i class="newtag">New</i>':''}</b><small>${esc(p.tagline||host(p.url))}</small></div><div class="rs"><b>▲ ${s.upvotes}</b><small>${s.visits} visits</small></div></div>`; });
+  const rows=interior.top.map((p,i)=>{ const s=Data.stats(p); return `<div class="rrow" data-id="${esc(p.id)}"><span class="rn${i<3?' podium':''}">${i+1}</span>${mono(p)}<div class="rt"><b>${esc(p.name)}${interior.ctx?.fresh.has(p.id)?'<i class="newtag">New</i>':''}</b><small>${esc(p.tagline||host(p.url))}</small></div>${Data.numbers?`<div class="rs"><b>▲ ${s.upvotes}</b><small>${s.visits} visits</small></div>`:''}</div>`; });
   const open=10-interior.top.length;
   if(open && rows.length) rows.push(`<div class="rrow empty" data-empty="1"><span class="rn">+</span><div class="mono ghost">+</div><div class="rt"><b>${open} open spot${open>1?'s':''}</b><small>Reserve a spot in ${D.short}</small></div></div>`);
   const body= rows.length? `<div class="rlist">${rows.join('')}</div>`
@@ -1996,9 +1999,14 @@ function stepObservatory(dt,t){ obs.fx+=((obs.active?1:0)-obs.fx)*(1-Math.exp(-d
 
 function districtCard(k){ const d=world.districts[k], v=Data.districtVisits(k), mx=Math.max(1,...ORDER.map(x=>Data.districtVisits(x)));
   const comm=places.filter(p=>p.district===k && !p.seed).length, open=d.cells.filter(c=>!c.occupied).length, top=Data.top(k,1)[0];
+  if(!Data.numbers) return `<div class="big">${open}<small>lots free</small></div>
+    <dl><dt>#1 inside</dt><dd>${top? esc(top.name) : 'Open spot'}</dd><dt>Classics</dt><dd>${places.filter(p=>p.district===k && p.seed).length}</dd></dl>`;
   return `<div class="big">${kfmt(v)}<small>visits this week</small></div><div class="bar"><i style="width:${Math.round(v/mx*100)}%"></i></div>
     <dl><dt>#1 inside</dt><dd>${top? esc(top.name) : 'Open spot'}</dd><dt>Community</dt><dd>${comm} tool${comm===1?'':'s'} · ${open} lots free</dd></dl>`; }
-function pulseCard(){ const days=Data.dailyVisits(), total=days.reduce((a,b)=>a+(b||0),0), mx=Math.max(1,...days.map(x=>x||0)), today=Data.dayIndex();
+function pulseCard(){
+  if(!Data.numbers) return `<div class="big">${places.length+1}<small>places</small></div>
+    <dl><dt>Classics</dt><dd>${places.filter(p=>p.seed).length}</dd><dt>Community</dt><dd>Opens to makers soon</dd></dl>`;
+  const days=Data.dailyVisits(), total=days.reduce((a,b)=>a+(b||0),0), mx=Math.max(1,...days.map(x=>x||0)), today=Data.dayIndex();
   const bars=days.map((v,i)=>{ const h=v==null? 2 : Math.max(2,Math.round(v/mx*26)); return `<rect x="${i*20}" y="${30-h}" width="14" height="${h}" rx="2" class="${v==null?'fut':i===today?'now':''}"/>`; }).join('');
   return `<div class="big">${Data.exploringNow()}<small>exploring now</small></div>
     <div class="spark"><svg viewBox="0 0 134 32" width="134" height="32" aria-label="Visits per day this week">${bars}</svg><span>${kfmt(total)} visits this week</span></div>
@@ -2017,7 +2025,7 @@ function openObservatoryPanel(){
     <div class="sub">What’s happening across Isomaker this week${Data.preview?' <span class="preview">Preview data</span>':''}</div>
     <div class="list"><h4>#1 in each district</h4>${firsts}</div>
     <div class="list"><h4>Newest arrivals</h4>${newest.length? newest.map(placeRow).join('') : '<p class="empty-note">No community tools yet. The first one lands here.</p>'}</div>
-    <div class="list"><h4>Climbing fastest</h4>${climbs.length? climbs.map(climbRow).join('') : '<p class="empty-note">Nobody has climbed a top 10 yet this week.</p>'}</div>
+    ${Data.numbers?`<div class="list"><h4>Climbing fastest</h4>${climbs.length? climbs.map(climbRow).join('') : '<p class="empty-note">Nobody has climbed a top 10 yet this week.</p>'}</div>`:''}
     <div class="list"><h4>Last week’s crowns</h4>${crowns.length? crowns.map(placeRow).join('') : '<p class="empty-note">Crowns go to a district’s community #1 with 5 or more upvotes in a week.</p>'}</div>
     <div class="list"><h4>Your trail</h4>
       <div class="trail">${ORDER.map(k=>`<span class="tdot${seenD.has(k)?' on':''}" style="--c:${DISTRICTS[k].color}">${DISTRICTS[k].short}</span>`).join('')}</div>
@@ -2032,7 +2040,7 @@ function openObservatoryPanel(){
 function enterObservatory(){
   if(interior.active) return openObservatoryPanel();
   stopWander(); closeSearch(); hideTooltip(); obs.active=true; document.body.classList.add('in-observatory');
-  const mx=Math.max(1,...ORDER.map(k=>Data.districtVisits(k))); for(const k of ORDER) obs.shares[k]=Data.districtVisits(k)/mx;
+  const mx=Math.max(1,...ORDER.map(k=>Data.districtVisits(k))); for(const k of ORDER) obs.shares[k]= Data.numbers? Data.districtVisits(k)/mx : .5;
   renderObservatoryCards(); openObservatoryPanel(); select(world.observatory);
   // the whole world in view, centred in the space left of the panel
   const base=Math.PI/4; goal.az=base+Math.round((goal.az-base)/(Math.PI*2))*Math.PI*2; goal.target.copy(HOME);

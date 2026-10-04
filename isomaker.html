@@ -198,6 +198,22 @@
   details.about{border-top:1px solid var(--line);padding-top:10px} details.about summary{cursor:pointer;color:var(--muted);font-size:12.5px;font-weight:500} details.about .desc{margin:10px 0}
   .sub .preview{vertical-align:1px}
 
+  /* ---------- film mode ---------- */
+  body.film .tl, body.film .tr, body.film .bl, body.film .br, body.film #obsHint, body.film .ihint, body.film #tooltip, body.film #toast, body.film .ibar{display:none!important}
+  body.film .side, body.film .modal, body.film .modal-card, body.film .fader, body.film .dlabel, body.film .ibar, body.film .irank{transition:none!important;animation:none!important}
+  body.film, body.film *{cursor:none!important} body.film input, body.film textarea{caret-color:transparent}
+  body.film #scene canvas{pointer-events:none}
+  .film-cap{position:fixed;left:50%;bottom:8%;z-index:40;text-align:center;pointer-events:none;opacity:0}
+  .film-cap b{display:block;font-size:36px;line-height:1.15;font-weight:700;letter-spacing:-.02em;color:#fff;text-shadow:0 4px 30px rgba(0,0,24,.75),0 1px 2px rgba(0,0,24,.6)}
+  .film-cap span{display:block;margin-top:10px;font-size:19px;font-weight:500;color:rgba(225,230,255,.88);text-shadow:0 2px 16px rgba(0,0,24,.7)}
+  .film-tag{position:fixed;top:24px;right:24px;z-index:40;opacity:0;font-size:15px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:40px;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);background:rgba(10,14,40,.6)}
+  .film-end{position:fixed;inset:0;z-index:45;opacity:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(ellipse at 50% 50%, rgba(6,10,34,.55), rgba(3,5,18,.88));color:#fff;text-align:center}
+  .film-end .fe-row{display:flex;align-items:center;gap:18px} .film-end .logo{width:72px;height:72px;border-radius:18px} .film-end .logo::after{inset:20px;border-width:5px}
+  .film-end b{font-size:60px;font-weight:700;letter-spacing:-.03em} .film-end span{font-size:30px;color:rgba(225,230,255,.9)}
+  .film-end em{font-style:normal;font-size:34px;font-weight:600;margin-top:18px;padding:12px 26px;border-radius:14px;background:#242D43;border:1px solid rgba(255,255,255,.2)}
+  .film-end i{font-style:normal;font-size:20px;color:rgba(225,230,255,.7);letter-spacing:.02em}
+  .film-start{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);z-index:50;color:#a2a8d0;font-size:14px}
+
   /* ---------- interiors ---------- */
   .fader{position:fixed;inset:0;z-index:15;pointer-events:none;opacity:0;transition:opacity .42s ease;background:radial-gradient(circle at 50% 50%,#10163e,#03050f)}
   .fader.on{opacity:1}
@@ -2093,11 +2109,109 @@ $('shareRoom').onclick=()=>{ const D=DISTRICTS[interior.key]; shareLink({ inside
 function rebuildInterior(){ const k=interior.key; disposeInterior(); const { ctx, top }=buildInterior(k); Object.assign(interior,{ ctx, scene:ctx.S, top }); renderPass.scene=ctx.S; renderRankList(); }
 
 /* =====================================================================
+   FILM MODE
+   ?film plays a scripted 42-second promo in real time (click or press
+   Space to start) with the interface hidden. ?film&render instead exposes
+   window.__film(t), which sets every part of the scene for time t and
+   renders one frame, so the video can be captured frame by frame.
+   One function, filmApply(t), drives camera, scenes, UI and captions.
+   ===================================================================== */
+const FILM_Q=new URLSearchParams(location.search);
+const film={ on:FILM_Q.has('film'), render:FILM_Q.has('render'), duration:42, done:{}, started:false, t0:0, last:0 };
+const fss=(a,b,x)=>{ const t=Math.min(1,Math.max(0,(x-a)/(b-a))); return t*t*(3-2*t); };
+const flerp=(a,b,e)=>a+(b-a)*e;
+// illustrative community tools for the room scene, labelled "Sample makers" on screen
+const FILM_DEMO=[['Palette Pal','Colour systems in one click'],['Kerning Club','Type pairing, crowd-sourced'],['Mood Mesh','Moodboards that remix themselves'],
+  ['Shader Garden','Grow WebGL effects visually'],['Frame Kit','Device frames for any screenshot'],['Glyph Lab','Icon sets from a sketch'],['Loop Studio','Seamless motion loops'],
+  ['Mockup Mill','Product shots in seconds'],['Type Tide','Variable fonts, played live'],['Pixel Porch','Pixel art for the web']];
+function filmInit(){
+  document.body.classList.add('film'); stopWander(); closeSide();
+  const el=document.createElement('div'); el.innerHTML=`<div class="film-cap" id="filmCap"><b></b><span></span></div><div class="film-tag" id="filmTag">Sample makers</div>
+    <div class="film-end" id="filmEnd"><div class="fe-row"><div class="logo"></div><b>Isomaker</b></div><span>A living world of indie tools</span><em>www.isomaker.club</em><i>Reserve your spot</i></div>
+    <div class="film-start" id="filmStart">Click or press Space to play</div>`;
+  document.body.append(...el.children);
+  // the hero shot: the tallest Classic in the Experiment District
+  film.hero=places.filter(p=>p.seed && p.district==='experiment' && p.obj).sort((a,b)=>(b.height||0)-(a.height||0))[0];
+  setMode('night',true); stepMode(performance.now());
+}
+function filmCap(t,a,b,title,sub,region){ const c=$('filmCap'); if(t<a-.01||t>b+.01) return false;
+  const o=fss(a,a+.35,t)*(1-fss(b-.35,b,t)); c.style.opacity=o; c.style.transform=`translate(-50%,${(1-o)*14}px)`;
+  const W=innerWidth, side=376, rank=336, cx= region==='left'? (W-side)/2 : region==='right'? rank+(W-rank)/2 : W/2, w= region? (region==='left'? W-side : W-rank)-48 : W*.86;
+  c.style.left=cx+'px'; c.style.width=w+'px'; c.querySelector('b').textContent=title; c.querySelector('span').textContent=sub||''; return true; }
+function filmWorldCam(target,az,zoom){ cam.target.copy(target); goal.target.copy(target); cam.az=goal.az=az; cam.zoom=goal.zoom=zoom; }
+function filmLeaveInterior(){ if(!interior.active) return; interior.active=false; renderPass.scene=scene; renderPass.camera=camera; disposeInterior();
+  document.body.classList.remove('in-interior'); $('ihud').hidden=true; }
+function filmObs(on){ if(on===obs.active) return; obs.active=on; document.body.classList.toggle('in-observatory',on); if(on){ for(const k of ORDER) obs.shares[k]=.5; renderObservatoryCards(); } }
+function filmApply(t){
+  const fit=fitZoom(), A=Math.PI/4, once=(k,f)=>{ if(!film.done[k]){ film.done[k]=true; f(); } };
+  const D=k=>V3(DISTRICTS[k].pos[0],0,DISTRICTS[k].pos[1]);
+  const heroP=film.hero? (()=>{ const v=new THREE.Vector3(); film.hero.obj.getWorldPosition(v); return v; })() : D('experiment');
+  const lmP=(()=>{ const v=new THREE.Vector3(); world.districts.creative.landmark.obj.getWorldPosition(v); return v; })();
+  const panelShift=z=>camVecs(A).R.multiplyScalar((376/2)*(VIEW_H/z/innerHeight));
+  let capShown=false;
+  // modes: night throughout, except the day/night cuts
+  const mode= t>=25.2 && t<26.5? 'dusk' : t>=26.5 && t<28? 'day' : 'night'; if(mode!==modeName){ setMode(mode,true); stepMode(performance.now()); }
+  $('labels').style.opacity= fss(3.6,4.4,t);
+
+  if(t<4.2){ // 1. hook: slow orbit over the night world
+    const e=fss(0,4.2,t); filmWorldCam(HOME,flerp(A-.55,A-.2,e),fit*flerp(1.15,1.35,e));
+    capShown=filmCap(t,.4,3.8,'What if the internet’s best tools lived in a city?');
+  } else if(t<9.6){ // 2. sweep: Creative → AI → Experiment
+    const e1=fss(4.2,6.9,t), e2=fss(6.9,9.6,t), tg=D('creative').lerp(D('ai'),e1).lerp(D('experiment'),e2);
+    filmWorldCam(tg,flerp(A-.2,A+.15,fss(4.2,9.6,t)),flerp(fit*1.35,1.7,fss(4.2,5.2,t)));
+    capShown=filmCap(t,4.4,9.2,'Five districts of indie tools','Creative · Maker · Experiment · AI · Personal');
+  } else if(t<15){ // 3. a building opens into its panel
+    const e=fss(9.6,10.8,t), z=flerp(1.7,3,e), lift=camVecs(A).F.multiplyScalar(((film.hero?.height||6)*.5)*Math.SQRT2*e);
+    const tg=D('experiment').lerp(heroP,e).add(lift).add(panelShift(z).multiplyScalar(fss(10.2,10.8,t)));
+    filmWorldCam(tg,flerp(A+.15,A+.25,fss(9.6,15,t)),z);
+    if(t>=10.2) once('openHero',()=>{ if(film.hero) openPlace(film.hero); });
+    const pv=fss(10.2,10.75,t)*(1-fss(14.55,15,t)); side.style.transform=`translateX(${(1-pv)*110}%)`; side.style.opacity=pv;
+    capShown=filmCap(t,10.5,14.7,'Every building is a tool you can visit',null,'left');
+  } else if(t<17){ // 4a. dive into the Creative landmark
+    once('closeHero',()=>{ closeSide(); side.style.transform=''; side.style.opacity=''; });
+    const e=fss(15,16.9,t), tg=heroP.clone().lerp(lmP,e), dip=1-.55*Math.sin(Math.PI*e);
+    filmWorldCam(tg,flerp(A+.25,A+.05,e),Math.exp(flerp(Math.log(3),Math.log(5.5),e))*dip);
+  } else if(t<23.3){ // 4b. inside The Canvas
+    once('enterRoom',()=>{ FILM_DEMO.forEach(([name,tagline],i)=>places.push({ id:'film-'+i, district:'creative', name, tagline, url:'https://example.com', by:'Sample maker', tags:['sample'], demo:true })); showInterior('creative'); });
+    const e=fss(17,23.3,t); interior.az=interior.goalAz=flerp(A-.9,A+.5,e); interior.zoom=interior.goalZoom=intFit()*flerp(.62,.9,fss(17,19.5,t));
+    capShown=filmCap(t,17.6,22.8,'Step inside for each district’s top 10',null,'right');
+  } else if(t<28){ // 5. day / night over The Commons
+    once('leaveRoom',()=>{ filmLeaveInterior(); for(let i=places.length-1;i>=0;i--) if(places[i].demo) places.splice(i,1); });
+    const e=fss(23.3,28,t); filmWorldCam(camVecs(A+.5).F.multiplyScalar(7),flerp(A+.3,A+.75,e),flerp(2.2,2.6,e));
+  } else if(t<33.5){ // 6. the Observatory view
+    filmObs(true); const e=fss(28,33.5,t); filmWorldCam(HOME,flerp(A+.18,A,fss(28,30,t)),fit*flerp(1.02,1.1,e));
+    capShown=filmCap(t,28.4,33.2,'See the whole world at a glance');
+  } else if(t<38.6){ // 7. reserve a spot
+    filmObs(false); const e=fss(33.5,38.6,t); filmWorldCam(HOME,flerp(A,A-.15,e),fit*1.2);
+    once('openModal',()=>{ openModal('creative'); document.activeElement?.blur(); });
+    const typed=(str,a,b)=>str.slice(0,Math.round(str.length*fss(a,b,t)));
+    form.elements.name.value=typed('Palette Pal',34.2,35.1); form.elements.url.value=typed('palettepal.app',34.9,35.6);
+    form.elements.tagline.value=typed('Colour systems in one click',35.3,36); form.elements.email.value=typed('hello@palettepal.app',35.7,36.3);
+    if(t>=36.6) once('reserved',()=>{ showModalView('done'); $('reservedMsg').textContent='Palette Pal is reserved in the Creative District. We’ll email you when Isomaker opens to makers, and it will be among the first tools inside The Canvas.'; $('refLink').value='https://www.isomaker.club/?ref=k3x9pa2m'; });
+    const mo=fss(33.6,34.05,t)*(1-fss(38.2,38.6,t)); modal.style.opacity=mo;
+    capShown=filmCap(t,34,38.3,'The top 10 is for makers','Reserve your spot before launch');
+  } else { // 8. end card
+    once('closeModal',()=>{ closeModal(); modal.style.opacity=''; });
+    const e=fss(38.6,42,t); filmWorldCam(HOME,flerp(A-.15,A-.3,e),fit*flerp(1.2,.98,e));
+  }
+  if(!capShown) $('filmCap').style.opacity=0;
+  // fades into and out of the room
+  const f=fss(16.1,16.9,t)*(1-fss(17,17.6,t)) + fss(22.8,23.3,t)*(1-fss(23.3,23.9,t));
+  $('fader').style.opacity=f; $('faderMsg').textContent= t<20? 'Stepping into The Canvas…' : '';
+  $('filmTag').style.opacity= fss(17.2,17.8,t)*(1-fss(22.8,23.2,t));
+  $('filmEnd').style.opacity= fss(38.8,39.7,t);
+}
+function filmStep(t,dt){ filmApply(t); frame({ t, dt }); }
+function filmLoop(){ const now=performance.now(); if(film.started){ const t=Math.min(film.duration,(now-film.t0)/1000), dt=Math.min(.05,(now-film.last)/1000); film.last=now; filmStep(t,dt); }
+  else { filmApply(0); frame({ t:now/1000, dt:1/60 }); } requestAnimationFrame(filmLoop); }
+function filmStart(){ if(film.started) return; film.started=true; film.t0=film.last=performance.now(); $('filmStart').hidden=true; }
+
+/* =====================================================================
    LOOP
    ===================================================================== */
 const clock=new THREE.Clock(); const tmpV=new THREE.Vector3(), tmpT=new THREE.Vector3();
-function frame(){
-  const dt=Math.min(clock.getDelta(),.05), t=clock.elapsedTime, now=performance.now();
+function frame(ft){
+  const dt=ft? ft.dt : Math.min(clock.getDelta(),.05), t=ft? ft.t : clock.elapsedTime, now=ft? ft.t*1000 : performance.now();
   if(interior.active){ interiorFrame(dt,t,now); return; }
   const k=1-Math.exp(-dt*5.5);
   cam.target.lerp(goal.target,k); cam.az+=(goal.az-cam.az)*k; cam.zoom=Math.exp(Math.log(cam.zoom)+(Math.log(goal.zoom)-Math.log(cam.zoom))*k);
@@ -2119,7 +2233,7 @@ function frame(){
   for(let i=anims.length-1;i>=0;i--) if(anims[i](now)) anims.splice(i,1);
   composer.render(); labelRenderer.render(scene,camera);
 }
-function animate(){ frame(); requestAnimationFrame(animate); }
+function animate(){ if(film.on){ if(!film.render) filmLoop(); return; } frame(); requestAnimationFrame(animate); }
 addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); composer.setSize(innerWidth,innerHeight); labelRenderer.setSize(innerWidth,innerHeight); bloom.resolution.set(innerWidth,innerHeight); clampGoal(); });
 
 /* =====================================================================
@@ -2130,7 +2244,9 @@ try{
   goal.zoom=fitZoom(); cam.zoom=goal.zoom*.62; cam.az=Math.PI/4-.7; cam.target.copy(HOME);
   updateCamera(); animate();
   setTimeout(()=>$('loader').classList.add('done'),120);
-  openDeepLink();
+  if(film.on){ filmInit(); if(film.render){ $('filmStart').hidden=true; window.__film=(t,dt)=>{ filmStep(t,dt||1/30); return t; }; }
+    else { addEventListener('keydown',e=>{ if(e.code==='Space'){ e.preventDefault(); filmStart(); } }); addEventListener('pointerdown',filmStart); } }
+  else openDeepLink();
   if(new URLSearchParams(location.search).has('debug')) window.__iso={ frame, places, interior, enterInterior, exitInterior, showInterior, openPlace, Data, cam, goal, setMode };
 }catch(err){ console.error(err); $('loadMsg').innerHTML=`<div class="err">Something went wrong while building the world.<br><small>${esc(err.message)}</small></div>`; }
 </script>

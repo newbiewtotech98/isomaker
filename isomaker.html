@@ -2151,7 +2151,7 @@ function filmApply(t){
   let capShown=false;
   // modes: night throughout, except the day/night cuts
   const mode= t>=25.2 && t<26.5? 'dusk' : t>=26.5 && t<28? 'day' : 'night'; if(mode!==modeName){ setMode(mode,true); stepMode(performance.now()); }
-  $('labels').style.opacity= fss(3.6,4.4,t);
+  $('labels').style.opacity= fss(3.6,4.4,t)*(1-fss(38.4,39.2,t));
 
   if(t<4.2){ // 1. hook: slow orbit over the night world
     const e=fss(0,4.2,t); filmWorldCam(HOME,flerp(A-.55,A-.2,e),fit*flerp(1.15,1.35,e));

@@ -307,6 +307,13 @@
     .br{left:16px;right:16px;justify-content:center;flex-wrap:wrap}
   }
 </style>
+<script>
+  // Vercel Web Analytics (cookieless). Only on the live domain, so local testing isn't counted.
+  if(/(^|\.)isomaker\.club$/.test(location.hostname)){
+    window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };
+    var vs = document.createElement('script'); vs.defer = true; vs.src = '/_vercel/insights/script.js'; document.head.appendChild(vs);
+  }
+</script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -359,7 +366,7 @@
 
 <aside class="side panel" id="side" aria-live="polite"></aside>
 <div id="ihud" hidden>
-  <div class="ibar panel"><button class="btn" id="backBtn"><svg class="i" viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to the world</button><div class="sep"></div><div class="ititle" id="ititle"></div></div>
+  <div class="ibar panel"><button class="btn" id="backBtn"><svg class="i" viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to the world</button><div class="sep"></div><div class="ititle" id="ititle"></div><button class="icon-btn" id="shareRoom" title="Share this room"><span data-i="share"></span></button></div>
   <aside class="irank panel" id="irank"></aside>
   <div class="ihint">Drag to rotate · Scroll to zoom · Esc to leave</div>
 </div>
@@ -1475,6 +1482,7 @@ const ICONS = {
   link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
   target:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
   trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>',
+  share:'<path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/>',
 };
 const icon = n=>`<svg class="i" viewBox="0 0 24 24">${ICONS[n]}</svg>`;
 document.querySelectorAll('[data-i]').forEach(el=>{ el.outerHTML=icon(el.dataset.i); });
@@ -1492,7 +1500,7 @@ function safeUrl(u){ try{ const x=new URL(u); return /^https?:$/.test(x.protocol
 function sideShell(color, monoHtml, body){ side.style.setProperty('--accent',color);
   side.innerHTML=`<div class="hero"><div class="grid"></div><button class="icon-btn close" id="closeSide" title="Close (Esc)">${icon('x')}</button>${monoHtml}</div><div class="body">${body}</div>`;
   side.classList.add('open'); $('closeSide').onclick=closeSide; document.getElementById('labels').classList.add('labels-dim'); }
-function closeSide(){ side.classList.remove('open'); select(null); exitObservatory();
+function closeSide(){ side.classList.remove('open'); select(null); exitObservatory(); setUrl(interior.active && interior.key? { inside:interior.key } : null);
   if(interior.active){ interior.sel=null; if(interior.ctx) interior.ctx.selRing.visible=false; document.querySelectorAll('#irank .rrow.sel').forEach(e=>e.classList.remove('sel')); } document.getElementById('labels').classList.remove('labels-dim'); }
 function placeRow(p){ const d=DISTRICTS[p.district]; return `<div class="result" data-id="${esc(p.id)}">${mono(p)}<div><b>${esc(p.name)}</b><small>${esc(p.tagline||host(p.url))}</small></div>${d?`<span class="d"><span class="dot" style="color:${d.color};width:6px;height:6px"></span>${d.short}</span>`:''}</div>`; }
 function bindRows(root){ root.querySelectorAll('.result[data-id]').forEach(el=>el.onclick=()=>{ const p=places.find(x=>x.id===el.dataset.id); if(p){ openPlace(p); } }); }
@@ -1515,13 +1523,13 @@ function openPlace(p){
     <div class="actions">
       ${url?`<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Visit website ${icon('ext')}</a>`:''}
       ${p.seed?'':`<button class="btn ghost vote${st.voted?' on':''}" id="voteBtn" title="${st.voted?'Remove upvote':'Upvote'}">▲ ${Data.numbers?`<b>${st.upvotes}</b>`:'Upvote'}</button>`}
-      <button class="btn ghost" id="copyLink" title="Copy link">${icon('link')}</button>
+      <button class="btn ghost" id="shareBtn" title="Share this place">${icon('share')}</button>
       ${interior.active?'':`<button class="btn ghost" id="focusBtn" title="Fly to">${icon('target')}</button>`}
     </div>
     ${p.user?`<button class="btn ghost danger" id="removeBtn">${icon('trash')} Remove my place</button>`:''}
     ${nearby.length?`<div class="list"><h4>Also in ${d.short}</h4>${nearby.map(placeRow).join('')}</div>`:''}`);
   bindRows(side);
-  $('copyLink').onclick=async()=>{ try{ await navigator.clipboard.writeText(p.url); toast(p,'Link copied',host(p.url)); }catch(e){ toast(p,'Copy failed',p.url); } };
+  $('shareBtn').onclick=()=>shareLink({ place:slugOf(p) }, `${p.name} in the ${d.name} on Isomaker`, p);
   if($('focusBtn')) $('focusBtn').onclick=()=>flyToPlace(p);
   const visitA=side.querySelector('a.btn.primary'); if(visitA) visitA.addEventListener('click',()=>{ if(!Data.recordVisit(p)) return; const s2=Data.stats(p);
     if($('weekStat')) $('weekStat').innerHTML=weekLine(p,d); updateMetrics(); if(interior.active) renderRankList(); });
@@ -1529,6 +1537,7 @@ function openPlace(p){
   if(p.user) $('removeBtn').onclick=()=>{ const b=$('removeBtn'); if(!b.dataset.confirm){ b.dataset.confirm='1'; b.innerHTML=`${icon('trash')} Click again to remove`; return; }
     removeBuilding(p); places.splice(places.indexOf(p),1); saveUser(); updateCount(); closeSide(); toast(p,'Removed',p.name); };
   if(interior.active) focusInterior(p); else { select(p); flyToPlace(p); }
+  setUrl({ place:slugOf(p) });
 }
 function openDistrict(k){
   const d=DISTRICTS[k]; const ps=places.filter(p=>p.district===k); const free=world.districts[k].cells.filter(c=>!c.occupied).length;
@@ -1537,9 +1546,10 @@ function openDistrict(k){
     <div><h2>${d.name}</h2></div><div class="sub">${d.tag}</div>
     <p class="desc">${d.desc}</p>
     <div class="stats"><div class="stat"><b>${ps.length}</b><span>places</span></div><div class="stat"><b>${ps.filter(p=>p.user).length}</b><span>community</span></div><div class="stat"><b>${free}</b><span>open lots</span></div></div>
-    <div class="actions"><button class="btn primary" id="enterLm">Step inside ${d.lm}</button><button class="btn ghost" id="addHere">${icon('plus')} Reserve a spot</button></div>
+    <div class="actions"><button class="btn primary" id="enterLm">Step inside ${d.lm}</button><button class="btn ghost" id="shareD" title="Share this district">${icon('share')}</button><button class="btn ghost" id="addHere">${icon('plus')} Reserve a spot</button></div>
     <div class="list"><h4>Places</h4>${ps.map(placeRow).join('')}</div>`);
   bindRows(side); $('addHere').onclick=()=>openModal(k); $('enterLm').onclick=()=>enterInterior(k); select(world.districts[k].landmark);
+  $('shareD').onclick=()=>shareLink({ district:k }, `The ${d.name} on Isomaker`); setUrl({ district:k });
 }
 function openAbout(){ enterObservatory(); }
 $('aboutBtn').onclick=openAbout;
@@ -1947,12 +1957,13 @@ function showInterior(k,built){
   interior.az=Math.PI/4-.9; interior.goalAz=Math.PI/4; interior.goalZoom=intFit(); interior.zoom=interior.goalZoom*.5; interior.shift=0;
   renderPass.scene=ctx.S; renderPass.camera=interior.cam;
   document.body.classList.add('in-interior'); $('ihud').hidden=false; renderInteriorTitle(); renderRankList(); Data.markSeen(k,top);
+  setUrl({ inside:k });
 }
 function exitInterior(){
   if(!interior.active||interior.busy) return; interior.busy=true; closeSide(); hideTooltip(); $('faderMsg').textContent=''; fadeTo(true);
   setTimeout(()=>{
     interior.active=false; renderPass.scene=scene; renderPass.camera=camera; disposeInterior();
-    document.body.classList.remove('in-interior'); $('ihud').hidden=true;
+    document.body.classList.remove('in-interior'); $('ihud').hidden=true; setUrl(null);
     const s=interior.saved; if(s){ cam.zoom=Math.min(ZOOM_MAX,5); goal.target.copy(s.target); goal.zoom=s.zoom; goal.az=s.az; }
     fadeTo(false); interior.busy=false;
   },460);
@@ -2030,11 +2041,11 @@ function openObservatoryPanel(){
     <div class="list"><h4>Your trail</h4>
       <div class="trail">${ORDER.map(k=>`<span class="tdot${seenD.has(k)?' on':''}" style="--c:${DISTRICTS[k].color}">${DISTRICTS[k].short}</span>`).join('')}</div>
       <div class="stats"><div class="stat"><b>${seenD.size}/5</b><span>rooms entered</span></div><div class="stat"><b>${Data.votedCount()}</b><span>upvotes given</span></div><div class="stat"><b>${Referral.count()}</b><span>spots reserved</span></div></div></div>
-    <div class="actions"><button class="btn primary" id="addAbout">${icon('plus')} Reserve your spot</button></div>
+    <div class="actions"><button class="btn primary" id="addAbout">${icon('plus')} Reserve your spot</button><button class="btn ghost" id="shareObs" title="Share the Observatory view">${icon('share')}</button></div>
     <details class="about"><summary>About Isomaker and controls</summary>
       <p class="desc">Isomaker is a living world of indie tools, plugins and delightful websites. Classics are hand-picked; each landmark’s top 10 belongs to tools the community adds.</p>
       <div class="meta" style="grid-template-columns:auto 1fr"><dt>Drag</dt><dd>Pan the world</dd><dt>Scroll / pinch</dt><dd>Zoom</dd><dt>Right-drag, Q / E</dt><dd>Rotate</dd><dt>Click</dt><dd>Open any building</dd><dt>Landmarks</dt><dd>Step inside for the top 10</dd><dt>/ · W · H</dt><dd>Find · Wander · Home</dd></div></details>`);
-  bindRows(side); $('addAbout').onclick=()=>openModal();
+  bindRows(side); $('addAbout').onclick=()=>openModal(); $('shareObs').onclick=()=>shareLink({ observatory:'' }, 'A live view of Isomaker, a world of indie tools');
   side.querySelectorAll('.result[data-lm]').forEach(r=>r.onclick=()=>{ const k=r.dataset.lm; exitObservatory(); closeSide(); enterInterior(k); });
 }
 function enterObservatory(){
@@ -2045,8 +2056,39 @@ function enterObservatory(){
   // the whole world in view, centred in the space left of the panel
   const base=Math.PI/4; goal.az=base+Math.round((goal.az-base)/(Math.PI*2))*Math.PI*2; goal.target.copy(HOME);
   const free=innerWidth>=760? innerWidth-(side.offsetWidth+32) : innerWidth; goal.zoom=Math.min(VIEW_H/112, VIEW_H*(free/innerHeight)/180); clampGoal(); panelOffset();
-  $('obsHint').hidden=false; }
-function exitObservatory(){ if(!obs.active) return; obs.active=false; document.body.classList.remove('in-observatory'); $('obsHint').hidden=true; }
+  $('obsHint').hidden=false; setUrl({ observatory:'' }); }
+function exitObservatory(){ if(!obs.active) return; obs.active=false; setUrl(null); document.body.classList.remove('in-observatory'); $('obsHint').hidden=true; }
+
+/* =====================================================================
+   SHAREABLE LINKS
+   The address bar follows what you're looking at (?place=, ?district=,
+   ?inside=, ?observatory), so any view can be shared, and opening such a
+   link takes you straight there. Shared links carry the sharer's referral
+   code when they have one.
+   ===================================================================== */
+const SITE='https://www.isomaker.club/';
+const slugOf=p=>p.seed? p.id.replace(/^s-/,'') : p.id;
+function setUrl(params){ try{ const q=new URLSearchParams(params||{}); const qs=q.toString().replace(/=(&|$)/g,'$1');
+  history.replaceState(null,'',location.pathname+(qs?'?'+qs:'')+location.hash); }catch(e){} }
+function shareLink(params,text,p){
+  const u=new URL(SITE); for(const [k,v] of Object.entries(params)) u.searchParams.set(k,v);
+  let mine=null; try{ mine=localStorage.getItem('isomaker.ref'); }catch(e){} if(mine) u.searchParams.set('ref',mine);
+  const url=u.toString().replace(/=(&|$)/g,'$1');
+  // phones get the native share sheet; desktops copy the link
+  if(navigator.share && matchMedia('(pointer: coarse)').matches){ navigator.share({ title:'Isomaker', text, url }).catch(()=>{}); return; }
+  navigator.clipboard.writeText(url).then(()=>toast(p||null,'Link copied',url.replace('https://',''))).catch(()=>toast(p||null,'Copy this link',url));
+}
+function openDeepLink(){ const q=new URLSearchParams(location.search);
+  const place=(q.get('place')||'').toLowerCase(), inside=q.get('inside'), dist=q.get('district');
+  // the referral code has been captured already; keep it out of the address bar from here on
+  if(q.has('ref')){ q.delete('ref'); setUrl(Object.fromEntries(q)); }
+  const go=f=>setTimeout(f,1400);   // after the intro camera sweep
+  if(inside && DISTRICTS[inside]) return go(()=>enterInterior(inside));
+  if(place){ const p=places.find(x=>slugOf(x)===place); if(p) return go(()=>openPlace(p)); }
+  if(dist && DISTRICTS[dist]) return go(()=>{ const D=DISTRICTS[dist]; openDistrict(dist); flyTo(V3(D.pos[0],0,D.pos[1]),1.9); panelOffset(); });
+  if(q.has('observatory')) go(enterObservatory);
+}
+$('shareRoom').onclick=()=>{ const D=DISTRICTS[interior.key]; shareLink({ inside:interior.key }, `This week’s top 10 inside ${D.lm} on Isomaker`); };
 
 function rebuildInterior(){ const k=interior.key; disposeInterior(); const { ctx, top }=buildInterior(k); Object.assign(interior,{ ctx, scene:ctx.S, top }); renderPass.scene=ctx.S; renderRankList(); }
 
@@ -2088,6 +2130,7 @@ try{
   goal.zoom=fitZoom(); cam.zoom=goal.zoom*.62; cam.az=Math.PI/4-.7; cam.target.copy(HOME);
   updateCamera(); animate();
   setTimeout(()=>$('loader').classList.add('done'),120);
+  openDeepLink();
   if(new URLSearchParams(location.search).has('debug')) window.__iso={ frame, places, interior, enterInterior, exitInterior, showInterior, openPlace, Data, cam, goal, setMode };
 }catch(err){ console.error(err); $('loadMsg').innerHTML=`<div class="err">Something went wrong while building the world.<br><small>${esc(err.message)}</small></div>`; }
 </script>

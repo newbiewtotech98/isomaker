@@ -1,5 +1,6 @@
 # Deploy only the Isomaker site
 /*
 !isomaker.html
+!story.html
 !vercel.json
 !og.png

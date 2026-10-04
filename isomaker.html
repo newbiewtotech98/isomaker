@@ -69,7 +69,9 @@
   .logo::after{content:"";position:absolute;inset:9px;border-radius:50%;border:2.5px solid #fff}
   .brand b{display:block;font-size:14px;font-weight:600;letter-spacing:-.01em}
   .brand span{display:block;color:var(--muted);font-size:12px;margin-top:1px}
-  .brand .icon-btn{margin-left:auto}
+  .storylink{margin-left:auto;font-size:12px;font-weight:500;padding:5px 10px;border-radius:var(--r-round);border:1px solid var(--line);color:var(--muted);text-decoration:none;white-space:nowrap;transition:color .2s,border-color .2s}
+  .storylink:hover{color:var(--text);border-color:var(--line-strong)}
+  .mb-made{display:none}
   .icon-btn{width:30px;height:30px;display:grid;place-items:center;border-radius:var(--r);border:0;background:transparent;cursor:pointer;color:var(--muted);transition:background .2s,color .2s}
   .icon-btn:hover{background:var(--hover);color:var(--text)}
   .icon-btn.active{background:rgba(160,120,255,.22);color:#fff}
@@ -107,7 +109,10 @@
   .empty{padding:18px;text-align:center;color:var(--muted)}
 
   /* ---------- bottom ---------- */
-  .bl{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));padding:10px 14px;display:flex;align-items:center;gap:10px;z-index:5}
+  .blwrap{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;z-index:5}
+  .bl{padding:10px 14px;display:flex;align-items:center;gap:10px}
+  .madeby{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;color:var(--muted);font-size:12px;font-weight:500;text-decoration:none;transition:color .2s}
+  .madeby:hover{color:var(--text)} .heart{color:#ff4f8b}
   .bl b{font-weight:600}
   .bl span{color:var(--muted);font-size:12px}
   .bl .dotsep{width:3px;height:3px;border-radius:50%;background:var(--faint)}
@@ -199,7 +204,7 @@
   .sub .preview{vertical-align:1px}
 
   /* ---------- film mode ---------- */
-  body.film .tl, body.film .tr, body.film .bl, body.film .br, body.film #obsHint, body.film .ihint, body.film #tooltip, body.film #toast, body.film .ibar{display:none!important}
+  body.film .tl, body.film .tr, body.film .blwrap, body.film .br, body.film #obsHint, body.film .ihint, body.film #tooltip, body.film #toast, body.film .ibar{display:none!important}
   body.film .side, body.film .modal, body.film .modal-card, body.film .fader, body.film .dlabel, body.film .ibar, body.film .irank{transition:none!important;animation:none!important}
   body.film, body.film *{cursor:none!important} body.film input, body.film textarea{caret-color:transparent}
   body.film #scene canvas{pointer-events:none}
@@ -316,7 +321,9 @@
     .tr .btn .t, .tr .kbd{display:none}
     .tr{top:auto;bottom:calc(66px + env(safe-area-inset-bottom,0px))}
     .search{top:auto;bottom:calc(120px + env(safe-area-inset-bottom,0px))}
-    .bl{display:none}
+    .blwrap{display:none}
+    .brand span.sub{display:none} .brand .mb-made{display:block;margin-top:1px;color:var(--muted);font-size:12px;text-decoration:none} .brand .mb-made .heart{display:inline;color:#ff4f8b}
+    .storylink{padding:4px 8px}
     .brand{min-width:0}
     .side{top:auto;height:62vh;bottom:calc(66px + env(safe-area-inset-bottom,0px))}
     .row2{grid-template-columns:1fr}
@@ -345,7 +352,8 @@
 <div class="tl">
   <div class="brand panel">
     <div class="logo"></div>
-    <div><b>Isomaker</b><span>Things worth discovering</span></div>
+    <div><b>Isomaker</b><span class="sub">Things worth discovering</span><a class="mb-made" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a></div>
+    <a class="storylink" href="story.html">The story</a>
     <button class="icon-btn" id="aboutBtn" title="About the Observatory"></button>
   </div>
   <div class="districts panel" id="districtChips"><span class="lbl">DISTRICTS:</span></div>
@@ -362,7 +370,7 @@
   <div class="results" id="results"></div>
 </div>
 
-<div class="bl panel"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div>
+<div class="blwrap"><div class="bl panel"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div><a class="madeby panel" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a></div>
 
 <div class="br panel">
   <div class="seg">
@@ -2059,7 +2067,7 @@ function openObservatoryPanel(){
       <div class="stats"><div class="stat"><b>${seenD.size}/5</b><span>rooms entered</span></div><div class="stat"><b>${Data.votedCount()}</b><span>upvotes given</span></div><div class="stat"><b>${Referral.count()}</b><span>spots reserved</span></div></div></div>
     <div class="actions"><button class="btn primary" id="addAbout">${icon('plus')} Reserve your spot</button><button class="btn ghost" id="shareObs" title="Share the Observatory view">${icon('share')}</button></div>
     <details class="about"><summary>About Isomaker and controls</summary>
-      <p class="desc">Isomaker is a living world of indie tools, plugins and delightful websites. Classics are hand-picked; each landmark’s top 10 belongs to tools the community adds.</p>
+      <p class="desc">Isomaker is a living world of indie tools, plugins and delightful websites. Classics are hand-picked; each landmark’s top 10 belongs to tools the community adds. <a href="story.html" style="color:var(--text)">Read the story →</a></p>
       <div class="meta" style="grid-template-columns:auto 1fr"><dt>Drag</dt><dd>Pan the world</dd><dt>Scroll / pinch</dt><dd>Zoom</dd><dt>Right-drag, Q / E</dt><dd>Rotate</dd><dt>Click</dt><dd>Open any building</dd><dt>Landmarks</dt><dd>Step inside for the top 10</dd><dt>/ · W · H</dt><dd>Find · Wander · Home</dd></div></details>`);
   bindRows(side); $('addAbout').onclick=()=>openModal(); $('shareObs').onclick=()=>shareLink({ observatory:'' }, 'A live view of Isomaker, a world of indie tools');
   side.querySelectorAll('.result[data-lm]').forEach(r=>r.onclick=()=>{ const k=r.dataset.lm; exitObservatory(); closeSide(); enterInterior(k); });
@@ -2102,7 +2110,8 @@ function openDeepLink(){ const q=new URLSearchParams(location.search);
   if(inside && DISTRICTS[inside]) return go(()=>enterInterior(inside));
   if(place){ const p=places.find(x=>slugOf(x)===place); if(p) return go(()=>openPlace(p)); }
   if(dist && DISTRICTS[dist]) return go(()=>{ const D=DISTRICTS[dist]; openDistrict(dist); flyTo(V3(D.pos[0],0,D.pos[1]),1.9); panelOffset(); });
-  if(q.has('observatory')) go(enterObservatory);
+  if(q.has('observatory')) return go(enterObservatory);
+  if(q.has('reserve')){ const k=q.get('reserve'); setUrl(null); go(()=>openModal(DISTRICTS[k]? k : undefined)); }
 }
 $('shareRoom').onclick=()=>{ const D=DISTRICTS[interior.key]; shareLink({ inside:interior.key }, `This week’s top 10 inside ${D.lm} on Isomaker`); };
 

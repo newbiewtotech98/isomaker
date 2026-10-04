@@ -71,7 +71,7 @@
   .brand span{display:block;color:var(--muted);font-size:12px;margin-top:1px}
   .storylink{margin-left:auto;font-size:12px;font-weight:500;padding:5px 10px;border-radius:var(--r-round);border:1px solid var(--line);color:var(--muted);text-decoration:none;white-space:nowrap;transition:color .2s,border-color .2s}
   .storylink:hover{color:var(--text);border-color:var(--line-strong)}
-  .mb-made{display:none}
+  .mb-made{display:none} .brand .storylink{display:none}
   .icon-btn{width:30px;height:30px;display:grid;place-items:center;border-radius:var(--r);border:0;background:transparent;cursor:pointer;color:var(--muted);transition:background .2s,color .2s}
   .icon-btn:hover{background:var(--hover);color:var(--text)}
   .icon-btn.active{background:rgba(160,120,255,.22);color:#fff}
@@ -323,7 +323,7 @@
     .search{top:auto;bottom:calc(120px + env(safe-area-inset-bottom,0px))}
     .blwrap{display:none}
     .brand span.sub{display:none} .brand .mb-made{display:block;margin-top:1px;color:var(--muted);font-size:12px;text-decoration:none} .brand .mb-made .heart{display:inline;color:#ff4f8b}
-    .storylink{padding:4px 8px}
+    .brand .storylink{display:inline-block;padding:4px 8px}
     .brand{min-width:0}
     .side{top:auto;height:62vh;bottom:calc(66px + env(safe-area-inset-bottom,0px))}
     .row2{grid-template-columns:1fr}
@@ -370,7 +370,7 @@
   <div class="results" id="results"></div>
 </div>
 
-<div class="blwrap"><div class="bl panel"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div><a class="madeby panel" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a></div>
+<div class="blwrap"><div class="bl panel"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div><a class="madeby panel" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a><a class="madeby panel" href="story.html">The story</a></div>
 
 <div class="br panel">
   <div class="seg">

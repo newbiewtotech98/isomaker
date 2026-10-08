@@ -353,7 +353,7 @@
   <div class="brand panel">
     <div class="logo"></div>
     <div><b>Isomaker</b><span class="sub">Things worth discovering</span><a class="mb-made" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a></div>
-    <a class="storylink" href="story.html">The story</a>
+    <a class="storylink" href="/story">The story</a>
     <button class="icon-btn" id="aboutBtn" title="About the Observatory"></button>
   </div>
   <div class="districts panel" id="districtChips"><span class="lbl">DISTRICTS:</span></div>
@@ -370,7 +370,7 @@
   <div class="results" id="results"></div>
 </div>
 
-<div class="blwrap"><div class="bl panel"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div><a class="madeby panel" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a><a class="madeby panel" href="story.html">The story</a></div>
+<div class="blwrap"><div class="bl panel"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div><a class="madeby panel" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a><a class="madeby panel" href="/story">The story</a></div>
 
 <div class="br panel">
   <div class="seg">
@@ -523,6 +523,8 @@ const SEED = [
 const OBSERVATORY = { id:'observatory', district:'commons', name:'The Observatory', tagline:'The heart of Isomaker',
   desc:'Every place in this world is logged at the Observatory. It watches the districts grow, surfaces what is new, and helps you find your way to things worth discovering.', by:'Isomaker', tags:['core'] };
 
+// Curated places added after the original Classics live in places.json; each becomes a place in the world.
+const CURATED = await fetch('/places.json',{ cache:'no-cache' }).then(r=>r.ok? r.json() : []).catch(()=>[]);
 const STORE_KEY = 'isomaker.places.v1';
 function loadUser(){ try{ const v = JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); return Array.isArray(v)? v.filter(p=>p && DISTRICTS[p.district] && p.name && p.url) : []; }catch(e){ return []; } }
 function saveUser(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(places.filter(p=>p.user).map(({obj,height,cell,...p})=>p))); }catch(e){} }
@@ -1335,6 +1337,7 @@ function build(){
   ORDER.forEach((k,i)=>buildFalls(islByKey(k),3,40+i));
   // places
   for(const p of SEED) places.push(p);
+  for(const c of CURATED) if(c && /^[a-z0-9-]+$/.test(c.slug||'') && DISTRICTS[c.district] && c.name && safeUrl(c.url)) places.push({ ...c, id:'c-'+c.slug, url:safeUrl(c.url), seed:true, curated:true });
   for(const p of loadUser()) places.push({ ...p, user:true });
   for(const p of places) placeBuilding(p,false);
   if(Data.numbers) for(const k of ORDER){ const w=Data.lastWeekWinner(k); if(w) addCrown(w); }
@@ -2067,7 +2070,7 @@ function openObservatoryPanel(){
       <div class="stats"><div class="stat"><b>${seenD.size}/5</b><span>rooms entered</span></div><div class="stat"><b>${Data.votedCount()}</b><span>upvotes given</span></div><div class="stat"><b>${Referral.count()}</b><span>waitlist joins</span></div></div></div>
     <div class="actions"><button class="btn primary" id="addAbout">${icon('plus')} Join the waitlist</button><button class="btn ghost" id="shareObs" title="Share the Observatory view">${icon('share')}</button></div>
     <details class="about"><summary>About Isomaker and controls</summary>
-      <p class="desc">Isomaker is a living world of indie tools, plugins and delightful websites. Classics are hand-picked; each landmark’s top 10 belongs to tools the community adds. <a href="story.html" style="color:var(--text)">Read the story →</a></p>
+      <p class="desc">Isomaker is a living world of indie tools, plugins and delightful websites. Classics are hand-picked; each landmark’s top 10 belongs to tools the community adds. <a href="/story" style="color:var(--text)">Read the story →</a></p>
       <div class="meta" style="grid-template-columns:auto 1fr"><dt>Drag</dt><dd>Pan the world</dd><dt>Scroll / pinch</dt><dd>Zoom</dd><dt>Right-drag, Q / E</dt><dd>Rotate</dd><dt>Click</dt><dd>Open any building</dd><dt>Landmarks</dt><dd>Step inside for the top 10</dd><dt>/ · W · H</dt><dd>Find · Wander · Home</dd></div></details>`);
   bindRows(side); $('addAbout').onclick=()=>openModal(); $('shareObs').onclick=()=>shareLink({ observatory:'' }, 'A live view of Isomaker, a world of indie tools');
   side.querySelectorAll('.result[data-lm]').forEach(r=>r.onclick=()=>{ const k=r.dataset.lm; exitObservatory(); closeSide(); enterInterior(k); });
@@ -2091,11 +2094,15 @@ function exitObservatory(){ if(!obs.active) return; obs.active=false; setUrl(nul
    code when they have one.
    ===================================================================== */
 const SITE='https://www.isomaker.club/';
-const slugOf=p=>p.seed? p.id.replace(/^s-/,'') : p.id;
-function setUrl(params){ try{ const q=new URLSearchParams(params||{}); const qs=q.toString().replace(/=(&|$)/g,'$1');
-  history.replaceState(null,'',location.pathname+(qs?'?'+qs:'')+location.hash); }catch(e){} }
+const slugOf=p=>p.slug || (p.seed? p.id.replace(/^s-/,'') : p.id);
+// a place's canonical address is /place/<slug>; every other view keeps using the root with ?query
+const ROOT=/\/isomaker(\.html)?$/.test(location.pathname)? location.pathname : '/';
+function setUrl(params){ try{ const q=new URLSearchParams(params||{}); let path=ROOT;
+  if(q.has('place')){ path='/place/'+encodeURIComponent(q.get('place')); q.delete('place'); }
+  const qs=q.toString().replace(/=(&|$)/g,'$1');
+  history.replaceState(null,'',path+(qs?'?'+qs:'')+location.hash); }catch(e){} }
 function shareLink(params,text,p){
-  const u=new URL(SITE); for(const [k,v] of Object.entries(params)) u.searchParams.set(k,v);
+  const u=new URL(SITE); for(const [k,v] of Object.entries(params)){ if(k==='place') u.pathname='/place/'+encodeURIComponent(v); else u.searchParams.set(k,v); }
   let mine=null; try{ mine=localStorage.getItem('isomaker.ref'); }catch(e){} if(mine) u.searchParams.set('ref',mine);
   const url=u.toString().replace(/=(&|$)/g,'$1');
   // phones get the native share sheet; desktops copy the link
@@ -2103,12 +2110,13 @@ function shareLink(params,text,p){
   navigator.clipboard.writeText(url).then(()=>toast(p||null,'Link copied',url.replace('https://',''))).catch(()=>toast(p||null,'Copy this link',url));
 }
 function openDeepLink(){ const q=new URLSearchParams(location.search);
-  const place=(q.get('place')||'').toLowerCase(), inside=q.get('inside'), dist=q.get('district');
+  const pm=location.pathname.match(/^\/place\/([a-z0-9-]+)\/?$/i);
+  const place=((pm&&pm[1])||q.get('place')||'').toLowerCase(), inside=q.get('inside'), dist=q.get('district');
   // the referral code has been captured already; keep it out of the address bar from here on
   if(q.has('ref')){ q.delete('ref'); setUrl(Object.fromEntries(q)); }
   const go=f=>setTimeout(f,1400);   // after the intro camera sweep
   if(inside && DISTRICTS[inside]) return go(()=>enterInterior(inside));
-  if(place){ const p=places.find(x=>slugOf(x)===place); if(p) return go(()=>openPlace(p)); }
+  if(place){ const p=places.find(x=>slugOf(x)===place); if(p) return go(()=>openPlace(p)); setUrl(null); }
   if(dist && DISTRICTS[dist]) return go(()=>{ const D=DISTRICTS[dist]; openDistrict(dist); flyTo(V3(D.pos[0],0,D.pos[1]),1.9); panelOffset(); });
   if(q.has('observatory')) return go(enterObservatory);
   if(q.has('reserve')){ const k=q.get('reserve'); setUrl(null); go(()=>openModal(DISTRICTS[k]? k : undefined)); }

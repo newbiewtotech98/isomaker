@@ -114,9 +114,5 @@
 
   <footer><a class="madeby" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a></footer>
 </div>
-<script>
-  // on the local dev server "/" is an older prototype, so point the world links at isomaker.html
-  if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) document.querySelectorAll('a[href^="/"]').forEach(a=>a.setAttribute('href','isomaker.html'+a.getAttribute('href').slice(1)));
-</script>
 </body>
 </html>

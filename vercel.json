@@ -1,10 +1,59 @@
 {
   "cleanUrls": true,
   "redirects": [
-    { "source": "/", "has": [{ "type": "host", "value": "isomaker.club" }], "destination": "https://www.isomaker.club/", "permanent": true },
-    { "source": "/", "has": [{ "type": "host", "value": "isomaker.vercel.app" }], "destination": "https://www.isomaker.club/", "permanent": true },
-    { "source": "/:path+", "has": [{ "type": "host", "value": "isomaker.club" }], "destination": "https://www.isomaker.club/:path+", "permanent": true },
-    { "source": "/:path+", "has": [{ "type": "host", "value": "isomaker.vercel.app" }], "destination": "https://www.isomaker.club/:path+", "permanent": true }
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "isomaker.club"
+        }
+      ],
+      "destination": "https://www.isomaker.club/",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "isomaker.vercel.app"
+        }
+      ],
+      "destination": "https://www.isomaker.club/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+",
+      "has": [
+        {
+          "type": "host",
+          "value": "isomaker.club"
+        }
+      ],
+      "destination": "https://www.isomaker.club/:path+",
+      "permanent": true
+    },
+    {
+      "source": "/:path+",
+      "has": [
+        {
+          "type": "host",
+          "value": "isomaker.vercel.app"
+        }
+      ],
+      "destination": "https://www.isomaker.club/:path+",
+      "permanent": true
+    }
   ],
-  "rewrites": [{ "source": "/", "destination": "/isomaker" }]
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/isomaker"
+    },
+    {
+      "source": "/place/:slug",
+      "destination": "/isomaker"
+    }
+  ]
 }

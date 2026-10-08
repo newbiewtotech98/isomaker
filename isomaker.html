@@ -1454,6 +1454,24 @@ function addCrown(p){ if(!p.obj) return; const g=new THREE.Group(), gold=glowMat
   for(let i=0;i<5;i++){ const a=i/5*Math.PI*2; g.add(at(new THREE.Mesh(new THREE.ConeGeometry(.1,.32,6),gold),Math.cos(a)*.42,.24,Math.sin(a)*.42));
     g.add(at(new THREE.Mesh(new THREE.SphereGeometry(.055,8,6),glowMat('#ff6b8b',2.6,'neon')),Math.cos(a)*.42,.42,Math.sin(a)*.42)); }
   g.scale.setScalar(1.7); g.position.y=(p.height||4)+1.1; p.obj.add(noPick(g)); spinners.push({ o:g, sy:.8 }); p.crowned=true; }
+/* Arriving through a place link (/place/<slug> or ?place=): start over the place's district, glide in to frame
+   the building with the world around it, mark the arrival, then open its panel. Other ways of opening a place
+   keep their usual camera. */
+function arriveAt(p){
+  const D=DISTRICTS[p.district], wp=new THREE.Vector3(); p.obj.getWorldPosition(wp);
+  cam.target.set(D.pos[0],0,D.pos[1]); goal.target.copy(cam.target); cam.az=goal.az=Math.PI/4-.35; cam.zoom=goal.zoom=1.4;
+  const phone=innerWidth<760, sub=`${D.name}${p.templateName? ' · '+p.templateName : ''}`;
+  setTimeout(()=>{ select(p); goal.az=Math.PI/4; flyTo(wp, p.curated? 4.2 : 2.8, p.height||4); arrivalPulse(p);
+    // on phones the panel is a bottom sheet that would hide the building, so it waits for a tap on Details
+    toast(p,`You’re at ${p.name}`,sub, phone? { label:'Details', ms:9000, fn:()=>openPlace(p,{ keepCamera:true }) } : undefined); setUrl({ place:slugOf(p) }); },500);
+  if(!phone) setTimeout(()=>openPlace(p,{ keepCamera:true }),1700);
+}
+function arrivalPulse(p){ const wp=new THREE.Vector3(); p.obj.getWorldPosition(wp); const t0=performance.now(), c=new THREE.Color(DISTRICTS[p.district]?.color||COMMONS.color).multiplyScalar(2.6);
+  const rings=[0,450].map(delay=>{ const m=noPick(new THREE.Mesh(new THREE.RingGeometry(1.6,1.85,64).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({ color:c, transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false })));
+    m.position.set(wp.x,GROUND+.08,wp.z); scene.add(m); return { m, delay }; });
+  anims.push(now=>{ let done=true; for(const r of rings){ const t=Math.min(1,Math.max(0,(now-t0-r.delay)/1300)); if(t<1) done=false;
+      r.m.scale.setScalar(1+t*4); r.m.material.opacity=t>0? (1-t)*.9 : 0; }
+    if(done){ for(const r of rings){ scene.remove(r.m); r.m.geometry.dispose(); r.m.material.dispose(); } return true; } }); }
 function spawnAnim(g,color){ const t0=performance.now(); g.scale.set(1,.01,1);
   const wp=new THREE.Vector3(); g.getWorldPosition(wp);
   const ring=noPick(new THREE.Mesh(new THREE.RingGeometry(.8,1.1,48).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({ color:new THREE.Color(color).multiplyScalar(3), transparent:true, blending:THREE.AdditiveBlending, depthWrite:false })));
@@ -1677,7 +1695,7 @@ function bindRows(root){ root.querySelectorAll('.result[data-id]').forEach(el=>e
 
 function weekLine(p,d){ if(!Data.numbers) return ''; const s=Data.stats(p), pv=Data.preview?' <span class="hint">(preview)</span>':'';
   return p.seed? `${s.visits} visits${pv}` : `#${Data.rank(p)} of ${d.short}’s community tools · ${s.visits} visits${pv}`; }
-function openPlace(p){
+function openPlace(p,opt={}){
   if(p.id==='observatory') return openAbout();
   exitObservatory();
   const d=DISTRICTS[p.district]; const url=safeUrl(p.url);
@@ -1706,7 +1724,7 @@ function openPlace(p){
   if($('voteBtn')) $('voteBtn').onclick=()=>{ const on=Data.toggleVote(p), s2=Data.stats(p), b=$('voteBtn'); b.classList.toggle('on',on); b.title=on?'Remove upvote':'Upvote'; if(b.querySelector('b')) b.querySelector('b').textContent=s2.upvotes; if(interior.active) renderRankList(); };
   if(p.user) $('removeBtn').onclick=()=>{ const b=$('removeBtn'); if(!b.dataset.confirm){ b.dataset.confirm='1'; b.innerHTML=`${icon('trash')} Click again to remove`; return; }
     removeBuilding(p); places.splice(places.indexOf(p),1); saveUser(); updateCount(); closeSide(); toast(p,'Removed',p.name); };
-  if(interior.active) focusInterior(p); else { select(p); flyToPlace(p); }
+  if(interior.active) focusInterior(p); else if(opt.keepCamera){ select(p); panelOffset(); } else { select(p); flyToPlace(p); }
   setUrl({ place:slugOf(p) });
 }
 function openDistrict(k){
@@ -1727,7 +1745,7 @@ $('aboutBtn').onclick=openAbout;
 /* toast */
 let toastTimer=0;
 function toast(p,title,sub,action){ const t=$('toast'); t.innerHTML=`${p?mono(p):''}<div><b>${esc(title)}</b><span>${esc(sub||'')}</span></div>${action?`<button class="btn ghost" id="toastAct">${esc(action.label)}</button>`:''}`;
-  t.classList.add('show'); if(action) $('toastAct').onclick=action.fn; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'), action?4200:2600); }
+  t.classList.add('show'); if(action) $('toastAct').onclick=action.fn; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'), action?(action.ms||4200):2600); }
 
 /* count */
 const kfmt=n=>n>=1000? (n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,'')+'k' : String(n);
@@ -2259,7 +2277,7 @@ function openDeepLink(){ const q=new URLSearchParams(location.search);
   if(q.has('ref')){ q.delete('ref'); setUrl(Object.fromEntries(q)); }
   const go=f=>setTimeout(f,1400);   // after the intro camera sweep
   if(inside && DISTRICTS[inside]) return go(()=>enterInterior(inside));
-  if(place){ const p=places.find(x=>slugOf(x)===place); if(p) return go(()=>openPlace(p)); setUrl(null); }
+  if(place){ const p=places.find(x=>slugOf(x)===place); if(p) return arriveAt(p); setUrl(null); }
   if(dist && DISTRICTS[dist]) return go(()=>{ const D=DISTRICTS[dist]; openDistrict(dist); flyTo(V3(D.pos[0],0,D.pos[1]),1.9); panelOffset(); });
   if(q.has('observatory')) return go(enterObservatory);
   if(q.has('reserve')){ const k=q.get('reserve'); setUrl(null); go(()=>openModal(DISTRICTS[k]? k : undefined)); }

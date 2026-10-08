@@ -1422,7 +1422,9 @@ function buildAmbience(){
    ===================================================================== */
 function styleFor(p, r){ if(p.style && p.style!=='auto'){ const m=USER_STYLE[p.style]; if(m) return m[p.district]||m._; } return pickR(r, STYLE[p.district]); }
 function placeBuilding(p, animate=false){
-  const d=world.districts[p.district]; const cell=d.cells.find(c=>!c.occupied); if(!cell) return false;
+  const d=world.districts[p.district];
+  // curated places take the most visible free lot (nearest the default camera); everything else the next free one
+  const cell= p.curated? d.cells.filter(c=>!c.occupied).sort((a,b)=>(b.lx+b.lz)-(a.lx+a.lz))[0] : d.cells.find(c=>!c.occupied); if(!cell) return false;
   cell.occupied=p.id; p.cell=cell; setTreesHidden(cell.trees,true);
   const r=mulberry32(hashStr(p.id));
   // curated places get a district template facing the camera; Classics keep their original buildings
@@ -2412,7 +2414,7 @@ try{
   if(film.on){ filmInit(); if(film.render){ $('filmStart').hidden=true; window.__film=(t,dt)=>{ filmStep(t,dt||1/30); return t; }; }
     else { addEventListener('keydown',e=>{ if(e.code==='Space'){ e.preventDefault(); filmStart(); } }); addEventListener('pointerdown',filmStart); } }
   else openDeepLink();
-  if(new URLSearchParams(location.search).has('debug')) window.__iso={ frame, places, interior, enterInterior, exitInterior, showInterior, openPlace, Data, cam, goal, setMode };
+  if(new URLSearchParams(location.search).has('debug')) window.__iso={ frame, places, interior, enterInterior, exitInterior, showInterior, openPlace, Data, cam, goal, setMode, world };
 }catch(err){ console.error(err); $('loadMsg').innerHTML=`<div class="err">Something went wrong while building the world.<br><small>${esc(err.message)}</small></div>`; }
 </script>
 </body>

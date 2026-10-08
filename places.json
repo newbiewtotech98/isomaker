@@ -4,11 +4,18 @@
     "district": "creative",
     "name": "Hairline",
     "url": "https://hairline.lucasmarkes.com",
-    "tagline": "Isometric figures that answer the pointer",
-    "desc": "Six isometric line figures that answer the pointer, for React and for anything with a DOM. Each one is drawn in a single stroke and reacts to where you point.",
+    "tagline": "Line drawings that answer the pointer",
+    "desc": "Thirty-three isometric line figures that answer the pointer. SVG, no dependencies, for React and for everything else.",
     "by": "Lucas Markes",
     "creatorUrl": "https://lucasmarkes.com",
-    "tags": ["illustration", "motion", "react"],
-    "added": "2026-10-08"
+    "tags": [
+      "illustration",
+      "motion",
+      "react"
+    ],
+    "added": "2026-10-08",
+    "logo": "/places/hairline/logo.svg",
+    "screenshot": "/places/hairline/screenshot.png",
+    "brandColor": "#f2f2f5"
   }
 ]

@@ -875,7 +875,7 @@ const TPL={
     g.add(at(facadeBox(w,h2,d,mat,roofM(pal),5.6,r),0,y2,0)); g.add(at(box(w+.1,.12,d+.1,roofM(pal)),0,top,0)); g.add(noPick(at(box(w+.14,.05,d+.14,S.accent),0,top+.03,0)));
     const plate=new THREE.Mesh(new THREE.PlaneGeometry(1.3,.28),S.plate); plate.position.set(0,y2+.2,d/2+.02); g.add(plate);
     g.add(at(box(1.2,.06,.5,darkMetal),0,y2-.06,d/2+.2)); kitDoor(g,.6,d/2-.03,.12);
-    const sc=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.95),S.screen); sc.rotation.y=Math.PI/2; sc.position.set(w/2+.03,y2+h2/2,0); g.add(sc);
+    S.screenAspect=1.5/.95; const sc=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.95),S.screen); sc.rotation.y=Math.PI/2; sc.position.set(w/2+.03,y2+h2/2,0); g.add(sc);
     g.add(noPick(at(box(.02,1.03,1.58,S.accent),w/2+.015,y2+h2/2-.515,0)));
     kitPosts(g,-w*.16,top+.12,d*.05,.4,.42); kitSign(g,S.logo,1.05,1.05,-w*.16,top+.5,d*.05);
     if(o.dish){ const dish=shadow(new THREE.Mesh(new THREE.SphereGeometry(.55,14,8,0,Math.PI*2,0,Math.PI/3.2),stdMat('#e6e3f5',{ side:THREE.DoubleSide })));
@@ -890,7 +890,7 @@ const TPL={
     g.add(box(2.6,.12,2.6,stoneMat)); const mat=winMat(o.glass?pickR(r,['#8fa6e6','#a3b5ee']):pickR(r,pal.tint),pickR(r,pal.win),r()*3|0,o.glass?.35:.72);
     g.add(at(facadeBox(w,h,d,mat,roofM(pal),o.glass?4.2:5.6,r),0,.12,0)); const top=.12+h;
     for(let y=1.4;y<h-.3;y+=1.2) g.add(noPick(at(box(w+.05,.04,d+.05,S.accent),0,.12+y,0)));
-    const ban=new THREE.Mesh(new THREE.PlaneGeometry(.95,h*.52),S.screen); ban.position.set(0,.12+h*.55,d/2+.025); g.add(ban);
+    S.screenAspect=.95/(h*.52); const ban=new THREE.Mesh(new THREE.PlaneGeometry(.95,h*.52),S.screen); ban.position.set(0,.12+h*.55,d/2+.025); g.add(ban);
     const plate=new THREE.Mesh(new THREE.PlaneGeometry(1.3,.28),S.plate); plate.position.set(0,.95,d/2+.025); g.add(plate); kitDoor(g,.55,d/2-.02,.12);
     g.add(at(box(w+.1,.14,d+.1,roofM(pal)),0,top,0));
     if(o.dome){ g.add(at(new THREE.Mesh(new THREE.SphereGeometry(.85,24,12,0,Math.PI*2,0,Math.PI/2),glassMat()),0,top+.14,0)); g.add(noPick(at(sphere(.35,glowMat(accentOf(p),2.4,'orb')),0,top+.5,0))); }
@@ -904,9 +904,9 @@ const TPL={
     for(let i=0;i<=5;i++) g.add(at(box(.05,h,.05,darkMetal),-(w-.2)/2+i*(w-.2)/5,.22,(d-.2)/2));
     g.add(noPick(at(box(w-.6,.04,d-.6,glowMat('#ffe2b0',.55,'win')),0,.24,0)));
     const top=.22+h; g.add(at(box(w+.3,.14,d+.4,roofM(pal)),0,top,0)); g.add(noPick(at(box(w+.34,.04,d+.44,S.accent),0,top+.05,0)));
-    kitPosts(g,0,top+.14,0,.9,.3); kitSign(g,S.screen,2,1.25,0,top+.42,0);
-    const tot=new THREE.Group(); tot.position.set(w/2-.1,0,d/2+.45); g.add(tot); tot.add(box(.42,1.5,.12,darkMetal));
-    const lf=new THREE.Mesh(new THREE.PlaneGeometry(.34,.34),S.logo); lf.position.set(0,1.18,.062); tot.add(lf);
+    S.screenAspect=2/1.25; kitPosts(g,0,top+.14,0,.9,.3); kitSign(g,S.screen,2,1.25,0,top+.42,0);
+    const tot=new THREE.Group(); tot.position.set(w/2-.15,0,d/2+.42); g.add(tot); tot.add(box(.62,1.75,.12,darkMetal));
+    const lf=new THREE.Mesh(new THREE.PlaneGeometry(.52,.52),S.logo); lf.position.set(0,1.38,.062); tot.add(lf); tot.add(noPick(at(box(.64,.04,.13,S.accent),0,1.71,0)));
     const plate=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.26),S.plate); plate.position.set(-.3,.11,d/2+.152); g.add(plate);
     if(o.dome) g.add(at(new THREE.Mesh(new THREE.SphereGeometry(.7,24,12,0,Math.PI*2,0,Math.PI/2),glassMat()),-w*.28,top+.14,-d*.2));
     if(o.orb){ const orb=noPick(sphere(.42,glowMat(accentOf(p),2.6,'orb'))); orb.position.set(-w*.3,top+.9,-d*.15); g.add(orb); g.add(noPick(at(new THREE.Mesh(new THREE.TorusGeometry(.6,.03,6,40),glowMat('#d9b8ff',2)),-w*.3,top+.9,-d*.15))); }
@@ -922,7 +922,7 @@ const TPL={
         const tg=new THREE.ExtrudeGeometry(s,{ depth:d, bevelEnabled:false }); tg.translate(0,0,-d/2); g.add(at(shadow(new THREE.Mesh(tg,roofC)),-w/2+i*tw,top,0));
         g.add(noPick(at(box(.04,th*.7,d*.9,S.accent),-w/2+i*tw+.03,top+.05,0))); } }
     else { const rf=prism(w+.3,o.small?.9:1.05,d+.3,roofC); rf.rotation.y=Math.PI/2; g.add(at(rf,0,top,0)); g.add(at(box(.24,.7,.24,stdMat('#8a7f96')),w*.25,top+.1,-d*.15)); }
-    const win=new THREE.Mesh(new THREE.PlaneGeometry(d*.62,h*.5),S.screen); win.rotation.y=Math.PI/2; win.position.set(w/2+.02,.1+h*.46,0); g.add(win);
+    S.screenAspect=(d*.62)/(h*.5); const win=new THREE.Mesh(new THREE.PlaneGeometry(d*.62,h*.5),S.screen); win.rotation.y=Math.PI/2; win.position.set(w/2+.02,.1+h*.46,0); g.add(win);
     g.add(noPick(at(box(.02,h*.5+.08,d*.62+.08,S.accent),w/2+.01,.1+h*.21-.04,0)));
     const plate=new THREE.Mesh(new THREE.PlaneGeometry(1.1,.24),S.plate); plate.position.set(-w*.12,.1+h-.28,d/2+.02); g.add(plate); kitDoor(g,.5,d/2-.02,.1);
     g.add(at(box(.05,.05,.55,darkMetal),w/2-.15,.1+h-.15,d/2+.27)); kitSign(g,S.logo,.45,.45,w/2-.15,.1+h-.75,d/2+.55,0);
@@ -958,6 +958,16 @@ function pickTemplate(p){ const list=PLACE_TEMPLATES[p.district]; const named=li
   const text=[p.name,p.tagline,p.desc,...(p.tags||[])].join(' ').toLowerCase();
   const scored=list.map(t=>({ t, n:(text.match(new RegExp(t.kw.source,'g'))||[]).length })); const best=Math.max(...scored.map(x=>x.n));
   const pool=scored.filter(x=>x.n===best).map(x=>x.t); return pool[hashStr(p.slug||p.id)%pool.length]; }
+function loadImage(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=src; }); }
+function imageTex(im,w,h,mode,bg){ return canvasTex(w,h,(x)=>{ x.fillStyle=bg; x.fillRect(0,0,w,h);
+  const iw=im.naturalWidth||w, ih=im.naturalHeight||h, s= mode==='cover'? Math.max(w/iw,h/ih) : Math.min(w/iw,h/ih), dw=iw*s, dh=ih*s;
+  x.drawImage(im,(w-dw)/2,(h-dh)/2,dw,dh); }); }
+// images are dimmed a little so white artwork doesn't flare under the night-time bloom
+async function personalize(p){ const S=p.obj?.userData.slots; if(!S) return;
+  const swap=(mat,tex,k)=>{ mat.map?.dispose(); mat.map=tex; mat.color.setScalar(k); mat.needsUpdate=true; };
+  if(p.logo) try{ swap(S.logo,imageTex(await loadImage(p.logo),512,512,'contain','#121735'),.8); }catch(e){}
+  if(p.screenshot) try{ const a=S.screenAspect||1.6, W=1024; swap(S.screen,imageTex(await loadImage(p.screenshot),W,Math.round(W/a),'cover','#121735'),.72); }catch(e){}
+}
 function buildPlace(p){ const t=pickTemplate(p); p.templateKey=t.key; p.templateName=t.name;
   return t.make(p,PAL[p.district],mulberry32(hashStr('tpl:'+(p.slug||p.id)))); }
 
@@ -1430,7 +1440,9 @@ function placeBuilding(p, animate=false){
   // curated places get a district template facing the camera; Classics keep their original buildings
   const g= p.curated? buildPlace(p) : B[styleFor(p,r)](r, PAL[p.district], {});
   g.position.set(cell.lx,GROUND,cell.lz); g.rotation.y= p.curated? 0 : pickR(r,[0,Math.PI/2,Math.PI,-Math.PI/2]);
+  if(p.curated){ g.scale.setScalar(1.2); g.userData.h*=1.2; }   // curated places stand a little taller than the Classics' lots suggest
   g.userData.place=p; d.group.add(g); world.pickables.push(g); p.obj=g; p.height=g.userData.h;
+  if(p.curated) personalize(p);
   if(animate) spawnAnim(g, DISTRICTS[p.district].color);
   return true;
 }
@@ -1467,7 +1479,8 @@ function build(){
   ORDER.forEach((k,i)=>buildFalls(islByKey(k),3,40+i));
   // places
   for(const p of SEED) places.push(p);
-  for(const c of CURATED) if(c && /^[a-z0-9-]+$/.test(c.slug||'') && DISTRICTS[c.district] && c.name && safeUrl(c.url)) places.push({ ...c, id:'c-'+c.slug, url:safeUrl(c.url), seed:true, curated:true });
+  for(const c of CURATED) if(c && /^[a-z0-9-]+$/.test(c.slug||'') && DISTRICTS[c.district] && c.name && safeUrl(c.url)) places.push({ ...c, id:'c-'+c.slug, url:safeUrl(c.url), seed:true, curated:true,
+    logo:/^\/places\//.test(c.logo||'')? c.logo : null, screenshot:/^\/places\//.test(c.screenshot||'')? c.screenshot : null });
   for(const p of loadUser()) places.push({ ...p, user:true });
   for(const p of places) placeBuilding(p,false);
   if(Data.numbers) for(const k of ORDER){ const w=Data.lastWeekWinner(k); if(w) addCrown(w); }

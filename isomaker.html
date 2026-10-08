@@ -834,6 +834,133 @@ B.villa = (r,pal)=>{ const g=new THREE.Group(); const mat=winMat(pickR(r,pal.tin
   g.add(at(box(w*.3,.14,d*.5,grassMat),w*.3,1.4,-d*.1));
   g.userData.h=2.8; return g; };
 
+/* ---- place templates ----
+   Curated places get one of four architectural templates per district, picked
+   from what the tool is about. Classics keep their original buildings.
+   Every template is assembled from one kit (glass ground floor, facade block,
+   roof, signs, accent trim) and marks personalization slots — logo, screen and
+   name plate — that show the tool's identity. The same builder renders the
+   place in the world and on its share card. */
+const accentOf=p=>/^#[0-9a-f]{6}$/i.test(p.brandColor||'')? p.brandColor : DISTRICTS[p.district].color;
+function canvasTex(w,h,draw){ const c=document.createElement('canvas'); c.width=w; c.height=h; draw(c.getContext('2d'),w,h);
+  const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=8; return t; }
+function fitFont(x,text,max,size,weight){ let s=size; do{ x.font=`${weight} ${s}px Inter, system-ui, sans-serif`; s-=2; }while(x.measureText(text).width>max && s>12); }
+const placeTex={
+  logo:p=>{ const col=accentOf(p); return canvasTex(256,256,(x,w,h)=>{ const g=x.createLinearGradient(0,0,w,h); g.addColorStop(0,col); g.addColorStop(1,'#242D43');
+    x.fillStyle=g; x.beginPath(); x.roundRect(0,0,w,h,44); x.fill(); x.fillStyle='#fff'; x.font='700 150px Inter, system-ui, sans-serif'; x.textAlign='center'; x.textBaseline='middle';
+    x.fillText((p.name.trim()[0]||'?').toUpperCase(),w/2,h/2+10); }); },
+  plate:p=>{ const col=accentOf(p); return canvasTex(512,112,(x,w,h)=>{ x.fillStyle='#121735'; x.fillRect(0,0,w,h); x.fillStyle=col; x.beginPath(); x.arc(52,h/2,15,0,7); x.fill();
+    x.fillStyle='#fff'; x.textBaseline='middle'; fitFont(x,p.name,w-110,62,600); x.fillText(p.name,88,h/2+3); }); },
+  screen:p=>{ const col=accentOf(p); return canvasTex(512,320,(x,w,h)=>{ const g=x.createLinearGradient(0,0,w,h); g.addColorStop(0,col); g.addColorStop(1,'#151a44'); x.fillStyle=g; x.fillRect(0,0,w,h);
+    x.globalAlpha=.22; x.fillStyle='#fff'; x.beginPath(); x.arc(w*.8,h*.32,92,0,7); x.fill(); x.beginPath(); x.arc(w*.62,h*.55,46,0,7); x.fill(); x.globalAlpha=1;
+    x.fillStyle='#fff'; x.textBaseline='alphabetic'; fitFont(x,p.name,w-64,68,700); x.fillText(p.name,32,h-96);
+    x.fillStyle='rgba(255,255,255,.82)'; fitFont(x,p.tagline||'',w-64,26,500); x.fillText(p.tagline||'',32,h-52); }); },
+};
+// one set of slot materials per place; Phase 3 swaps their maps for the tool's real imagery
+function placeSlots(p){ const m=t=>{ const mat=new THREE.MeshBasicMaterial({ map:t }); mat.color.setScalar(.88); return mat; };
+  return { logo:m(placeTex.logo(p)), screen:m(placeTex.screen(p)), plate:m(placeTex.plate(p)), accent:glowMat(accentOf(p),2.2,'neon') }; }
+const glassMat=()=>stdMat('#a9c4ff',{ opacity:.34, rough:.08, emissive:'#7fb0ff', ei:.22, cat:'win' });
+function kitSign(g,mat,w,h,x,y,z,ry=0,frame=darkMetal){ const s=new THREE.Group(); s.position.set(x,y,z); s.rotation.y=ry; g.add(s);
+  s.add(box(w+.12,h+.12,.1,frame)); const f=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat); f.position.set(0,(h+.12)/2,.052); s.add(f); return s; }
+function kitPosts(g,x,y,z,span,h){ for(const s of [-1,1]) g.add(at(box(.06,h,.06,darkMetal),x+s*span,y,z)); }
+function kitDoor(g,w,z,y=0){ g.add(noPick(at(box(w,.78,.03,glowMat('#ffd9a0',1.4,'win')),0,y,z))); }
+function kitPlanters(g,r,pts){ for(const [x,z] of pts){ g.add(at(box(.36,.22,.36,stdMat('#5a5070')),x,0,z)); g.add(at(sphere(rr(r,.2,.28),stdMat(pickR(r,['#3c7d4f','#4a8a55','#ff8fc7']),{ flat:true }),7,5),x,.42,z)); } }
+
+const TPL={
+  // two-storey studio: glass ground floor, facade block, rooftop logo sign, side screen
+  studio(p,pal,r,o={}){ const g=new THREE.Group(), S=placeSlots(p), w=2.7, d=2.2, h1=1.05, h2=o.tall?2.4:1.6;
+    g.add(box(w,.12,d,stoneMat)); g.add(at(new THREE.Mesh(new THREE.BoxGeometry(w-.1,h1,d-.1).translate(0,h1/2,0),glassMat()),0,.12,0));
+    for(let i=0;i<=4;i++) g.add(at(box(.05,h1,.05,darkMetal),-w/2+.05+i*(w-.1)/4,.12,d/2-.05));
+    const mat=winMat(pickR(r,pal.tint),pickR(r,pal.win),r()*3|0), y2=.12+h1, top=y2+h2;
+    g.add(at(facadeBox(w,h2,d,mat,roofM(pal),5.6,r),0,y2,0)); g.add(at(box(w+.1,.12,d+.1,roofM(pal)),0,top,0)); g.add(noPick(at(box(w+.14,.05,d+.14,S.accent),0,top+.03,0)));
+    const plate=new THREE.Mesh(new THREE.PlaneGeometry(1.3,.28),S.plate); plate.position.set(0,y2+.2,d/2+.02); g.add(plate);
+    g.add(at(box(1.2,.06,.5,darkMetal),0,y2-.06,d/2+.2)); kitDoor(g,.6,d/2-.03,.12);
+    const sc=new THREE.Mesh(new THREE.PlaneGeometry(1.5,.95),S.screen); sc.rotation.y=Math.PI/2; sc.position.set(w/2+.03,y2+h2/2,0); g.add(sc);
+    g.add(noPick(at(box(.02,1.03,1.58,S.accent),w/2+.015,y2+h2/2-.515,0)));
+    kitPosts(g,-w*.16,top+.12,d*.05,.4,.42); kitSign(g,S.logo,1.05,1.05,-w*.16,top+.5,d*.05);
+    if(o.dish){ const dish=shadow(new THREE.Mesh(new THREE.SphereGeometry(.55,14,8,0,Math.PI*2,0,Math.PI/3.2),stdMat('#e6e3f5',{ side:THREE.DoubleSide })));
+      dish.rotation.x=Math.PI*.8; g.add(at(cyl(.05,.07,.45,darkMetal,6),w*.3,top+.12,-d*.25)); g.add(at(dish,w*.3,top+.95,-d*.25)); }
+    if(o.bands) for(let y=y2+.45;y<top-.2;y+=.5) g.add(noPick(at(box(w+.05,.035,d+.05,glowMat('#6fc3ff',1.4)),0,y,0)));
+    if(o.columns) for(const x of [-1,-.33,.33,1]) g.add(at(cyl(.07,.08,h1,stdMat('#e8e4f0'),10),x*(w/2-.15),.12,d/2+.32));
+    if(o.fins) for(let i=0;i<5;i++) g.add(noPick(at(box(.04,h2-.3,.25,glowMat(accentOf(p),1.3)),-w/2+.35+i*.5,y2+.15,-d/2-.12)));
+    kitPlanters(g,r,[[-w/2+.25,d/2+.25],[w/2-.25,d/2+.25]]);
+    g.userData.h=top+1.7; g.userData.slots=S; return g; },
+  // slim tower with a vertical banner screen and a lit logo crown
+  tower(p,pal,r,o={}){ const g=new THREE.Group(), S=placeSlots(p), w=2, d=2, h=o.short?4.6:6.2;
+    g.add(box(2.6,.12,2.6,stoneMat)); const mat=winMat(o.glass?pickR(r,['#8fa6e6','#a3b5ee']):pickR(r,pal.tint),pickR(r,pal.win),r()*3|0,o.glass?.35:.72);
+    g.add(at(facadeBox(w,h,d,mat,roofM(pal),o.glass?4.2:5.6,r),0,.12,0)); const top=.12+h;
+    for(let y=1.4;y<h-.3;y+=1.2) g.add(noPick(at(box(w+.05,.04,d+.05,S.accent),0,.12+y,0)));
+    const ban=new THREE.Mesh(new THREE.PlaneGeometry(.95,h*.52),S.screen); ban.position.set(0,.12+h*.55,d/2+.025); g.add(ban);
+    const plate=new THREE.Mesh(new THREE.PlaneGeometry(1.3,.28),S.plate); plate.position.set(0,.95,d/2+.025); g.add(plate); kitDoor(g,.55,d/2-.02,.12);
+    g.add(at(box(w+.1,.14,d+.1,roofM(pal)),0,top,0));
+    if(o.dome){ g.add(at(new THREE.Mesh(new THREE.SphereGeometry(.85,24,12,0,Math.PI*2,0,Math.PI/2),glassMat()),0,top+.14,0)); g.add(noPick(at(sphere(.35,glowMat(accentOf(p),2.4,'orb')),0,top+.5,0))); }
+    const crown=new THREE.Group(); crown.position.y=top+(o.dome?1.1:.3); g.add(crown);
+    for(const [ry,x,z] of [[0,0,.42],[Math.PI/2,.42,0]]){ const f=new THREE.Mesh(new THREE.PlaneGeometry(.8,.8),S.logo); f.rotation.y=ry; f.position.set(x,.5,z); crown.add(f); }
+    crown.add(at(box(.82,.92,.82,darkMetal),0,.04,0)); crown.children.at(-1).scale.set(.98,1,.98);
+    const ah=addAntenna(g,crown.position.y+.96,r); g.userData.h=crown.position.y+1+ah; g.userData.slots=S; return g; },
+  // wide glass pavilion with a big rooftop screen and a logo totem by the door
+  pavilion(p,pal,r,o={}){ const g=new THREE.Group(), S=placeSlots(p), w=2.8, d=2.2, h=1.3;
+    g.add(box(w+.1,.22,d+.3,stoneMat)); g.add(at(new THREE.Mesh(new THREE.BoxGeometry(w-.2,h,d-.2).translate(0,h/2,0),glassMat()),0,.22,0));
+    for(let i=0;i<=5;i++) g.add(at(box(.05,h,.05,darkMetal),-(w-.2)/2+i*(w-.2)/5,.22,(d-.2)/2));
+    g.add(noPick(at(box(w-.6,.04,d-.6,glowMat('#ffe2b0',.55,'win')),0,.24,0)));
+    const top=.22+h; g.add(at(box(w+.3,.14,d+.4,roofM(pal)),0,top,0)); g.add(noPick(at(box(w+.34,.04,d+.44,S.accent),0,top+.05,0)));
+    kitPosts(g,0,top+.14,0,.9,.3); kitSign(g,S.screen,2,1.25,0,top+.42,0);
+    const tot=new THREE.Group(); tot.position.set(w/2-.1,0,d/2+.45); g.add(tot); tot.add(box(.42,1.5,.12,darkMetal));
+    const lf=new THREE.Mesh(new THREE.PlaneGeometry(.34,.34),S.logo); lf.position.set(0,1.18,.062); tot.add(lf);
+    const plate=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.26),S.plate); plate.position.set(-.3,.11,d/2+.152); g.add(plate);
+    if(o.dome) g.add(at(new THREE.Mesh(new THREE.SphereGeometry(.7,24,12,0,Math.PI*2,0,Math.PI/2),glassMat()),-w*.28,top+.14,-d*.2));
+    if(o.orb){ const orb=noPick(sphere(.42,glowMat(accentOf(p),2.6,'orb'))); orb.position.set(-w*.3,top+.9,-d*.15); g.add(orb); g.add(noPick(at(new THREE.Mesh(new THREE.TorusGeometry(.6,.03,6,40),glowMat('#d9b8ff',2)),-w*.3,top+.9,-d*.15))); }
+    if(o.chimneys) for(const [x,hh] of [[-.9,1.3],[-.45,.9]]){ g.add(at(cyl(.16,.2,hh,stdMat('#7d7590'),12),x,top+.14,-d*.3)); g.add(noPick(at(cyl(.17,.17,.06,S.accent,12),x,top+.14+hh-.1,-d*.3))); }
+    if(o.greenhouse){ const gh=prism(w-.4,.8,d-.4,glassMat()); gh.castShadow=false; gh.rotation.y=Math.PI/2; g.add(at(gh,0,top+.14,0)); }
+    kitPlanters(g,r,[[-w/2,d/2+.4],[-w/2+.6,d/2+.4]]);
+    g.userData.h=top+1.9; g.userData.slots=S; return g; },
+  // house or loft with a pitched or sawtooth roof, a hanging sign and a shop window
+  house(p,pal,r,o={}){ const g=new THREE.Group(), S=placeSlots(p), w=o.small?2.1:2.5, d=o.small?1.8:2.1, h=o.small?1.3:1.7;
+    const mat=winMat(pickR(r,pal.tint),pickR(r,pal.win),r()*3|0); g.add(box(w+.3,.1,d+.4,stoneMat)); g.add(at(facadeBox(w,h,d,mat,roofM(pal),7,r),0,.1,0));
+    const top=.1+h, roofC=stdMat(pickR(r,pal.roofs||[pal.roof]),{ flat:true });
+    if(o.sawtooth){ const n=3, tw=w/n, th=.7; for(let i=0;i<n;i++){ const s=new THREE.Shape(); s.moveTo(0,0); s.lineTo(tw,0); s.lineTo(0,th); s.closePath();
+        const tg=new THREE.ExtrudeGeometry(s,{ depth:d, bevelEnabled:false }); tg.translate(0,0,-d/2); g.add(at(shadow(new THREE.Mesh(tg,roofC)),-w/2+i*tw,top,0));
+        g.add(noPick(at(box(.04,th*.7,d*.9,S.accent),-w/2+i*tw+.03,top+.05,0))); } }
+    else { const rf=prism(w+.3,o.small?.9:1.05,d+.3,roofC); rf.rotation.y=Math.PI/2; g.add(at(rf,0,top,0)); g.add(at(box(.24,.7,.24,stdMat('#8a7f96')),w*.25,top+.1,-d*.15)); }
+    const win=new THREE.Mesh(new THREE.PlaneGeometry(d*.62,h*.5),S.screen); win.rotation.y=Math.PI/2; win.position.set(w/2+.02,.1+h*.46,0); g.add(win);
+    g.add(noPick(at(box(.02,h*.5+.08,d*.62+.08,S.accent),w/2+.01,.1+h*.21-.04,0)));
+    const plate=new THREE.Mesh(new THREE.PlaneGeometry(1.1,.24),S.plate); plate.position.set(-w*.12,.1+h-.28,d/2+.02); g.add(plate); kitDoor(g,.5,d/2-.02,.1);
+    g.add(at(box(.05,.05,.55,darkMetal),w/2-.15,.1+h-.15,d/2+.27)); kitSign(g,S.logo,.45,.45,w/2-.15,.1+h-.75,d/2+.55,0);
+    g.add(at(box(w*.6,.05,.45,darkMetal),-w*.12,.1+h*.62,d/2+.22));
+    kitPlanters(g,r,[[-w/2+.1,d/2+.35]]);
+    g.userData.h=top+1.1; g.userData.slots=S; return g; },
+};
+// four named templates per district; `kw` is what pulls a tool towards each one
+const PLACE_TEMPLATES={
+  creative:[ { key:'glass-studio', name:'Glass Studio', make:(p,pal,r)=>TPL.studio(p,pal,r), kw:/design|\bui\b|\bux\b|prototyp|figma|website|mockup|wirefram/ },
+             { key:'media-house', name:'Media House', make:(p,pal,r)=>TPL.tower(p,pal,r,{ short:true }), kw:/video|image|photo|motion|animat|media|stream|3d|render/ },
+             { key:'gallery', name:'Gallery', make:(p,pal,r)=>TPL.pavilion(p,pal,r), kw:/illustrat|\bart\b|figure|gallery|portfolio|icon|line|drawing|sketch/ },
+             { key:'design-loft', name:'Design Loft', make:(p,pal,r)=>TPL.house(p,pal,r,{ sawtooth:true }), kw:/type|font|colou?r|palette|brand|logo|kerning/ } ],
+  maker:[ { key:'workshop', name:'Workshop', make:(p,pal,r)=>TPL.house(p,pal,r,{ sawtooth:true }), kw:/\bcli\b|terminal|\bgit\b|editor|build|tool ?kit|snippet/ },
+          { key:'engineering-lab', name:'Engineering Lab', make:(p,pal,r)=>TPL.studio(p,pal,r,{ dish:true }), kw:/\bapi\b|backend|database|server|infra|cloud|deploy|hosting/ },
+          { key:'modular-factory', name:'Modular Factory', make:(p,pal,r)=>TPL.pavilion(p,pal,r,{ chimneys:true }), kw:/hardware|automat|pipeline|\bci\b|devops|workflow|queue/ },
+          { key:'maker-tower', name:'Maker Tower', make:(p,pal,r)=>TPL.tower(p,pal,r), kw:/framework|library|\bsdk\b|platform|react|component/ } ],
+  ai:[ { key:'ai-lab', name:'AI Lab', make:(p,pal,r)=>TPL.studio(p,pal,r,{ bands:true }), kw:/model|\bllm|agent|assistant|chat|prompt/ },
+       { key:'glass-tower', name:'Glass Tower', make:(p,pal,r)=>TPL.tower(p,pal,r,{ glass:true }), kw:/platform|\bapi\b|inference|cloud|enterprise/ },
+       { key:'research-observatory', name:'Research Observatory', make:(p,pal,r)=>TPL.pavilion(p,pal,r,{ dome:true }), kw:/research|search|data|science|knowledge|answer/ },
+       { key:'compute-studio', name:'Compute Studio', make:(p,pal,r)=>TPL.studio(p,pal,r,{ fins:true, tall:true }), kw:/gpu|compute|voice|audio|speech|image gen|local/ } ],
+  experiment:[ { key:'experimental-pavilion', name:'Experimental Pavilion', make:(p,pal,r)=>TPL.pavilion(p,pal,r,{ orb:true }), kw:/game|play|toy|\bfun\b|puzzle/ },
+               { key:'strange-lab', name:'Strange Lab', make:(p,pal,r)=>TPL.studio(p,pal,r,{ dish:true, fins:true }), kw:/shader|webgl|glitch|generativ|creative cod|simulat/ },
+               { key:'interactive-gallery', name:'Interactive Gallery', make:(p,pal,r)=>TPL.pavilion(p,pal,r), kw:/interactive|music|sound|\bart\b|visual|pointer/ },
+               { key:'observatory', name:'Observatory', make:(p,pal,r)=>TPL.tower(p,pal,r,{ dome:true, short:true }), kw:/\bmap|globe|space|radio|world|planet/ } ],
+  personal:[ { key:'studio-house', name:'Studio House', make:(p,pal,r)=>TPL.house(p,pal,r), kw:/note|writing|journal|blog|diary|newsletter/ },
+             { key:'garden-house', name:'Garden House', make:(p,pal,r)=>TPL.pavilion(p,pal,r,{ greenhouse:true }), kw:/habit|health|garden|calm|focus|mindful|wellbeing/ },
+             { key:'library', name:'Library', make:(p,pal,r)=>TPL.studio(p,pal,r,{ columns:true }), kw:/read|book|library|collect|bookmark|archive|save/ },
+             { key:'cabin', name:'Cabin', make:(p,pal,r)=>TPL.house(p,pal,r,{ small:true }), kw:/music|radio|personal|home|homepage|cosy|cozy/ } ],
+};
+// intentional, not random: the template whose keywords match the tool best; ties and no-match fall back to the slug
+function pickTemplate(p){ const list=PLACE_TEMPLATES[p.district]; const named=list.find(t=>t.key===p.template); if(named) return named;
+  const text=[p.name,p.tagline,p.desc,...(p.tags||[])].join(' ').toLowerCase();
+  const scored=list.map(t=>({ t, n:(text.match(new RegExp(t.kw.source,'g'))||[]).length })); const best=Math.max(...scored.map(x=>x.n));
+  const pool=scored.filter(x=>x.n===best).map(x=>x.t); return pool[hashStr(p.slug||p.id)%pool.length]; }
+function buildPlace(p){ const t=pickTemplate(p); p.templateKey=t.key; p.templateName=t.name;
+  return t.make(p,PAL[p.district],mulberry32(hashStr('tpl:'+(p.slug||p.id)))); }
+
 /* ---- landmarks ---- */
 const LM = {};
 LM.creative = (r,pal)=>{ const g=new THREE.Group(); const mat=winMat('#e3dbff','#ff8fd0',1);
@@ -1297,9 +1424,10 @@ function styleFor(p, r){ if(p.style && p.style!=='auto'){ const m=USER_STYLE[p.s
 function placeBuilding(p, animate=false){
   const d=world.districts[p.district]; const cell=d.cells.find(c=>!c.occupied); if(!cell) return false;
   cell.occupied=p.id; p.cell=cell; setTreesHidden(cell.trees,true);
-  const r=mulberry32(hashStr(p.id)); const kind=styleFor(p,r);
-  const g=B[kind](r, PAL[p.district], {});
-  g.position.set(cell.lx,GROUND,cell.lz); g.rotation.y=pickR(r,[0,Math.PI/2,Math.PI,-Math.PI/2]);
+  const r=mulberry32(hashStr(p.id));
+  // curated places get a district template facing the camera; Classics keep their original buildings
+  const g= p.curated? buildPlace(p) : B[styleFor(p,r)](r, PAL[p.district], {});
+  g.position.set(cell.lx,GROUND,cell.lz); g.rotation.y= p.curated? 0 : pickR(r,[0,Math.PI/2,Math.PI,-Math.PI/2]);
   g.userData.place=p; d.group.add(g); world.pickables.push(g); p.obj=g; p.height=g.userData.h;
   if(animate) spawnAnim(g, DISTRICTS[p.district].color);
   return true;
@@ -1540,10 +1668,10 @@ function openPlace(p){
   const d=DISTRICTS[p.district]; const url=safeUrl(p.url);
   const nearby=places.filter(x=>x.district===p.district && x.id!==p.id).slice(0,4); const st=Data.stats(p);
   sideShell(d.color, mono(p), `
-    <div class="tagline-row"><span class="dot" style="color:${d.color};width:7px;height:7px"></span>${d.name} · ${p.seed?'Classic':'Community'}</div>
+    <div class="tagline-row"><span class="dot" style="color:${d.color};width:7px;height:7px"></span>${d.name} · ${p.curated? esc(p.templateName||'Place') : p.seed?'Classic':'Community'}</div>
     <div><h2>${esc(p.name)}</h2></div>
     <div class="sub">${esc(p.tagline||'')}</div>
-    ${p.seed?`<div class="cl-note">A hand-picked Classic. Classics aren’t ranked — the top 10 inside ${d.lm} is for makers.</div>`:''}
+    ${p.seed && !p.curated?`<div class="cl-note">A hand-picked Classic. Classics aren’t ranked — the top 10 inside ${d.lm} is for makers.</div>`:''}
     ${p.desc?`<p class="desc">${esc(p.desc)}</p>`:''}
     <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}${Data.numbers?`<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>`:''}${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
     ${p.tags?.length?`<div class="tags">${p.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
@@ -2223,12 +2351,31 @@ function filmLoop(){ const now=performance.now(); if(film.started){ const t=Math
   else { filmApply(0); frame({ t:now/1000, dt:1/60 }); } requestAnimationFrame(filmLoop); }
 function filmStart(){ if(film.started) return; film.started=true; film.t0=film.last=performance.now(); $('filmStart').hidden=true; }
 
+/* ?templates — a review sheet of every place template, five districts by four templates */
+let tplGallery=null;
+function showTemplateGallery(){ const S=new THREE.Scene(); S.background=new THREE.Color('#080c26');
+  S.add(new THREE.HemisphereLight('#c9ccff','#1a1540',1.15)); S.add(new THREE.AmbientLight('#ffffff',.15));
+  const dl=new THREE.DirectionalLight('#fff4e6',1.5); dl.position.set(-14,30,18); dl.castShadow=true; dl.shadow.mapSize.set(2048,2048);
+  Object.assign(dl.shadow.camera,{ left:-22, right:22, top:22, bottom:-22, near:1, far:90 }); dl.shadow.bias=-.0005; S.add(dl);
+  S.add(new THREE.PointLight('#8a7bff',0,10)); S.add(new THREE.PointLight('#ffd9b0',0,10));
+  ORDER.forEach((k,row)=>PLACE_TEMPLATES[k].forEach((t,col)=>{ const x=(col-1.5)*5.4, z=(row-2)*5.4;
+    S.add(at(box(4.4,.3,4.4,stdMat('#1a2050')),x,-.3,z)); S.add(noPick(at(box(4.46,.05,4.46,glowMat(DISTRICTS[k].color,1.4)),x,-.06,z)));
+    const p={ id:'tpl-'+t.key, slug:t.key, district:k, name:t.name, tagline:DISTRICTS[k].name, template:t.key, curated:true };
+    const g=buildPlace(p); g.position.set(x,0,z); S.add(g); }));
+  const cam=new THREE.OrthographicCamera(-1,1,1,-1,1,400);
+  tplGallery={ frame(){ const a=innerWidth/innerHeight, H=30; cam.left=-H*a/2; cam.right=H*a/2; cam.top=H/2; cam.bottom=-H/2;
+    const dir=V3(Math.sin(Math.PI/4)*Math.cos(ELEV),Math.sin(ELEV),Math.cos(Math.PI/4)*Math.cos(ELEV)); cam.position.copy(dir).multiplyScalar(120); cam.lookAt(0,1,0); cam.updateProjectionMatrix();
+    renderPass.scene=S; renderPass.camera=cam; composer.render(); } };
+  document.body.classList.add('film'); $('labels').style.display='none';
+}
+
 /* =====================================================================
    LOOP
    ===================================================================== */
 const clock=new THREE.Clock(); const tmpV=new THREE.Vector3(), tmpT=new THREE.Vector3();
 function frame(ft){
   const dt=ft? ft.dt : Math.min(clock.getDelta(),.05), t=ft? ft.t : clock.elapsedTime, now=ft? ft.t*1000 : performance.now();
+  if(tplGallery){ for(const u of timeUniforms) u.uTime.value=t; tplGallery.frame(); return; }
   if(interior.active){ interiorFrame(dt,t,now); return; }
   const k=1-Math.exp(-dt*5.5);
   cam.target.lerp(goal.target,k); cam.az+=(goal.az-cam.az)*k; cam.zoom=Math.exp(Math.log(cam.zoom)+(Math.log(goal.zoom)-Math.log(cam.zoom))*k);
@@ -2261,6 +2408,7 @@ try{
   goal.zoom=fitZoom(); cam.zoom=goal.zoom*.62; cam.az=Math.PI/4-.7; cam.target.copy(HOME);
   updateCamera(); animate();
   setTimeout(()=>$('loader').classList.add('done'),120);
+  if(new URLSearchParams(location.search).has('templates')) showTemplateGallery();
   if(film.on){ filmInit(); if(film.render){ $('filmStart').hidden=true; window.__film=(t,dt)=>{ filmStep(t,dt||1/30); return t; }; }
     else { addEventListener('keydown',e=>{ if(e.code==='Space'){ e.preventDefault(); filmStart(); } }); addEventListener('pointerdown',filmStart); } }
   else openDeepLink();

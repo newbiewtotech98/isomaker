@@ -4,19 +4,19 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Isomaker — Living World of Indie Tools</title>
-<meta name="description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and reserve a spot for your tool." />
+<meta name="description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and join the waitlist to add your tool." />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Isomaker" />
 <meta property="og:url" content="https://www.isomaker.club/" />
 <meta property="og:title" content="Isomaker — Living World of Indie Tools" />
-<meta property="og:description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and reserve a spot for your tool." />
+<meta property="og:description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and join the waitlist to add your tool." />
 <meta property="og:image" content="https://www.isomaker.club/og.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content="An isometric night-time world of glowing islands, each a district of indie tools, around a central observatory." />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Isomaker — Living World of Indie Tools" />
-<meta name="twitter:description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and reserve a spot for your tool." />
+<meta name="twitter:description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and join the waitlist to add your tool." />
 <meta name="twitter:image" content="https://www.isomaker.club/og.png" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff3d7f'/%3E%3Cstop offset='1' stop-color='%23ffcf5c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -362,7 +362,7 @@
 <div class="tr panel">
   <button class="btn" id="findBtn" title="Find a place (/)"><span data-i="search"></span><span class="t">Find place</span><span class="kbd">/</span></button>
   <button class="btn" id="wanderBtn" title="Wander (W)"><span data-i="shuffle"></span><span class="t">Wander</span></button>
-  <button class="btn primary" id="addBtn"><span data-i="plus"></span><span class="t">Reserve your spot</span></button>
+  <button class="btn primary" id="addBtn"><span data-i="plus"></span><span class="t">Join the waitlist</span></button>
 </div>
 
 <div class="search panel" id="search" hidden>
@@ -402,7 +402,7 @@
 <div class="modal" id="modal" hidden>
   <div class="modal-card panel" role="dialog" aria-modal="true" aria-labelledby="addTitle">
     <div class="modal-head">
-      <div><h2 id="addTitle">Reserve your spot</h2><p>Isomaker opens to makers soon. Reserve a spot now and your tool will be among the first buildings in its district, with a shot at the landmark’s top 10.</p></div>
+      <div><h2 id="addTitle">Join the waitlist</h2><p>Isomaker opens to makers soon. Join the waitlist and your tool will be among the first buildings in its district, with a shot at the landmark’s top 10.</p></div>
       <button class="icon-btn" data-close title="Close"><span data-i="x"></span></button>
     </div>
     <form id="addForm" novalidate>
@@ -418,11 +418,11 @@
       </div>
       <fieldset><legend>District</legend><div class="choice" id="districtChoice"></div></fieldset>
       <p class="form-error" id="formError"></p>
-      <button type="button" class="linkbtn" id="toLookup">Already reserved? Get your referral link</button>
+      <button type="button" class="linkbtn" id="toLookup">Already on the waitlist? Get your referral link</button>
       <div class="modal-actions">
         <span class="hint" style="margin-right:auto;align-self:center">Your email is only used to tell you when it’s live</span>
         <button type="button" class="btn ghost" data-close>Cancel</button>
-        <button type="submit" class="btn primary"><span data-i="plus"></span><span class="lbl">Reserve my spot</span></button>
+        <button type="submit" class="btn primary"><span data-i="plus"></span><span class="lbl">Join the waitlist</span></button>
       </div>
     </form>
     <div class="reserved" id="reserved" hidden>
@@ -430,12 +430,12 @@
       <h2>You’re on the list</h2>
       <p id="reservedMsg"></p>
       <label class="f">Your referral link<div class="refbox"><input id="refLink" readonly><button type="button" class="btn ghost" id="copyRef">Copy</button></div></label>
-      <p class="hint">Makers who reserve through your link are credited to you. Top referrers get the first spotlight weeks at launch.</p>
+      <p class="hint">Makers who join through your link are credited to you. Top referrers get the first spotlight weeks at launch.</p>
       <div class="modal-actions"><button type="button" class="btn primary" data-close>Back to exploring</button></div>
     </div>
     <div class="reserved" id="lookup" hidden>
       <h2>Get your referral link</h2>
-      <p>Enter the email you reserved with. Your link is worked out from your email, so it is the same on every device.</p>
+      <p>Enter the email you joined with. Your link is worked out from your email, so it is the same on every device.</p>
       <label class="f">Email<input id="lookupEmail" type="email" placeholder="you@yourtool.com" autocomplete="email"></label>
       <p class="form-error" id="lookupError"></p>
       <label class="f" id="lookupResult" hidden>Your referral link<div class="refbox"><input id="lookupLink" readonly><button type="button" class="btn ghost" id="copyLookup">Copy</button></div></label>
@@ -1455,7 +1455,7 @@ let hovered=null, hoverRaf=0;
 function hoverAt(x,y){ if(hoverRaf) return; hoverRaf=requestAnimationFrame(()=>{ hoverRaf=0;
   if(interior.active){ const sl=pickInterior(x,y); cvs.classList.toggle('hovering',!!sl); interiorHighlight(sl?.p||null); if(sl) markSlot(interior.ctx.hover,sl);
     if(sl){ const d=DISTRICTS[interior.key]; tooltip.hidden=false; tooltip.style.left=x+'px'; tooltip.style.top=y+'px';
-      tooltip.innerHTML=`<em><span class="dot" style="color:${d.color};width:6px;height:6px"></span>#${sl.rank} this week · ${d.short}</em><b>${esc(sl.p? sl.p.name : 'Open spot')}</b><span>${sl.p? esc(sl.p.tagline||'') : 'Reserve a spot to claim it'}</span>`; }
+      tooltip.innerHTML=`<em><span class="dot" style="color:${d.color};width:6px;height:6px"></span>#${sl.rank} this week · ${d.short}</em><b>${esc(sl.p? sl.p.name : 'Open spot')}</b><span>${sl.p? esc(sl.p.tagline||'') : 'Join the waitlist to claim it'}</span>`; }
     else hideTooltip(); return; }
   const p=pickAt(x,y); setHover(p);
   if(p){ const d=DISTRICTS[p.district]; tooltip.hidden=false; tooltip.style.left=x+'px'; tooltip.style.top=y+'px';
@@ -1570,7 +1570,7 @@ function openDistrict(k){
     <div><h2>${d.name}</h2></div><div class="sub">${d.tag}</div>
     <p class="desc">${d.desc}</p>
     <div class="stats"><div class="stat"><b>${ps.length}</b><span>places</span></div><div class="stat"><b>${ps.filter(p=>p.user).length}</b><span>community</span></div><div class="stat"><b>${free}</b><span>open lots</span></div></div>
-    <div class="actions"><button class="btn primary" id="enterLm">Step inside ${d.lm}</button><button class="btn ghost" id="shareD" title="Share this district">${icon('share')}</button><button class="btn ghost" id="addHere">${icon('plus')} Reserve a spot</button></div>
+    <div class="actions"><button class="btn primary" id="enterLm">Step inside ${d.lm}</button><button class="btn ghost" id="shareD" title="Share this district">${icon('share')}</button><button class="btn ghost" id="addHere">${icon('plus')} Join the waitlist</button></div>
     <div class="list"><h4>Places</h4>${ps.map(placeRow).join('')}</div>`);
   bindRows(side); $('addHere').onclick=()=>openModal(k); $('enterLm').onclick=()=>enterInterior(k); select(world.districts[k].landmark);
   $('shareD').onclick=()=>shareLink({ district:k }, `The ${d.name} on Isomaker`); setUrl({ district:k });
@@ -1633,7 +1633,7 @@ function openModal(k){ form.reset(); showModalView('form'); $('formError').textC
 function closeModal(){ modal.hidden=true; }
 $('addBtn').onclick=()=>openModal();
 modal.addEventListener('click',e=>{ if(e.target===modal || e.target.closest('[data-close]')) closeModal(); });
-/* Reservations. Until the shared backend exists, "Reserve your spot" sends the
+/* Reservations. Until the shared backend exists, "Join the waitlist" sends the
    tool to a Google Form (a sheet the owner reviews) instead of placing a building
    only this browser would see. Paste the form's formResponse URL and entry ids
    below to switch it on. */
@@ -1670,18 +1670,18 @@ form.addEventListener('submit',async e=>{ e.preventDefault(); const f=new FormDa
   const data={ name, url:safeUrl(url), tagline:String(f.get('tagline')||'').trim(), desc:String(f.get('desc')||'').trim(), by:String(f.get('by')||'').trim(),
     email, district:RESERVE.districtLabel[k]||D.short, ref:'', referredBy:'' };
   const code=await Referral.codeFor(email); data.ref=code; data.referredBy= Referral.from()===code? '' : Referral.from();
-  const btn=form.querySelector('[type=submit]'), lbl=btn.querySelector('.lbl'); btn.disabled=true; lbl.textContent='Reserving…';
+  const btn=form.querySelector('[type=submit]'), lbl=btn.querySelector('.lbl'); btn.disabled=true; lbl.textContent='Joining…';
   try{ await sendReservation(data); }
-  catch(x){ err.textContent= x.message==='closed'? 'Reservations open very soon — check back shortly.' : 'Couldn’t reach the reservation list. Check your connection and try again.'; return; }
-  finally{ btn.disabled=false; lbl.textContent='Reserve my spot'; }
+  catch(x){ err.textContent= x.message==='closed'? 'The waitlist opens very soon — check back shortly.' : 'Couldn’t reach the waitlist. Check your connection and try again.'; return; }
+  finally{ btn.disabled=false; lbl.textContent='Join the waitlist'; }
   Referral.noteReserved(); Referral.remember(code); showModalView('done');
-  $('reservedMsg').textContent=`${name} is reserved in the ${D.name}. We’ll email ${email} when Isomaker opens to makers, and it will be among the first tools inside ${D.lm}.`;
+  $('reservedMsg').textContent=`${name} is on the waitlist for the ${D.name}. We’ll email ${email} when Isomaker opens to makers, and it will be among the first tools considered for ${D.lm}.`;
   $('refLink').value=Referral.link(code);
 });
 $('toLookup').onclick=()=>{ showModalView('lookup'); $('lookupError').textContent=''; $('lookupResult').hidden=true; $('lookupEmail').value=form.elements.email.value; setTimeout(()=>$('lookupEmail').focus(),30); };
 $('backToForm').onclick=()=>showModalView('form');
 $('lookupGo').onclick=async()=>{ const email=$('lookupEmail').value.trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $('lookupError').textContent='Enter the email you reserved with.'; return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $('lookupError').textContent='Enter the email you joined with.'; return; }
   $('lookupError').textContent=''; const code=await Referral.codeFor(email); Referral.remember(code); $('lookupLink').value=Referral.link(code); $('lookupResult').hidden=false; };
 $('lookupEmail').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $('lookupGo').click(); } });
 $('copyLookup').onclick=async()=>{ const b=$('copyLookup'); try{ await navigator.clipboard.writeText($('lookupLink').value); b.textContent='Copied'; }catch(e){ $('lookupLink').select(); b.textContent='Press ⌘C'; } setTimeout(()=>b.textContent='Copy',1800); };
@@ -1952,9 +1952,9 @@ function pickInterior(x,y){ if(!interior.ctx) return null; raycaster.setFromCame
 function renderRankList(){ const k=interior.key, D=DISTRICTS[k], el=$('irank');
   const rows=interior.top.map((p,i)=>{ const s=Data.stats(p); return `<div class="rrow" data-id="${esc(p.id)}"><span class="rn${i<3?' podium':''}">${i+1}</span>${mono(p)}<div class="rt"><b>${esc(p.name)}${interior.ctx?.fresh.has(p.id)?'<i class="newtag">New</i>':''}</b><small>${esc(p.tagline||host(p.url))}</small></div>${Data.numbers?`<div class="rs"><b>▲ ${s.upvotes}</b><small>${s.visits} visits</small></div>`:''}</div>`; });
   const open=10-interior.top.length;
-  if(open && rows.length) rows.push(`<div class="rrow empty" data-empty="1"><span class="rn">+</span><div class="mono ghost">+</div><div class="rt"><b>${open} open spot${open>1?'s':''}</b><small>Reserve a spot in ${D.short}</small></div></div>`);
+  if(open && rows.length) rows.push(`<div class="rrow empty" data-empty="1"><span class="rn">+</span><div class="mono ghost">+</div><div class="rt"><b>${open} open spot${open>1?'s':''}</b><small>Join the waitlist for ${D.short}</small></div></div>`);
   const body= rows.length? `<div class="rlist">${rows.join('')}</div>`
-    : `<div class="rempty"><b>The top 10 is waiting for its first maker</b><p>Every spot in ${D.lm} goes to tools the community adds. Reserve a spot now and yours will be among the first inside when makers are let in.</p><button class="btn primary" data-empty="1">${icon('plus')} Reserve a spot in ${D.short}</button></div>`;
+    : `<div class="rempty"><b>The top 10 is waiting for its first maker</b><p>Every spot in ${D.lm} goes to tools the community adds. Join the waitlist and yours could be among the first inside when makers are let in.</p><button class="btn primary" data-empty="1">${icon('plus')} Join the waitlist for ${D.short}</button></div>`;
   el.innerHTML=`<div class="rhead"><h4>Top 10 this week</h4><small>${Data.weekLabel()}</small></div>${body}<p class="rnote">Community tools only, ranked by 3 × upvotes + website visits. Resets every Monday.</p>`;
   el.querySelectorAll('.rrow[data-id]').forEach(r=>{ const p=places.find(x=>x.id===r.dataset.id);
     r.onmouseenter=()=>interiorHighlight(p); r.onmouseleave=()=>interiorHighlight(null); r.onclick=()=>openPlace(p); });
@@ -2064,8 +2064,8 @@ function openObservatoryPanel(){
     <div class="list"><h4>Last week’s crowns</h4>${crowns.length? crowns.map(placeRow).join('') : '<p class="empty-note">Crowns go to a district’s community #1 with 5 or more upvotes in a week.</p>'}</div>
     <div class="list"><h4>Your trail</h4>
       <div class="trail">${ORDER.map(k=>`<span class="tdot${seenD.has(k)?' on':''}" style="--c:${DISTRICTS[k].color}">${DISTRICTS[k].short}</span>`).join('')}</div>
-      <div class="stats"><div class="stat"><b>${seenD.size}/5</b><span>rooms entered</span></div><div class="stat"><b>${Data.votedCount()}</b><span>upvotes given</span></div><div class="stat"><b>${Referral.count()}</b><span>spots reserved</span></div></div></div>
-    <div class="actions"><button class="btn primary" id="addAbout">${icon('plus')} Reserve your spot</button><button class="btn ghost" id="shareObs" title="Share the Observatory view">${icon('share')}</button></div>
+      <div class="stats"><div class="stat"><b>${seenD.size}/5</b><span>rooms entered</span></div><div class="stat"><b>${Data.votedCount()}</b><span>upvotes given</span></div><div class="stat"><b>${Referral.count()}</b><span>waitlist joins</span></div></div></div>
+    <div class="actions"><button class="btn primary" id="addAbout">${icon('plus')} Join the waitlist</button><button class="btn ghost" id="shareObs" title="Share the Observatory view">${icon('share')}</button></div>
     <details class="about"><summary>About Isomaker and controls</summary>
       <p class="desc">Isomaker is a living world of indie tools, plugins and delightful websites. Classics are hand-picked; each landmark’s top 10 belongs to tools the community adds. <a href="story.html" style="color:var(--text)">Read the story →</a></p>
       <div class="meta" style="grid-template-columns:auto 1fr"><dt>Drag</dt><dd>Pan the world</dd><dt>Scroll / pinch</dt><dd>Zoom</dd><dt>Right-drag, Q / E</dt><dd>Rotate</dd><dt>Click</dt><dd>Open any building</dd><dt>Landmarks</dt><dd>Step inside for the top 10</dd><dt>/ · W · H</dt><dd>Find · Wander · Home</dd></div></details>`);
@@ -2136,7 +2136,7 @@ const FILM_DEMO=[['Palette Pal','Colour systems in one click'],['Kerning Club','
 function filmInit(){
   document.body.classList.add('film'); stopWander(); closeSide();
   const el=document.createElement('div'); el.innerHTML=`<div class="film-cap" id="filmCap"><b></b><span></span></div><div class="film-tag" id="filmTag">Sample makers</div>
-    <div class="film-end" id="filmEnd"><div class="fe-row"><div class="logo"></div><b>Isomaker</b></div><span>A living world of indie tools</span><em>www.isomaker.club</em><i>Reserve your spot</i></div>
+    <div class="film-end" id="filmEnd"><div class="fe-row"><div class="logo"></div><b>Isomaker</b></div><span>A living world of indie tools</span><em>www.isomaker.club</em><i>Join the waitlist</i></div>
     <div class="film-start" id="filmStart">Click or press Space to play</div>`;
   document.body.append(...el.children);
   // the hero shot: the tallest Classic in the Experiment District
@@ -2190,15 +2190,15 @@ function filmApply(t){
   } else if(t<33.5){ // 6. the Observatory view
     filmObs(true); const e=fss(28,33.5,t); filmWorldCam(HOME,flerp(A+.18,A,fss(28,30,t)),fit*flerp(1.02,1.1,e));
     capShown=filmCap(t,28.4,33.2,'See the whole world at a glance');
-  } else if(t<38.6){ // 7. reserve a spot
+  } else if(t<38.6){ // 7. join the waitlist
     filmObs(false); const e=fss(33.5,38.6,t); filmWorldCam(HOME,flerp(A,A-.15,e),fit*1.2);
     once('openModal',()=>{ openModal('creative'); document.activeElement?.blur(); });
     const typed=(str,a,b)=>str.slice(0,Math.round(str.length*fss(a,b,t)));
     form.elements.name.value=typed('Palette Pal',34.2,35.1); form.elements.url.value=typed('palettepal.app',34.9,35.6);
     form.elements.tagline.value=typed('Colour systems in one click',35.3,36); form.elements.email.value=typed('hello@palettepal.app',35.7,36.3);
-    if(t>=36.6) once('reserved',()=>{ showModalView('done'); $('reservedMsg').textContent='Palette Pal is reserved in the Creative District. We’ll email you when Isomaker opens to makers, and it will be among the first tools inside The Canvas.'; $('refLink').value='https://www.isomaker.club/?ref=k3x9pa2m'; });
+    if(t>=36.6) once('reserved',()=>{ showModalView('done'); $('reservedMsg').textContent='Palette Pal is on the waitlist for the Creative District. We’ll email you when Isomaker opens to makers, and it will be among the first tools considered for The Canvas.'; $('refLink').value='https://www.isomaker.club/?ref=k3x9pa2m'; });
     const mo=fss(33.6,34.05,t)*(1-fss(38.2,38.6,t)); modal.style.opacity=mo;
-    capShown=filmCap(t,34,38.3,'The top 10 is for makers','Reserve your spot before launch');
+    capShown=filmCap(t,34,38.3,'The top 10 is for makers','Join the waitlist before launch');
   } else { // 8. end card
     once('closeModal',()=>{ closeModal(); modal.style.opacity=''; });
     const e=fss(38.6,42,t); filmWorldCam(HOME,flerp(A-.15,A-.3,e),fit*flerp(1.2,.98,e));

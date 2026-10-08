@@ -16,6 +16,12 @@
     "added": "2026-10-08",
     "logo": "/places/hairline/logo.svg",
     "screenshot": "/places/hairline/screenshot.png",
-    "brandColor": "#f2f2f5"
+    "brandColor": "#f2f2f5",
+    "highlights": [
+      "33 line figures",
+      "Answers the pointer",
+      "SVG, no dependencies",
+      "React or any DOM"
+    ]
   }
 ]

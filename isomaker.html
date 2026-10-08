@@ -306,6 +306,14 @@
   .reserved .ok{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:700;color:#06281a;background:#3ee08f;box-shadow:0 0 24px rgba(62,224,143,.5)}
   .reserved h2{margin:0;font-size:20px} .reserved p{margin:0;color:var(--muted);line-height:1.5}
   .refbox{display:flex;gap:8px} .refbox input{flex:1;min-width:0}
+  .share-card{width:640px}
+  .seg-row{display:inline-flex;gap:4px;padding:4px;border-radius:var(--r);border:1px solid var(--line);margin-bottom:12px}
+  .seg-row button{border:0;background:transparent;padding:7px 12px;border-radius:6px;cursor:pointer;color:var(--muted);font-weight:500}
+  .seg-row button.on{background:var(--hover);color:var(--text)}
+  .share-stage{position:relative;border-radius:var(--r-m);overflow:hidden;border:1px solid var(--line);background:#070b26;aspect-ratio:1/1;display:grid;place-items:center}
+  .share-stage[data-f=og]{aspect-ratio:1200/630}
+  .share-stage img{width:100%;height:100%;object-fit:contain;display:block}
+  .share-stage.loading img{visibility:hidden} .share-wait{position:absolute;color:var(--muted)} .share-stage:not(.loading) .share-wait{display:none}
   .form-error{color:#ff7a8a;margin:0;min-height:1em;font-size:12.5px}
   .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
   .hint{font-size:11.5px;color:var(--faint)}
@@ -407,6 +415,15 @@
 <div class="tooltip panel" id="tooltip" hidden></div>
 <div class="toast panel" id="toast"></div>
 
+<div class="modal" id="shareModal" hidden>
+  <div class="modal-card panel share-card" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+    <div class="modal-head"><div><h2 id="shareTitle">Share this place</h2><p>A card for this place in Isomaker. Post it anywhere; the link brings people straight to the building.</p></div>
+      <button class="icon-btn" data-close-share title="Close"><span data-i="x"></span></button></div>
+    <div class="seg-row" id="shareFmt"><button data-f="square" class="on">Square post</button><button data-f="og">Link preview</button></div>
+    <div class="share-stage loading" id="shareStage" data-f="square"><img id="shareImg" alt="Share card"><span class="share-wait">Rendering the card…</span></div>
+    <div class="modal-actions"><button type="button" class="btn ghost" id="shareCopy"><span data-i="link"></span>Copy link</button><button type="button" class="btn primary" id="shareDownload"><span data-i="download"></span>Download PNG</button></div>
+  </div>
+</div>
 <div class="modal" id="modal" hidden>
   <div class="modal-card panel" role="dialog" aria-modal="true" aria-labelledby="addTitle">
     <div class="modal-head">
@@ -971,7 +988,7 @@ function imageTex(im,w,h,mode,bg){ return canvasTex(w,h,(x)=>{ x.fillStyle=bg; x
   const iw=im.naturalWidth||w, ih=im.naturalHeight||h, s= mode==='cover'? Math.max(w/iw,h/ih) : Math.min(w/iw,h/ih), dw=iw*s, dh=ih*s;
   x.drawImage(im,(w-dw)/2,(h-dh)/2,dw,dh); }); }
 // images are dimmed a little so white artwork doesn't flare under the night-time bloom
-async function personalize(p){ const S=p.obj?.userData.slots; if(!S) return;
+async function personalize(p,S=p.obj?.userData.slots){ if(!S) return;
   const swap=(mat,tex,k)=>{ mat.map?.dispose(); mat.map=tex; mat.color.setScalar(k); mat.needsUpdate=true; };
   if(p.logo) try{ swap(S.logo,imageTex(await loadImage(p.logo),512,512,'contain','#121735'),.8); }catch(e){}
   if(p.screenshot) try{ const a=S.screenAspect||1.6, W=1024; swap(S.screen,imageTex(await loadImage(p.screenshot),W,Math.round(W/a),'cover','#121735'),.72); }catch(e){}
@@ -1679,6 +1696,7 @@ const ICONS = {
   target:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
   trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>',
   share:'<path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/>',
+  download:'<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
 };
 const icon = n=>`<svg class="i" viewBox="0 0 24 24">${ICONS[n]}</svg>`;
 document.querySelectorAll('[data-i]').forEach(el=>{ el.outerHTML=icon(el.dataset.i); });
@@ -1724,14 +1742,14 @@ function openPlace(p,opt={}){
     <div class="actions">
       ${url?`<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${cu?'Visit tool':'Visit website'} ${icon('ext')}</a>`:''}
       ${p.seed?'':`<button class="btn ghost vote${st.voted?' on':''}" id="voteBtn" title="${st.voted?'Remove upvote':'Upvote'}">▲ ${Data.numbers?`<b>${st.upvotes}</b>`:'Upvote'}</button>`}
-      <button class="btn ghost" id="shareBtn" title="Share this place">${icon('share')}</button>
+      <button class="btn ghost" id="shareBtn" title="Share this place">${icon('share')} Share</button>
       ${interior.active?'':`<button class="btn ghost" id="focusBtn" title="Fly to">${icon('target')}</button>`}
     </div>
     ${p.user?`<button class="btn ghost danger" id="removeBtn">${icon('trash')} Remove my place</button>`:''}
     ${moreBy.length?`<div class="list"><h4>More by ${esc(by)}</h4>${moreBy.map(placeRow).join('')}</div>`:''}
     ${nearby.length?`<div class="list"><h4>Also in ${d.short}</h4>${nearby.map(placeRow).join('')}</div>`:''}`, cu? p.screenshot : null);
   bindRows(side);
-  $('shareBtn').onclick=()=>shareLink({ place:slugOf(p) }, `${p.name} in the ${d.name} on Isomaker`, p);
+  $('shareBtn').onclick=()=>openShareCard(p);
   if($('focusBtn')) $('focusBtn').onclick=()=>flyToPlace(p);
   const visitA=side.querySelector('a.btn.primary'); if(visitA) visitA.addEventListener('click',()=>{ if(!Data.recordVisit(p)) return; const s2=Data.stats(p);
     if($('weekStat')) $('weekStat').innerHTML=weekLine(p,d); updateMetrics(); if(interior.active) renderRankList(); });
@@ -1867,7 +1885,7 @@ $('copyRef').onclick=async()=>{ const b=$('copyRef'); try{ await navigator.clipb
 
 /* keyboard */
 addEventListener('keydown',e=>{ const typing=/INPUT|TEXTAREA/.test(document.activeElement?.tagName);
-  if(e.key==='Escape'){ if(!modal.hidden) closeModal(); else if(!search.hidden) closeSearch(); else if(interior.active && !side.classList.contains('open')) exitInterior(); else { closeSide(); stopWander(); } return; }
+  if(e.key==='Escape'){ if(!$('shareModal').hidden) closeShareCard(); else if(!modal.hidden) closeModal(); else if(!search.hidden) closeSearch(); else if(interior.active && !side.classList.contains('open')) exitInterior(); else { closeSide(); stopWander(); } return; }
   if(typing || !modal.hidden) return;
   const k=e.key.toLowerCase(); const { R:Rv, F }=camVecs(goal.az); const step=12/goal.zoom;
   if(interior.active){ if(k==='q') interior.goalAz-=Math.PI/2; else if(k==='e') interior.goalAz+=Math.PI/2; else if(k==='+'||k==='=') izoom(1.3); else if(k==='-'||k==='_') izoom(1/1.3);
@@ -2415,6 +2433,160 @@ function showTemplateGallery(){ const S=new THREE.Scene(); S.background=new THRE
     renderPass.scene=S; renderPass.camera=cam; composer.render(); } };
   document.body.classList.add('film'); $('labels').style.display='none';
 }
+
+/* =====================================================================
+   SHARE CARDS
+   A place's card is rendered from the same Place: the same builder and seed
+   make the same building, with the same logo and screenshot, set on a small
+   island diorama and lit like the world at night. A 2D layer adds the type.
+   Formats: 'square' (1080×1080, for posts) and 'og' (1200×630, link previews).
+   ===================================================================== */
+const CARD_FMT={ square:{ W:1080, H:1080 }, og:{ W:1200, H:630 } };
+const cardCache=new Map();
+function placeBuilding3D(p){ // a fresh copy of the place's building, built exactly as in the world
+  if(p.curated){ const g=buildPlace(p); g.rotation.y=0; return g; }
+  const r=mulberry32(hashStr(p.id)); const g=B[styleFor(p,r)](r, PAL[p.district], {}); g.rotation.y=pickR(r,[0,Math.PI/2,Math.PI,-Math.PI/2]); return g; }
+function cardDiorama(p){
+  const S=new THREE.Scene(); S.background=new THREE.Color('#070b26'); const r=mulberry32(hashStr('card:'+p.id)), pal=PAL[p.district], dcol=DISTRICTS[p.district].color;
+  S.add(new THREE.HemisphereLight('#6a72d8','#10123a',.9)); S.add(new THREE.AmbientLight('#ffffff',.12));
+  const sun=new THREE.DirectionalLight('#8796ff',.9); sun.position.set(-12,26,10); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
+  Object.assign(sun.shadow.camera,{ left:-12, right:12, top:12, bottom:-12, near:1, far:80 }); sun.shadow.bias=-.0005; sun.shadow.normalBias=.03; S.add(sun);
+  const warm=new THREE.PointLight('#ffd9a0',14,14,1.4); warm.position.set(2,3,3); S.add(warm); const cool=new THREE.PointLight(dcol,10,16,1.4); cool.position.set(-3,4,-2); S.add(cool);
+  // island: a small rounded block with displaced rock sides and a grass cap, like the districts
+  const waterY=-2.6, outline=jitterOutline(resample(roundRect(4.9,4.9,1.8,10),.45),hashStr(p.id)%50,.3), H=GROUND-.3-(waterY-.6);
+  const geo=new THREE.ExtrudeGeometry(shapeFrom(outline),{ depth:H, bevelEnabled:false, steps:4 }); geo.rotateX(-Math.PI/2);
+  const pos=geo.attributes.position, v=new THREE.Vector3(), cols=new Float32Array(pos.count*3), cT=new THREE.Color('#5b5f97'), cB=new THREE.Color('#1c2150'), c=new THREE.Color();
+  for(let i=0;i<pos.count;i++){ v.fromBufferAttribute(pos,i); const fromTop=H-v.y, n=noise2(v.x*.5+v.y*.4,v.z*.5-v.y*.3);
+    if(fromTop>.01){ const len=Math.hypot(v.x,v.z)||1, amt=(n-.45)*.7*Math.min(1,fromTop/.6); pos.setXYZ(i,v.x+v.x/len*amt,v.y,v.z+v.z/len*amt); }
+    c.copy(cB).lerp(cT,Math.pow(Math.min(1,Math.max(0,v.y/H)),.8)).multiplyScalar(.8+.4*n); cols.set([c.r,c.g,c.b],i*3); }
+  geo.setAttribute('color',new THREE.BufferAttribute(cols,3)); geo.computeVertexNormals();
+  const cliff=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({ vertexColors:true, roughness:.95, flatShading:true, emissive:'#1d3cff', emissiveIntensity:.08 }));
+  cliff.position.y=waterY-.6; cliff.castShadow=cliff.receiveShadow=true; S.add(cliff);
+  const cap=new THREE.ExtrudeGeometry(shapeFrom(offsetOutline(outline,.08)),{ depth:.4, bevelEnabled:false }); cap.rotateX(-Math.PI/2);
+  const capM=new THREE.Mesh(cap,new THREE.MeshStandardMaterial({ color:'#2f5b43', roughness:.95 })); capM.position.y=GROUND-.4; capM.receiveShadow=true; S.add(capM);
+  // paths: a plaza ring round the building and a walk out to the pier
+  const ring=shapeFrom(roundRect(3.25,3.25,1.1,8)); ring.holes.push(new THREE.Path(roundRect(2.55,2.55,.6,8).map(q=>new THREE.Vector2(q.x,-q.y))));
+  const rg=new THREE.ShapeGeometry(ring,4); rg.rotateX(-Math.PI/2); const path=new THREE.Mesh(rg,roadMat); path.position.y=GROUND+.02; path.receiveShadow=true; S.add(path);
+  const walk=new THREE.Mesh(new THREE.PlaneGeometry(1.7,.75).rotateX(-Math.PI/2),roadMat); walk.position.set(4.05,GROUND+.021,1.6); S.add(walk);
+  // pier on the +x side, lamps at its end
+  const wood=stdMat('#6b5876',{ rough:.9 }), deck=box(4,.12,.8,wood); deck.position.set(6.6,GROUND-.18,1.6); S.add(deck);
+  for(let x=5.2;x<=8.4;x+=1.05) for(const z of [1.25,1.95]) S.add(at(cyl(.06,.06,GROUND-.06-waterY+.3,wood,6),x,waterY-.3,z));
+  const bulb=glowMat('#ffd58a',3.2,'lamp'), post=stdMat('#3a3f5c',{ rough:.6, metal:.2 });
+  const lamp=(x,z)=>{ S.add(at(cyl(.035,.05,1,post,6),x,GROUND,z)); S.add(noPick(at(new THREE.Mesh(new THREE.SphereGeometry(.1,10,8),bulb),x,GROUND+1.05,z)));
+    const pool=new THREE.Mesh(new THREE.PlaneGeometry(2,2).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({ map:DOT_TEX, color:'#ffb866', transparent:true, opacity:.45, blending:THREE.AdditiveBlending, depthWrite:false })); pool.position.set(x,GROUND+.04,z); S.add(pool); };
+  for(const [x,z] of [[8.4,1.2],[8.4,2],[3.4,3.4],[-3.4,3.4],[3.4,-3.4],[-3.4,-3.4],[3.4,0],[0,3.4]]) lamp(x,z);
+  // trees and flowers outside the plaza, kept off the walk and away from the building
+  const greens=['#2f6b45','#3c7d4f','#2a5e44','#4a8a55'], accentTrees=pal.trees.filter(t=>!greens.includes(t));
+  const pine=mergeGeometries([ new THREE.ConeGeometry(.6,1.2,7).translate(0,.85,0), new THREE.ConeGeometry(.45,.9,7).translate(0,1.4,0), new THREE.ConeGeometry(.28,.6,7).translate(0,1.85,0) ]);
+  const trunkG=new THREE.CylinderGeometry(.07,.1,.6,5).translate(0,.3,0), roundG=new THREE.IcosahedronGeometry(.65,0).translate(0,1,0);
+  for(let i=0;i<46;i++){ const a=r()*Math.PI*2, d=rr(r,3.5,4.4), x=Math.cos(a)*d, z=Math.sin(a)*d;
+    if(Math.abs(z-1.6)<.9 && x>2.8) continue; if(sdRoundRect(x,z,4.3,1.6)>0) continue; if(x+z>2.2) continue;
+    const s=rr(r,.75,1.2), col=new THREE.Color(r()<.25 && accentTrees.length? pickR(r,accentTrees) : pickR(r,greens));
+    const t=new THREE.Group(); t.position.set(x,GROUND,z); t.scale.setScalar(s); t.rotation.y=r()*6; S.add(t);
+    t.add(shadow(new THREE.Mesh(trunkG,stdMat('#5a4658')))); t.add(shadow(new THREE.Mesh(r()<.55? pine : roundG, new THREE.MeshStandardMaterial({ color:col, roughness:.85, flatShading:true })))); }
+  for(let i=0;i<22;i++){ const a=r()*Math.PI*2, d=rr(r,2.9,4.2); S.add(at(sphere(rr(r,.14,.24),stdMat(pickR(r,['#ff8fc7','#ffd166','#b58cff','#4a8a55']),{ flat:true }),7,5),Math.cos(a)*d,GROUND+.12,Math.sin(a)*d)); }
+  // two glowing waterfalls on the faces the camera sees
+  for(const [x,z,nx,nz] of [[-1.6,5,0,1],[5,-1.8,1,0]]){ const w=1.1, seg=10, P=[], U=[], I=[], t=new THREE.Vector2(-nz,nx);
+    for(let i=0;i<=seg;i++){ const q=i/seg, y=GROUND-q*(GROUND-waterY), out=.1+.8*Math.sqrt(q); for(let k=0;k<=1;k++){ const off=(k-.5)*w*(1+q*.3); P.push(x+nx*out+t.x*off,y,z+nz*out+t.y*off); U.push(k,q); } }
+    for(let i=0;i<seg;i++){ const a=i*2; I.push(a,a+1,a+2,a+1,a+3,a+2); }
+    const fg=new THREE.BufferGeometry(); fg.setAttribute('position',new THREE.Float32BufferAttribute(P,3)); fg.setAttribute('uv',new THREE.Float32BufferAttribute(U,2)); fg.setIndex(I); S.add(new THREE.Mesh(fg,fallMat));
+    const mist=new THREE.Sprite(new THREE.SpriteMaterial({ map:DOT_TEX, color:'#6fc8ff', transparent:true, opacity:.55, blending:THREE.AdditiveBlending, depthWrite:false })); mist.scale.set(2.6,1.6,1); mist.position.set(x+nx*1.1,waterY+.4,z+nz*1.1); S.add(mist); }
+  // boulders at the waterline and the glowing water around the island
+  const rock=stdMat('#3b3f73',{ flat:true, rough:.95 });
+  outline.forEach((q,i)=>{ if(i%3||r()>.7) return; const n=q.clone().normalize(), o=rr(r,.2,.9); const b=shadow(new THREE.Mesh(new THREE.DodecahedronGeometry(1,0),rock));
+    b.position.set(q.x+n.x*o,waterY+rr(r,-.3,.4),q.y+n.y*o); b.scale.set(rr(r,.4,.9),rr(r,.4,1.1),rr(r,.4,.9)); b.rotation.set(r()*3,r()*3,0); S.add(b); });
+  const water=new THREE.Mesh(new THREE.PlaneGeometry(90,90).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({ color:'#06103a' })); water.position.y=waterY; S.add(water);
+  const glow=new THREE.Mesh(new THREE.PlaneGeometry(22,22).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({ map:DOT_TEX, color:new THREE.Color('#2d8cff').multiplyScalar(1.4), transparent:true, opacity:.9, blending:THREE.AdditiveBlending, depthWrite:false }));
+  glow.position.y=waterY+.02; S.add(glow);
+  const halo=new THREE.Mesh(new THREE.PlaneGeometry(14,14).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({ map:DOT_TEX, color:new THREE.Color(dcol).multiplyScalar(.6), transparent:true, opacity:.5, blending:THREE.AdditiveBlending, depthWrite:false }));
+  halo.position.y=waterY+.03; S.add(halo);
+  return S;
+}
+function cardRoundRect(x,X,Y,w,h,rad){ x.beginPath(); x.roundRect(X,Y,w,h,rad); }
+function cardLogo(x,X,Y,s){ const g=x.createConicGradient(Math.PI*210/180,X+s/2,Y+s/2); g.addColorStop(0,'#ff3d7f'); g.addColorStop(.33,'#ff8a3d'); g.addColorStop(.66,'#ffcf5c'); g.addColorStop(1,'#ff3d7f');
+  x.fillStyle=g; cardRoundRect(x,X,Y,s,s,s*.26); x.fill(); x.strokeStyle='#fff'; x.lineWidth=s*.085; x.beginPath(); x.arc(X+s/2,Y+s/2,s*.22,0,7); x.stroke(); }
+function cardWrap(x,text,max,lines){ const words=String(text||'').split(/\s+/), out=[]; let cur='';
+  for(const w of words){ const t=cur? cur+' '+w : w; if(x.measureText(t).width>max && cur){ out.push(cur); cur=w; if(out.length===lines) break; } else cur=t; }
+  if(out.length<lines && cur) out.push(cur); if(out.length===lines && words.join(' ')!==out.join(' ')) out[lines-1]=out[lines-1].replace(/\s*\S*$/,'')+'…'; return out; }
+function cardText(x,p,f){ const D=DISTRICTS[p.district], acc=accentOf(p), sq=f==='square', W=CARD_FMT[f].W, H=CARD_FMT[f].H, F=(s,w=500)=>`${w} ${s}px Inter, system-ui, sans-serif`;
+  // frame and header
+  x.strokeStyle='rgba(255,255,255,.12)'; x.lineWidth=2; cardRoundRect(x,24,24,W-48,H-48,sq?40:30); x.stroke();
+  const m=sq?72:52; cardLogo(x,m,m,sq?64:50); x.fillStyle='#fff'; x.font=F(sq?42:34,700); x.textBaseline='alphabetic'; x.fillText('Isomaker',m+(sq?84:66),m+(sq?36:30));
+  x.fillStyle='rgba(225,230,255,.72)'; x.font=F(sq?24:20); x.fillText('A living world of indie tools',m+(sq?84:66),m+(sq?68:54));
+  // NEW PLACE badge
+  // a curated place is new for its first 45 days; Classics say so
+  const isNew=p.curated && p.added && (Date.now()-Date.parse(p.added))<45*864e5;
+  x.font=F(sq?22:18,600); const label= !p.curated? 'CLASSIC' : isNew? 'NEW PLACE' : 'PLACE', lw=x.measureText(label).width+(sq?78:64), bh=sq?56:46, bx=W-m-lw, by=m+(sq?4:2);
+  x.fillStyle='rgba(16,22,60,.75)'; cardRoundRect(x,bx,by,lw,bh,bh/2); x.fill(); x.strokeStyle='rgba(160,170,255,.45)'; x.lineWidth=2; x.stroke();
+  x.fillStyle='#b9a6ff'; x.save(); x.translate(bx+(sq?30:25),by+bh/2); x.beginPath(); for(let i=0;i<8;i++){ const a=i*Math.PI/4, rr2=i%2?3.5:11; x.lineTo(Math.cos(a)*rr2,Math.sin(a)*rr2); } x.closePath(); x.fill(); x.restore();
+  x.fillStyle='#fff'; x.textBaseline='middle'; x.fillText(label,bx+(sq?52:44),by+bh/2+1); x.textBaseline='alphabetic';
+  // name block
+  const left=m, maxW= sq? (p.highlights?.length? 560 : W-2*m) : 500, y0= sq? 596 : 168;
+  x.font=F(sq?20:17,600); const chip=D.short.toUpperCase(), cw=x.measureText(chip).width+(sq?64:54), ch=sq?46:40;
+  x.fillStyle='rgba(16,22,60,.7)'; cardRoundRect(x,left,y0,cw,ch,ch/2); x.fill(); x.strokeStyle='rgba(255,255,255,.14)'; x.stroke();
+  x.fillStyle=D.color; x.beginPath(); x.arc(left+(sq?26:22),y0+ch/2,sq?8:7,0,7); x.fill(); x.fillStyle='rgba(235,238,255,.92)'; x.textBaseline='middle'; x.fillText(chip,left+(sq?44:38),y0+ch/2+1); x.textBaseline='alphabetic';
+  let ns=sq?92:68; x.font=F(ns,700); while(x.measureText(p.name).width>maxW && ns>40){ ns-=4; x.font=F(ns,700); }
+  x.fillStyle='#fff'; x.fillText(p.name,left-3,y0+ch+(sq?96:72));
+  x.font=F(sq?30:23); x.fillStyle='rgba(228,232,255,.85)'; const tl=cardWrap(x,p.tagline||p.desc,maxW,2); tl.forEach((t,i)=>x.fillText(t,left,y0+ch+(sq?146:110)+i*(sq?40:30)));
+  if(p.by){ const ay=y0+ch+(sq?146:110)+tl.length*(sq?40:30)+(sq?30:20), ar=sq?26:21;
+    x.fillStyle=acc; x.beginPath(); x.arc(left+ar,ay+ar,ar,0,7); x.fill(); x.fillStyle= /^#f/i.test(acc)? '#1a1f3d' : '#fff'; x.font=F(sq?24:20,700); x.textAlign='center'; x.textBaseline='middle'; x.fillText(p.by.trim()[0].toUpperCase(),left+ar,ay+ar+1); x.textAlign='left';
+    x.font=F(sq?28:22); x.fillStyle='rgba(225,230,255,.75)'; x.fillText('by',left+ar*2+16,ay+ar+1); x.fillStyle='#c9b8ff'; x.font=F(sq?28:22,600); x.fillText(p.by,left+ar*2+16+x.measureText('by ').width+4,ay+ar+1); x.textBaseline='alphabetic'; }
+  // highlights (square only)
+  if(sq && p.highlights?.length){ const hx=680; p.highlights.slice(0,4).forEach((h,i)=>{ const hy=y0+56+i*60;
+    x.strokeStyle='rgba(225,230,255,.85)'; x.lineWidth=2.5; x.beginPath(); x.arc(hx+14,hy+14,13,0,7); x.stroke(); x.beginPath(); x.moveTo(hx+8,hy+14); x.lineTo(hx+12.5,hy+19); x.lineTo(hx+20.5,hy+9); x.stroke();
+    x.fillStyle='rgba(235,238,255,.92)'; x.font=F(25); x.textBaseline='middle'; x.fillText(cardWrap(x,h,300,1)[0],hx+44,hy+15); x.textBaseline='alphabetic'; }); }
+  // discover bar
+  const url=`isomaker.club/place/${slugOf(p)}`, bw=W-2*m, bh2=sq?104:84, bx2=m, by2=H-m-bh2+(sq?8:4);
+  x.fillStyle='rgba(12,16,46,.78)'; cardRoundRect(x,bx2,by2,bw,bh2,sq?22:18); x.fill(); x.strokeStyle='rgba(255,255,255,.14)'; x.lineWidth=2; x.stroke();
+  cardLogo(x,bx2+(sq?28:22),by2+(bh2-(sq?48:40))/2,sq?48:40); x.fillStyle='#fff'; x.font=F(sq?26:21,600); x.fillText('Discover this place on Isomaker',bx2+(sq?96:78),by2+bh2/2-(sq?4:3));
+  x.fillStyle='rgba(225,230,255,.62)'; x.font=F(sq?20:16); x.fillText('A living world of indie tools',bx2+(sq?96:78),by2+bh2/2+(sq?24:19));
+  x.font=F(sq?26:20,600); x.fillStyle='#b9a6ff'; x.textAlign='right'; x.fillText(url,bx2+bw-(sq?32:24),by2+bh2/2+(sq?9:7)); x.textAlign='left';
+}
+async function renderPlaceCard(p,f='square'){ const key=p.id+'|'+f; if(cardCache.has(key)) return cardCache.get(key);
+  const { W, H }=CARD_FMT[f], sq=f==='square';
+  await document.fonts.ready;
+  const g=placeBuilding3D(p); if(p.curated && g.userData.slots) await personalize(p,g.userData.slots);
+  const S=cardDiorama(p); S.add(g);
+  // the card is always night: borrow the night palette for the render, then restore the viewer's mode
+  const prev=modeName; if(prev!=='night'){ setMode('night',true); stepMode(performance.now()); }
+  const R=new THREE.WebGLRenderer({ antialias:false, preserveDrawingBuffer:true }); R.setPixelRatio(1); R.setSize(W,H,false);
+  R.toneMapping=THREE.ACESFilmicToneMapping; R.shadowMap.enabled=true; R.shadowMap.type=THREE.PCFSoftShadowMap;
+  const bh=g.userData.h||4, cam=new THREE.OrthographicCamera(-1,1,1,-1,1,400), Hf= sq? Math.max(10.8,bh*1.75) : Math.max(9.6,bh*1.45), a=W/H;   // tall buildings pull the camera back
+  cam.left=-Hf*a/2; cam.right=Hf*a/2; cam.top=Hf/2; cam.bottom=-Hf/2;
+  const dir=V3(Math.sin(Math.PI/4)*Math.cos(ELEV),Math.sin(ELEV),Math.cos(Math.PI/4)*Math.cos(ELEV)), tgt=V3(.9,(g.userData.h||4)*(g.userData.h>6? .4 : .32),.9);
+  cam.position.copy(tgt).addScaledVector(dir,120); cam.lookAt(tgt); cam.updateMatrixWorld();
+  // place the island: upper middle on the square card, right half on the link card
+  const up=V3(0,1,0).applyQuaternion(cam.quaternion), right=V3(1,0,0).applyQuaternion(cam.quaternion);
+  if(sq) tgt.addScaledVector(up,-Hf*.16); else tgt.addScaledVector(right,-Hf*a*.21).addScaledVector(up,-Hf*.06);
+  cam.position.copy(tgt).addScaledVector(dir,120); cam.lookAt(tgt); cam.updateProjectionMatrix();
+  const comp=new EffectComposer(R,new THREE.WebGLRenderTarget(W,H,{ type:THREE.HalfFloatType, samples:4 })); comp.setSize(W,H);
+  comp.addPass(new RenderPass(S,cam)); comp.addPass(new UnrealBloomPass(new THREE.Vector2(W,H),.75,.5,.82)); comp.addPass(new OutputPass());
+  fallUniforms.uTime.value=3.2; comp.render();
+  const out=document.createElement('canvas'); out.width=W; out.height=H; const x=out.getContext('2d'); x.drawImage(R.domElement,0,0);
+  // darken behind the type so it reads over the scene
+  const grad= sq? x.createLinearGradient(0,500,0,H) : x.createLinearGradient(0,0,W*.62,0);
+  if(sq){ grad.addColorStop(0,'rgba(7,10,32,0)'); grad.addColorStop(.3,'rgba(7,10,32,.78)'); grad.addColorStop(1,'rgba(7,10,32,.95)'); x.fillStyle=grad; x.fillRect(0,500,W,H-500); }
+  else { const b=x.createLinearGradient(0,H-170,0,H); b.addColorStop(0,'rgba(7,10,32,0)'); b.addColorStop(1,'rgba(7,10,32,.85)'); x.fillStyle=b; x.fillRect(0,H-170,W,170); }
+  if(!sq){ grad.addColorStop(0,'rgba(7,10,32,.92)'); grad.addColorStop(.7,'rgba(7,10,32,.6)'); grad.addColorStop(1,'rgba(7,10,32,0)'); x.fillStyle=grad; x.fillRect(0,0,W*.62,H); }
+  const top=x.createLinearGradient(0,0,0,200); top.addColorStop(0,'rgba(7,10,32,.7)'); top.addColorStop(1,'rgba(7,10,32,0)'); x.fillStyle=top; x.fillRect(0,0,W,200);
+  cardText(x,p,f);
+  if(prev!=='night'){ setMode(prev,true); stepMode(performance.now()); }
+  comp.dispose?.(); R.dispose(); R.forceContextLoss();
+  S.traverse(o=>{ if(o.geometry) o.geometry.dispose(); });
+  const url=out.toDataURL('image/png'); cardCache.set(key,url); return url;
+}
+
+/* share card dialog: preview, format switch, download and copy link */
+let shareFor=null;
+async function openShareCard(p,f='square'){ shareFor=p; const m=$('shareModal'); m.hidden=false;
+  $('shareTitle').textContent=`Share ${p.name}`; $('shareFmt').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.f===f));
+  const img=$('shareImg'); img.removeAttribute('src'); $('shareStage').classList.add('loading'); $('shareStage').dataset.f=f;
+  const url=await renderPlaceCard(p,f); if(shareFor!==p) return; img.src=url; $('shareStage').classList.remove('loading'); }
+function closeShareCard(){ $('shareModal').hidden=true; shareFor=null; }
+$('shareModal').addEventListener('click',e=>{ if(e.target===$('shareModal') || e.target.closest('[data-close-share]')) closeShareCard(); });
+$('shareFmt').querySelectorAll('button').forEach(b=>b.onclick=()=>shareFor && openShareCard(shareFor,b.dataset.f));
+$('shareDownload').onclick=()=>{ const src=$('shareImg').getAttribute('src'); if(!src||!shareFor) return; const a=document.createElement('a'); a.href=src; a.download=`isomaker-${slugOf(shareFor)}-${$('shareStage').dataset.f}.png`; document.body.appendChild(a); a.click(); a.remove(); };
+$('shareCopy').onclick=()=>{ if(shareFor) shareLink({ place:slugOf(shareFor) }, `${shareFor.name} on Isomaker`, shareFor); };
 
 /* =====================================================================
    LOOP

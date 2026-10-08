@@ -156,6 +156,14 @@
   .side .close{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.25);color:#fff}
   .side .close:hover{background:rgba(0,0,0,.45);color:#fff}
   .mono{display:grid;place-items:center;border-radius:var(--r-m);font-weight:700;color:#fff;flex:none;background:var(--accent);box-shadow:0 0 0 1px rgba(255,255,255,.2) inset}
+  /* the whole screenshot, over a blurred copy of itself that fills the edges */
+  .side .hero .hero-bg{position:absolute;inset:-20px;width:calc(100% + 40px);height:calc(100% + 40px);object-fit:cover;filter:blur(18px) saturate(120%);opacity:.9}
+  .side .hero .hero-shot{position:absolute;inset:10px 0 0;width:100%;height:calc(100% - 10px);object-fit:contain;object-position:center top}
+  .side .hero.has-shot .close{background:rgba(13,17,42,.65);color:#fff}
+  .side .hero.has-shot::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(13,17,42,.5))}
+  .side .hero.has-shot .grid{display:none} .side .hero .close{z-index:3}
+  .mono.logo{background:#121735!important;padding:0;overflow:hidden} .mono.logo img{width:100%;height:100%;object-fit:contain;display:block}
+  .byline{margin-top:-6px;font-size:14px;color:var(--muted)} .byline a{color:var(--text);text-decoration:none;border-bottom:1px solid var(--line-strong);transition:border-color .2s} .byline a:hover{border-color:var(--text)}
   .side .hero .mono{position:absolute;z-index:2;left:18px;bottom:-22px;width:60px;height:60px;font-size:24px;border-radius:var(--r-l);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 3px var(--glass-strong)}
   .side .body{padding:34px 18px 18px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:14px}
   .tagline-row{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
@@ -1682,11 +1690,13 @@ const chips=$('districtChips');
 for(const k of ORDER){ const d=DISTRICTS[k]; const b=document.createElement('button'); b.className='chip'; b.innerHTML=`<span class="dot" style="color:${d.color}"></span>${d.short}`;
   b.onclick=()=>{ openDistrict(k); flyTo(V3(d.pos[0],0,d.pos[1]),1.9); panelOffset(); }; chips.appendChild(b); }
 
-function mono(p){ const c=DISTRICTS[p.district]?.color||COMMONS.color; return `<div class="mono" style="--accent:${c};background:linear-gradient(135deg, ${c}, color-mix(in srgb, ${c} 45%, #242D43))">${esc((p.name||'?').trim()[0]?.toUpperCase()||'?')}</div>`; }
+function mono(p){ const c=DISTRICTS[p.district]?.color||COMMONS.color;
+  if(p.curated && p.logo) return `<div class="mono logo" style="--accent:${c}"><img src="${esc(p.logo)}" alt=""></div>`;
+  return `<div class="mono" style="--accent:${c};background:linear-gradient(135deg, ${c}, color-mix(in srgb, ${c} 45%, #242D43))">${esc((p.name||'?').trim()[0]?.toUpperCase()||'?')}</div>`; }
 function host(u){ try{ return new URL(u).host.replace(/^www\./,''); }catch(e){ return u; } }
 function safeUrl(u){ try{ const x=new URL(u); return /^https?:$/.test(x.protocol)? x.href : null; }catch(e){ return null; } }
-function sideShell(color, monoHtml, body){ side.style.setProperty('--accent',color);
-  side.innerHTML=`<div class="hero"><div class="grid"></div><button class="icon-btn close" id="closeSide" title="Close (Esc)">${icon('x')}</button>${monoHtml}</div><div class="body">${body}</div>`;
+function sideShell(color, monoHtml, body, shot){ side.style.setProperty('--accent',color);
+  side.innerHTML=`<div class="hero${shot?' has-shot':''}">${shot?`<img class="hero-bg" src="${esc(shot)}" alt=""><img class="hero-shot" src="${esc(shot)}" alt="">`:''}<div class="grid"></div><button class="icon-btn close" id="closeSide" title="Close (Esc)">${icon('x')}</button>${monoHtml}</div><div class="body">${body}</div>`;
   side.classList.add('open'); $('closeSide').onclick=closeSide; document.getElementById('labels').classList.add('labels-dim'); }
 function closeSide(){ side.classList.remove('open'); select(null); exitObservatory(); setUrl(interior.active && interior.key? { inside:interior.key } : null);
   if(interior.active){ interior.sel=null; if(interior.ctx) interior.ctx.selRing.visible=false; document.querySelectorAll('#irank .rrow.sel').forEach(e=>e.classList.remove('sel')); } document.getElementById('labels').classList.remove('labels-dim'); }
@@ -1700,22 +1710,26 @@ function openPlace(p,opt={}){
   exitObservatory();
   const d=DISTRICTS[p.district]; const url=safeUrl(p.url);
   const nearby=places.filter(x=>x.district===p.district && x.id!==p.id).slice(0,4); const st=Data.stats(p);
+  const cu=p.curated, by=cu && p.by? p.by : '', byUrl=cu? safeUrl(p.creatorUrl||'') : null;
+  const moreBy= by? places.filter(x=>x!==p && x.by===by) : [];
   sideShell(d.color, mono(p), `
     <div class="tagline-row"><span class="dot" style="color:${d.color};width:7px;height:7px"></span>${d.name} · ${p.curated? esc(p.templateName||'Place') : p.seed?'Classic':'Community'}</div>
     <div><h2>${esc(p.name)}</h2></div>
     <div class="sub">${esc(p.tagline||'')}</div>
+    ${by?`<div class="byline">by ${byUrl?`<a href="${esc(byUrl)}" target="_blank" rel="noopener noreferrer">${esc(by)}</a>`:esc(by)}</div>`:''}
     ${p.seed && !p.curated?`<div class="cl-note">A hand-picked Classic. Classics aren’t ranked — the top 10 inside ${d.lm} is for makers.</div>`:''}
     ${p.desc?`<p class="desc">${esc(p.desc)}</p>`:''}
-    <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}${Data.numbers?`<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>`:''}${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
+    <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by && !cu?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}${Data.numbers?`<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>`:''}${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
     ${p.tags?.length?`<div class="tags">${p.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
     <div class="actions">
-      ${url?`<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Visit website ${icon('ext')}</a>`:''}
+      ${url?`<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${cu?'Visit tool':'Visit website'} ${icon('ext')}</a>`:''}
       ${p.seed?'':`<button class="btn ghost vote${st.voted?' on':''}" id="voteBtn" title="${st.voted?'Remove upvote':'Upvote'}">▲ ${Data.numbers?`<b>${st.upvotes}</b>`:'Upvote'}</button>`}
       <button class="btn ghost" id="shareBtn" title="Share this place">${icon('share')}</button>
       ${interior.active?'':`<button class="btn ghost" id="focusBtn" title="Fly to">${icon('target')}</button>`}
     </div>
     ${p.user?`<button class="btn ghost danger" id="removeBtn">${icon('trash')} Remove my place</button>`:''}
-    ${nearby.length?`<div class="list"><h4>Also in ${d.short}</h4>${nearby.map(placeRow).join('')}</div>`:''}`);
+    ${moreBy.length?`<div class="list"><h4>More by ${esc(by)}</h4>${moreBy.map(placeRow).join('')}</div>`:''}
+    ${nearby.length?`<div class="list"><h4>Also in ${d.short}</h4>${nearby.map(placeRow).join('')}</div>`:''}`, cu? p.screenshot : null);
   bindRows(side);
   $('shareBtn').onclick=()=>shareLink({ place:slugOf(p) }, `${p.name} in the ${d.name} on Isomaker`, p);
   if($('focusBtn')) $('focusBtn').onclick=()=>flyToPlace(p);

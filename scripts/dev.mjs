@@ -1,11 +1,11 @@
 // Local dev server that mirrors the Vercel routing in vercel.json:
 //   /            → isomaker.html
-//   /place/:slug → place/<slug>.html when built (npm run build), else isomaker.html
+//   /place/:slug → place/<slug>.html when built (npm run build) and up to date, else isomaker.html
 //   /story       → story.html      (cleanUrls)
 // Usage: node scripts/dev.mjs [port]   (default 8765)
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -17,7 +17,9 @@ const types = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.m
 function route(pathname){
   if(pathname === '/') return '/isomaker.html';
   const place = pathname.match(/^\/place\/([a-z0-9-]+)\/?$/i);   // a built place page if there is one, else the world
-  if(place) return existsSync(join(root, 'place', place[1] + '.html')) ? `/place/${place[1]}.html` : '/isomaker.html';
+  if(place){ // a built page only while it's newer than the world page, so local edits never hide behind a stale copy
+    const built = join(root, 'place', place[1] + '.html');
+    return existsSync(built) && statSync(built).mtimeMs >= statSync(join(root, 'isomaker.html')).mtimeMs ? `/place/${place[1]}.html` : '/isomaker.html'; }
   if(!extname(pathname)) return pathname.replace(/\/$/, '') + '.html';
   return pathname;
 }

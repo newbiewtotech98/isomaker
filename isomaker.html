@@ -1729,11 +1729,16 @@ function bindRows(root){ root.querySelectorAll('.result[data-id]').forEach(el=>e
 
 function weekLine(p,d){ if(!Data.numbers) return ''; const s=Data.stats(p), pv=Data.preview?' <span class="hint">(preview)</span>':'';
   return p.seed? `${s.visits} visits${pv}` : `#${Data.rank(p)} of ${d.short}’s community tools · ${s.visits} visits${pv}`; }
+// the places physically closest to this one: three in its own district, then the nearest across a bridge
+function nearbyPlaces(p,same=3,other=1){ if(!p.obj) return [];
+  const a=new THREE.Vector3(), b=new THREE.Vector3(); p.obj.getWorldPosition(a);
+  const ranked=places.filter(x=>x!==p && x.obj && !x.demo).map(x=>{ x.obj.getWorldPosition(b); return { x, d:a.distanceTo(b) }; }).sort((u,v)=>u.d-v.d);
+  return [...ranked.filter(o=>o.x.district===p.district).slice(0,same), ...ranked.filter(o=>o.x.district!==p.district).slice(0,other)].map(o=>o.x); }
 function openPlace(p,opt={}){
   if(p.id==='observatory') return openAbout();
   exitObservatory();
   const d=DISTRICTS[p.district]; const url=safeUrl(p.url);
-  const nearby=places.filter(x=>x.district===p.district && x.id!==p.id).slice(0,4); const st=Data.stats(p);
+  const nearby=nearbyPlaces(p); const st=Data.stats(p);
   const cu=p.curated, by=cu && p.by? p.by : '', byUrl=cu? safeUrl(p.creatorUrl||'') : null;
   const moreBy= by? places.filter(x=>x!==p && x.by===by) : [];
   sideShell(d.color, mono(p), `
@@ -1753,8 +1758,10 @@ function openPlace(p,opt={}){
     </div>
     ${p.user?`<button class="btn ghost danger" id="removeBtn">${icon('trash')} Remove my place</button>`:''}
     ${moreBy.length?`<div class="list"><h4>More by ${esc(by)}</h4>${moreBy.map(placeRow).join('')}</div>`:''}
-    ${nearby.length?`<div class="list"><h4>Also in ${d.short}</h4>${nearby.map(placeRow).join('')}</div>`:''}`, cu? p.screenshot : null);
+    ${nearby.length?`<div class="list near"><h4>Explore nearby</h4>${nearby.map(placeRow).join('')}</div>`:''}`, cu? p.screenshot : null);
   bindRows(side);
+  // a nearby place flies there and marks the arrival, so one place leads to the next
+  if(!interior.active) side.querySelectorAll('.list.near .result[data-id]').forEach(el=>{ const q=places.find(x=>x.id===el.dataset.id); if(q) el.onclick=()=>{ openPlace(q); arrivalPulse(q); }; });
   $('shareBtn').onclick=()=>openShareCard(p);
   if($('focusBtn')) $('focusBtn').onclick=()=>flyToPlace(p);
   const visitA=side.querySelector('a.btn.primary'); if(visitA) visitA.addEventListener('click',()=>{ if(!Data.recordVisit(p)) return; const s2=Data.stats(p);

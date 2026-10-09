@@ -1,0 +1,10 @@
+{
+  "name": "isomaker",
+  "private": true,
+  "description": "A living isometric world of indie tools",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "cards": "node scripts/render-cards.mjs",
+    "build": "node scripts/build-place-pages.mjs"
+  }
+}

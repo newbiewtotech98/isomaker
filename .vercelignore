@@ -1,4 +1,4 @@
-# Deploy only the Isomaker site
+# Deploy only the Isomaker site (place/ pages are built on deploy by npm run build)
 /*
 !isomaker.html
 !story.html
@@ -6,3 +6,5 @@
 !og.png
 !places.json
 !places
+!package.json
+!scripts

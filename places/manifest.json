@@ -1,0 +1,353 @@
+[
+  {
+    "slug": "spline",
+    "name": "Spline",
+    "tagline": "3D design for the web",
+    "desc": "Design and publish interactive 3D scenes right in the browser — no code, real-time collaboration.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Spline"
+  },
+  {
+    "slug": "rive",
+    "name": "Rive",
+    "tagline": "Interactive motion graphics",
+    "desc": "Build state-machine driven animations that run anywhere: web, mobile and games.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Rive"
+  },
+  {
+    "slug": "coolors",
+    "name": "Coolors",
+    "tagline": "Palette generator",
+    "desc": "Hit the spacebar, get a palette. Lock the colors you love and reroll the rest.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Fabrizio Bianchi"
+  },
+  {
+    "slug": "excalidraw",
+    "name": "Excalidraw",
+    "tagline": "Hand-drawn whiteboard",
+    "desc": "Open-source virtual whiteboard for diagrams that feel sketched by hand.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Excalidraw"
+  },
+  {
+    "slug": "framer",
+    "name": "Framer",
+    "tagline": "Design sites that ship",
+    "desc": "Design and publish responsive websites on a canvas that feels like a design tool.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Framer"
+  },
+  {
+    "slug": "unicorn-studio",
+    "name": "Unicorn Studio",
+    "tagline": "WebGL effects, no code",
+    "desc": "Layer shaders, noise and motion into interactive WebGL scenes for your site.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "George Kedenburg"
+  },
+  {
+    "slug": "shots",
+    "name": "Shots",
+    "tagline": "Mockups in seconds",
+    "desc": "Turn plain screenshots into polished device mockups and social visuals.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Shots"
+  },
+  {
+    "slug": "fontjoy",
+    "name": "Fontjoy",
+    "tagline": "Font pairing with ML",
+    "desc": "Generates balanced font pairings using deep learning. Lock one, shuffle the rest.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Jack Qiao"
+  },
+  {
+    "slug": "claude",
+    "name": "Claude",
+    "tagline": "A thinking partner",
+    "desc": "An AI assistant for writing, coding, analysis and deep, careful work.",
+    "district": "ai",
+    "districtName": "AI District",
+    "by": "Anthropic"
+  },
+  {
+    "slug": "hugging-face",
+    "name": "Hugging Face",
+    "tagline": "Home of open models",
+    "desc": "Discover, share and run open-source models, datasets and Spaces.",
+    "district": "ai",
+    "districtName": "AI District",
+    "by": "Hugging Face"
+  },
+  {
+    "slug": "replicate",
+    "name": "Replicate",
+    "tagline": "Run models with an API",
+    "desc": "Run and fine-tune open-source models in the cloud with a single API call.",
+    "district": "ai",
+    "districtName": "AI District",
+    "by": "Replicate"
+  },
+  {
+    "slug": "elevenlabs",
+    "name": "ElevenLabs",
+    "tagline": "Lifelike AI voices",
+    "desc": "Text to speech, voice design and dubbing across dozens of languages.",
+    "district": "ai",
+    "districtName": "AI District",
+    "by": "ElevenLabs"
+  },
+  {
+    "slug": "ollama",
+    "name": "Ollama",
+    "tagline": "Run LLMs locally",
+    "desc": "Get up and running with large language models on your own machine.",
+    "district": "ai",
+    "districtName": "AI District",
+    "by": "Ollama"
+  },
+  {
+    "slug": "perplexity",
+    "name": "Perplexity",
+    "tagline": "Answer engine",
+    "desc": "Ask anything and get a direct answer with sources cited from the web.",
+    "district": "ai",
+    "districtName": "AI District",
+    "by": "Perplexity"
+  },
+  {
+    "slug": "cursor",
+    "name": "Cursor",
+    "tagline": "The AI code editor",
+    "desc": "An editor built around AI pair-programming — from autocomplete to agents.",
+    "district": "ai",
+    "districtName": "AI District",
+    "by": "Anysphere"
+  },
+  {
+    "slug": "v0",
+    "name": "v0",
+    "tagline": "Generate UI from a prompt",
+    "desc": "Describe an interface and get working React + Tailwind code you can ship.",
+    "district": "ai",
+    "districtName": "AI District",
+    "by": "Vercel"
+  },
+  {
+    "slug": "github",
+    "name": "GitHub",
+    "tagline": "Where code lives",
+    "desc": "Host repositories, review pull requests and build together in the open.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "GitHub"
+  },
+  {
+    "slug": "raycast",
+    "name": "Raycast",
+    "tagline": "A supercharged launcher",
+    "desc": "Blazingly fast, extendable launcher for macOS with a thriving extension store.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Raycast"
+  },
+  {
+    "slug": "vercel",
+    "name": "Vercel",
+    "tagline": "Ship frontends fast",
+    "desc": "Deploy web apps with previews on every push and a global edge network.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Vercel"
+  },
+  {
+    "slug": "supabase",
+    "name": "Supabase",
+    "tagline": "Postgres, batteries included",
+    "desc": "Database, auth, storage and realtime — an open-source backend in minutes.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Supabase"
+  },
+  {
+    "slug": "linear",
+    "name": "Linear",
+    "tagline": "Issue tracking, refined",
+    "desc": "A fast, keyboard-first tool for planning and building products.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Linear"
+  },
+  {
+    "slug": "tailwind-css",
+    "name": "Tailwind CSS",
+    "tagline": "Utility-first CSS",
+    "desc": "Build any design directly in your markup with composable utility classes.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Tailwind Labs"
+  },
+  {
+    "slug": "val-town",
+    "name": "Val Town",
+    "tagline": "Code that runs in the browser",
+    "desc": "Write and deploy small TypeScript functions, APIs and crons right on the web.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Val Town"
+  },
+  {
+    "slug": "arduino",
+    "name": "Arduino",
+    "tagline": "Open-source electronics",
+    "desc": "Boards, IDE and a huge community for building interactive hardware.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Arduino"
+  },
+  {
+    "slug": "neal-fun",
+    "name": "Neal.fun",
+    "tagline": "Delightful web toys",
+    "desc": "A collection of playful, surprising little websites and games.",
+    "district": "experiment",
+    "districtName": "Experiment District",
+    "by": "Neal Agarwal"
+  },
+  {
+    "slug": "chrome-music-lab",
+    "name": "Chrome Music Lab",
+    "tagline": "Music through play",
+    "desc": "Hands-on experiments that make learning music fun and approachable.",
+    "district": "experiment",
+    "districtName": "Experiment District",
+    "by": "Google Creative Lab"
+  },
+  {
+    "slug": "patatap",
+    "name": "Patatap",
+    "tagline": "Animation & sound kit",
+    "desc": "Press any key and make music with shapes, color and sound.",
+    "district": "experiment",
+    "districtName": "Experiment District",
+    "by": "Jono Brandel"
+  },
+  {
+    "slug": "shadertoy",
+    "name": "Shadertoy",
+    "tagline": "Shaders from everyone",
+    "desc": "Build and share GLSL shaders that run live in your browser.",
+    "district": "experiment",
+    "districtName": "Experiment District",
+    "by": "Beautypi"
+  },
+  {
+    "slug": "radio-garden",
+    "name": "Radio Garden",
+    "tagline": "Live radio on a globe",
+    "desc": "Spin the globe and tune into thousands of live stations worldwide.",
+    "district": "experiment",
+    "districtName": "Experiment District",
+    "by": "Radio Garden"
+  },
+  {
+    "slug": "windows-93",
+    "name": "Windows 93",
+    "tagline": "A delightfully broken OS",
+    "desc": "A fake operating system full of jokes, games and glitches.",
+    "district": "experiment",
+    "districtName": "Experiment District",
+    "by": "Jankenpopp & Zombectro"
+  },
+  {
+    "slug": "the-useless-web",
+    "name": "The Useless Web",
+    "tagline": "Take me somewhere useless",
+    "desc": "One button, infinite pointless and wonderful websites.",
+    "district": "experiment",
+    "districtName": "Experiment District",
+    "by": "Tim Holman"
+  },
+  {
+    "slug": "obsidian",
+    "name": "Obsidian",
+    "tagline": "Your second brain",
+    "desc": "A private, local-first knowledge base built on plain Markdown files.",
+    "district": "personal",
+    "districtName": "Personal District",
+    "by": "Obsidian"
+  },
+  {
+    "slug": "are-na",
+    "name": "Are.na",
+    "tagline": "Collect and connect ideas",
+    "desc": "A calm place to gather images, links and thoughts into channels.",
+    "district": "personal",
+    "districtName": "Personal District",
+    "by": "Are.na"
+  },
+  {
+    "slug": "bear",
+    "name": "Bear",
+    "tagline": "Beautiful notes",
+    "desc": "A focused, gorgeous writing and note-taking app for Apple devices.",
+    "district": "personal",
+    "districtName": "Personal District",
+    "by": "Shiny Frog"
+  },
+  {
+    "slug": "poolsuite",
+    "name": "Poolsuite",
+    "tagline": "Summer, forever",
+    "desc": "Retro internet radio playing the best vibes from a pool somewhere.",
+    "district": "personal",
+    "districtName": "Personal District",
+    "by": "Poolsuite"
+  },
+  {
+    "slug": "cosmos",
+    "name": "Cosmos",
+    "tagline": "Visual inspiration",
+    "desc": "Save, organize and discover images and ideas — ad-free.",
+    "district": "personal",
+    "districtName": "Personal District",
+    "by": "Cosmos"
+  },
+  {
+    "slug": "things",
+    "name": "Things",
+    "tagline": "Award-winning to-dos",
+    "desc": "A delightful personal task manager with a clean, calm design.",
+    "district": "personal",
+    "districtName": "Personal District",
+    "by": "Cultured Code"
+  },
+  {
+    "slug": "day-one",
+    "name": "Day One",
+    "tagline": "A journal for life",
+    "desc": "Capture memories with photos, places and prompts in a private journal.",
+    "district": "personal",
+    "districtName": "Personal District",
+    "by": "Day One"
+  },
+  {
+    "slug": "hairline",
+    "name": "Hairline",
+    "tagline": "Line drawings that answer the pointer",
+    "desc": "Thirty-three isometric line figures that answer the pointer. SVG, no dependencies, for React and for everything else.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Lucas Markes"
+  }
+]

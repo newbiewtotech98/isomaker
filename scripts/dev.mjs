@@ -1,10 +1,11 @@
 // Local dev server that mirrors the Vercel routing in vercel.json:
 //   /            → isomaker.html
-//   /place/:slug → isomaker.html   (the world opens on that place)
+//   /place/:slug → place/<slug>.html when built (npm run build), else isomaker.html
 //   /story       → story.html      (cleanUrls)
 // Usage: node scripts/dev.mjs [port]   (default 8765)
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -14,7 +15,9 @@ const types = { '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.m
   '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.svg':'image/svg+xml', '.webp':'image/webp', '.mp4':'video/mp4', '.css':'text/css', '.ico':'image/x-icon' };
 
 function route(pathname){
-  if(pathname === '/' || /^\/place\/[a-z0-9-]+\/?$/i.test(pathname)) return '/isomaker.html';
+  if(pathname === '/') return '/isomaker.html';
+  const place = pathname.match(/^\/place\/([a-z0-9-]+)\/?$/i);   // a built place page if there is one, else the world
+  if(place) return existsSync(join(root, 'place', place[1] + '.html')) ? `/place/${place[1]}.html` : '/isomaker.html';
   if(!extname(pathname)) return pathname.replace(/\/$/, '') + '.html';
   return pathname;
 }

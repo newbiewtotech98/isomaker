@@ -1495,7 +1495,7 @@ function arriveAt(p){
     toast(p,`You’re at ${p.name}`,sub, phone? { label:'Details', ms:9000, fn:()=>openPlace(p,{ keepCamera:true }) } : undefined); setUrl({ place:slugOf(p) }); },500);
   if(!phone) setTimeout(()=>openPlace(p,{ keepCamera:true }),1700);
 }
-function arrivalPulse(p){ const wp=new THREE.Vector3(); p.obj.getWorldPosition(wp); const t0=performance.now(), c=new THREE.Color(DISTRICTS[p.district]?.color||COMMONS.color).multiplyScalar(2.6);
+function arrivalPulse(p,t0=performance.now()){ const wp=new THREE.Vector3(); p.obj.getWorldPosition(wp); const c=new THREE.Color(DISTRICTS[p.district]?.color||COMMONS.color).multiplyScalar(2.6);
   const rings=[0,450].map(delay=>{ const m=noPick(new THREE.Mesh(new THREE.RingGeometry(1.6,1.85,64).rotateX(-Math.PI/2), new THREE.MeshBasicMaterial({ color:c, transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false })));
     m.position.set(wp.x,GROUND+.08,wp.z); scene.add(m); return { m, delay }; });
   anims.push(now=>{ let done=true; for(const r of rings){ const t=Math.min(1,Math.max(0,(now-t0-r.delay)/1300)); if(t<1) done=false;
@@ -2655,7 +2655,7 @@ try{
   if(film.on){ filmInit(); if(film.render){ $('filmStart').hidden=true; window.__film=(t,dt)=>{ filmStep(t,dt||1/30); return t; }; }
     else { addEventListener('keydown',e=>{ if(e.code==='Space'){ e.preventDefault(); filmStart(); } }); addEventListener('pointerdown',filmStart); } }
   else openDeepLink();
-  if(new URLSearchParams(location.search).has('debug')) window.__iso={ frame, places, interior, enterInterior, exitInterior, showInterior, openPlace, Data, cam, goal, setMode, world, renderPlaceCard, slugOf, DISTRICTS };
+  if(FILM_Q.has('debug')) window.__iso={ frame, places, interior, enterInterior, exitInterior, showInterior, openPlace, Data, cam, goal, setMode, world, renderPlaceCard, slugOf, DISTRICTS, select, arrivalPulse, camVecs, fitZoom };
 }catch(err){ console.error(err); $('loadMsg').innerHTML=`<div class="err">Something went wrong while building the world.<br><small>${esc(err.message)}</small></div>`; }
 </script>
 </body>

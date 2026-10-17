@@ -23,5 +23,79 @@
       "SVG, no dependencies",
       "React or any DOM"
     ]
+  },
+  {
+    "slug": "artcraft",
+    "district": "creative",
+    "name": "ArtCraft",
+    "url": "https://getartcraft.com/apps",
+    "tagline": "Thirteen open-source creative apps, built in Rust",
+    "desc": "Image editing, vector illustration, video, photography, PDFs, motion graphics, page layout, interface design and more: thirteen native, open-source apps from the ArtCraft team, built in Rust and free to use.",
+    "by": "ArtCraft team",
+    "creatorUrl": "https://github.com/storytold",
+    "tags": [
+      "open source",
+      "rust",
+      "creative suite"
+    ],
+    "added": "2026-10-17",
+    "logo": "/places/artcraft/logo.svg",
+    "screenshot": "/places/artcraft/screenshot.jpg",
+    "brandColor": "#4e7bfb",
+    "highlights": [
+      "13 creative apps",
+      "Open source",
+      "Built in Rust",
+      "Free to use"
+    ]
+  },
+  {
+    "slug": "anatomy",
+    "district": "ai",
+    "name": "Anatomy",
+    "url": "https://skills.wheresryan.sh/anatomy",
+    "tagline": "Claude draws the machine behind an idea",
+    "desc": "A skill for Claude Code: name an idea in one line, and Claude invents the machine that does it, drawn as a live isometric figure you can turn, press and read.",
+    "by": "Ryan",
+    "creatorUrl": "https://x.com/wheresryan22",
+    "tags": [
+      "claude",
+      "skill",
+      "isometric"
+    ],
+    "added": "2026-10-17",
+    "screenshot": "/places/anatomy/screenshot.jpg",
+    "brandColor": "#e9e9ec",
+    "highlights": [
+      "One-line prompts",
+      "Live isometric figures",
+      "Turn, press and read",
+      "A skill for Claude Code"
+    ]
+  },
+  {
+    "slug": "lightmeter",
+    "district": "creative",
+    "name": "Lightmeter",
+    "url": "https://shotonlightmeter.com/",
+    "appStore": "https://apps.apple.com/app/lightmeter-pocket-film-camera/id6800456535",
+    "tagline": "Your pocket film camera",
+    "desc": "A real light meter when you carry film, and a film camera when you don't. Zero-AI processing, authentic grain, and film looks inspired by real films and artists.",
+    "by": "Aakash Goel",
+    "tags": [
+      "photography",
+      "film",
+      "iphone"
+    ],
+    "added": "2026-10-17",
+    "logo": "/places/lightmeter/logo.png",
+    "screenshot": "/places/lightmeter/screenshot.jpg",
+    "brandColor": "#f4b400",
+    "highlights": [
+      "A real light meter",
+      "Authentic film grain",
+      "Zero-AI processing",
+      "For iPhone"
+    ]
   }
 ]

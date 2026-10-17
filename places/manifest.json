@@ -349,5 +349,32 @@
     "district": "creative",
     "districtName": "Creative District",
     "by": "Lucas Markes"
+  },
+  {
+    "slug": "artcraft",
+    "name": "ArtCraft",
+    "tagline": "Thirteen open-source creative apps, built in Rust",
+    "desc": "Image editing, vector illustration, video, photography, PDFs, motion graphics, page layout, interface design and more: thirteen native, open-source apps from the ArtCraft team, built in Rust and free to use.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "ArtCraft team"
+  },
+  {
+    "slug": "anatomy",
+    "name": "Anatomy",
+    "tagline": "Claude draws the machine behind an idea",
+    "desc": "A skill for Claude Code: name an idea in one line, and Claude invents the machine that does it, drawn as a live isometric figure you can turn, press and read.",
+    "district": "ai",
+    "districtName": "AI District",
+    "by": "Ryan"
+  },
+  {
+    "slug": "lightmeter",
+    "name": "Lightmeter",
+    "tagline": "Your pocket film camera",
+    "desc": "A real light meter when you carry film, and a film camera when you don't. Zero-AI processing, authentic grain, and film looks inspired by real films and artists.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Aakash Goel"
   }
 ]

@@ -177,6 +177,7 @@
   .tag{font-size:11.5px;padding:4px 9px;border-radius:var(--r-round);border:1px solid var(--line);color:var(--muted)}
   .actions{display:flex;gap:8px;flex-wrap:wrap}
   .actions .btn.primary{flex:1;justify-content:center;text-decoration:none}
+  .actions .btn.store{text-decoration:none;gap:6px;color:inherit}
   .list{display:flex;flex-direction:column;gap:2px}
   .list h4{margin:4px 0 6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600}
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -1526,8 +1527,11 @@ function build(){
   ORDER.forEach((k,i)=>buildFalls(islByKey(k),3,40+i));
   // places
   for(const p of SEED) places.push(p);
-  for(const c of CURATED) if(c && /^[a-z0-9-]+$/.test(c.slug||'') && DISTRICTS[c.district] && c.name && safeUrl(c.url)) places.push({ ...c, id:'c-'+c.slug, url:safeUrl(c.url), seed:true, curated:true,
-    logo:/^\/places\//.test(c.logo||'')? c.logo : null, screenshot:/^\/places\//.test(c.screenshot||'')? c.screenshot : null });
+  for(const c of CURATED){ if(!c || !/^[a-z0-9-]+$/.test(c.slug||'') || !DISTRICTS[c.district] || !c.name) continue;
+    // an app's store links are kept only for the stores' own domains; an app with no website uses its store link
+    const site=safeUrl(c.url||''), appStore=storeUrl(c.appStore,/^apps\.apple\.com$/), playStore=storeUrl(c.playStore,/^play\.google\.com$/);
+    if(site||appStore||playStore) places.push({ ...c, id:'c-'+c.slug, url:site||appStore||playStore, site:!!site, appStore, playStore, seed:true, curated:true,
+    logo:/^\/places\//.test(c.logo||'')? c.logo : null, screenshot:/^\/places\//.test(c.screenshot||'')? c.screenshot : null }); }
   for(const p of loadUser()) places.push({ ...p, user:true });
   for(const p of places) placeBuilding(p,false);
   if(Data.numbers) for(const k of ORDER){ const w=Data.lastWeekWinner(k); if(w) addCrown(w); }
@@ -1693,6 +1697,7 @@ const ICONS = {
   home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
   mute:'<path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6M16 9l6 6"/>',
   sound:'<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>',
+  phone:'<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 18h2"/>',
   ext:'<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
   x:'<path d="M18 6 6 18M6 6l12 12"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>',
@@ -1719,6 +1724,7 @@ function mono(p){ const c=DISTRICTS[p.district]?.color||COMMONS.color;
   return `<div class="mono" style="--accent:${c};background:linear-gradient(135deg, ${c}, color-mix(in srgb, ${c} 45%, #242D43))">${esc((p.name||'?').trim()[0]?.toUpperCase()||'?')}</div>`; }
 function host(u){ try{ return new URL(u).host.replace(/^www\./,''); }catch(e){ return u; } }
 function safeUrl(u){ try{ const x=new URL(u); return /^https?:$/.test(x.protocol)? x.href : null; }catch(e){ return null; } }
+function storeUrl(u,hostRe){ const s=safeUrl(u||''); return s && hostRe.test(new URL(s).hostname)? s : null; }
 function sideShell(color, monoHtml, body, shot){ side.style.setProperty('--accent',color);
   side.innerHTML=`<div class="hero${shot?' has-shot':''}">${shot?`<img class="hero-bg" src="${esc(shot)}" alt=""><img class="hero-shot" src="${esc(shot)}" alt="">`:''}<div class="grid"></div><button class="icon-btn close" id="closeSide" title="Close (Esc)">${icon('x')}</button>${monoHtml}</div><div class="body">${body}</div>`;
   side.classList.add('open'); $('closeSide').onclick=closeSide; document.getElementById('labels').classList.add('labels-dim'); }
@@ -1741,6 +1747,9 @@ function openPlace(p,opt={}){
   const nearby=nearbyPlaces(p); const st=Data.stats(p);
   const cu=p.curated, by=cu && p.by? p.by : '', byUrl=cu? safeUrl(p.creatorUrl||'') : null;
   const moreBy= by? places.filter(x=>x!==p && x.by===by) : [];
+  // an app's stores, the visitor's own platform first; an app with no website leads with Get the app
+  const apps=[p.appStore && ['App Store',p.appStore], p.playStore && ['Google Play',p.playStore]].filter(Boolean); if(/Android/i.test(navigator.userAgent)) apps.reverse();
+  const appOnly=cu && apps.length && !p.site, ext=`target="_blank" rel="noopener noreferrer"`;
   sideShell(d.color, mono(p), `
     <div class="tagline-row"><span class="dot" style="color:${d.color};width:7px;height:7px"></span>${d.name} · ${p.curated? esc(p.templateName||'Place') : p.seed?'Classic':'Community'}</div>
     <div><h2>${esc(p.name)}</h2></div>
@@ -1748,10 +1757,12 @@ function openPlace(p,opt={}){
     ${by?`<div class="byline">by ${byUrl?`<a href="${esc(byUrl)}" target="_blank" rel="noopener noreferrer">${esc(by)}</a>`:esc(by)}</div>`:''}
     ${p.seed && !p.curated?`<div class="cl-note">A hand-picked Classic. Classics aren’t ranked — the top 10 inside ${d.lm} is for makers.</div>`:''}
     ${p.desc?`<p class="desc">${esc(p.desc)}</p>`:''}
-    <dl class="meta"><dt>Website</dt><dd>${esc(host(p.url))}</dd>${p.by && !cu?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}${Data.numbers?`<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>`:''}${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
+    <dl class="meta">${appOnly?'':`<dt>Website</dt><dd>${esc(host(p.url))}</dd>`}${apps.length?`<dt>App</dt><dd>${[p.appStore&&'iPhone & iPad',p.playStore&&'Android'].filter(Boolean).join(' · ')}</dd>`:''}${p.by && !cu?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}${Data.numbers?`<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>`:''}${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
     ${p.tags?.length?`<div class="tags">${p.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
     <div class="actions">
-      ${url?`<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${cu?'Visit tool':'Visit website'} ${icon('ext')}</a>`:''}
+      ${appOnly? `<a class="btn primary" href="${esc(apps[0][1])}" ${ext}>${icon('phone')} Get the app ${icon('ext')}</a>`
+        : url?`<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${cu?'Visit tool':'Visit website'} ${icon('ext')}</a>`:''}
+      ${apps.slice(appOnly?1:0).map(([label,href])=>`<a class="btn ghost store" href="${esc(href)}" ${ext} title="${label}">${icon('phone')}${label}</a>`).join('')}
       ${p.seed?'':`<button class="btn ghost vote${st.voted?' on':''}" id="voteBtn" title="${st.voted?'Remove upvote':'Upvote'}">▲ ${Data.numbers?`<b>${st.upvotes}</b>`:'Upvote'}</button>`}
       <button class="btn ghost" id="shareBtn" title="Share this place">${icon('share')} Share</button>
       ${interior.active?'':`<button class="btn ghost" id="focusBtn" title="Fly to">${icon('target')}</button>`}
@@ -2534,10 +2545,15 @@ function cardText(x,p,f){ const D=DISTRICTS[p.district], acc=accentOf(p), sq=f==
   x.fillStyle='#b9a6ff'; x.save(); x.translate(bx+(sq?30:25),by+bh/2); x.beginPath(); for(let i=0;i<8;i++){ const a=i*Math.PI/4, rr2=i%2?3.5:11; x.lineTo(Math.cos(a)*rr2,Math.sin(a)*rr2); } x.closePath(); x.fill(); x.restore();
   x.fillStyle='#fff'; x.textBaseline='middle'; x.fillText(label,bx+(sq?52:44),by+bh/2+1); x.textBaseline='alphabetic';
   // name block
-  const left=m, maxW= sq? (p.highlights?.length? 560 : W-2*m) : 500, y0= sq? 596 : 168;
+  const left=m, maxW= sq? (p.highlights?.length? 560 : W-2*m) : 500;
+  // a tagline that wraps lifts the whole name block, so the byline never reaches the discover bar
+  x.font=F(sq?30:23); const tlN=cardWrap(x,p.tagline||p.desc,maxW,2).length, y0=(sq? 596 : 168)-(tlN-1)*(sq?40:30);
   x.font=F(sq?20:17,600); const chip=D.short.toUpperCase(), cw=x.measureText(chip).width+(sq?64:54), ch=sq?46:40;
   x.fillStyle='rgba(16,22,60,.7)'; cardRoundRect(x,left,y0,cw,ch,ch/2); x.fill(); x.strokeStyle='rgba(255,255,255,.14)'; x.stroke();
   x.fillStyle=D.color; x.beginPath(); x.arc(left+(sq?26:22),y0+ch/2,sq?8:7,0,7); x.fill(); x.fillStyle='rgba(235,238,255,.92)'; x.textBaseline='middle'; x.fillText(chip,left+(sq?44:38),y0+ch/2+1); x.textBaseline='alphabetic';
+  if(p.appStore||p.playStore){ const al=p.appStore&&p.playStore? 'iOS & ANDROID' : p.appStore? 'IPHONE APP' : 'ANDROID APP', ax=left+cw+(sq?12:10), aw=x.measureText(al).width+(sq?40:34);
+    x.fillStyle='rgba(16,22,60,.7)'; cardRoundRect(x,ax,y0,aw,ch,ch/2); x.fill(); x.strokeStyle='rgba(255,255,255,.14)'; x.stroke();
+    x.fillStyle='rgba(235,238,255,.92)'; x.textBaseline='middle'; x.fillText(al,ax+(sq?20:17),y0+ch/2+1); x.textBaseline='alphabetic'; }
   let ns=sq?92:68; x.font=F(ns,700); while(x.measureText(p.name).width>maxW && ns>40){ ns-=4; x.font=F(ns,700); }
   x.fillStyle='#fff'; x.fillText(p.name,left-3,y0+ch+(sq?96:72));
   x.font=F(sq?30:23); x.fillStyle='rgba(228,232,255,.85)'; const tl=cardWrap(x,p.tagline||p.desc,maxW,2); tl.forEach((t,i)=>x.fillText(t,left,y0+ch+(sq?146:110)+i*(sq?40:30)));

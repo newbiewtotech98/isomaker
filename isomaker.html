@@ -2465,7 +2465,7 @@ function showTemplateGallery(){ const S=new THREE.Scene(); S.background=new THRE
    island diorama and lit like the world at night. A 2D layer adds the type.
    Formats: 'square' (1080×1080, for posts) and 'og' (1200×630, link previews).
    ===================================================================== */
-const CARD_FMT={ square:{ W:1080, H:1080 }, og:{ W:1200, H:630 } };
+const CARD_FMT={ square:{ W:1080, H:1080 }, og:{ W:1200, H:630 }, portrait:{ W:1080, H:1350 } };   // portrait (4:5) is the square card, taller: for feeds and the films
 const cardCache=new Map();
 function placeBuilding3D(p){ // a fresh copy of the place's building, built exactly as in the world
   if(p.curated){ const g=buildPlace(p); g.rotation.y=0; return g; }
@@ -2532,7 +2532,7 @@ function cardLogo(x,X,Y,s){ const g=x.createConicGradient(Math.PI*210/180,X+s/2,
 function cardWrap(x,text,max,lines){ const words=String(text||'').split(/\s+/), out=[]; let cur='';
   for(const w of words){ const t=cur? cur+' '+w : w; if(x.measureText(t).width>max && cur){ out.push(cur); cur=w; if(out.length===lines) break; } else cur=t; }
   if(out.length<lines && cur) out.push(cur); if(out.length===lines && words.join(' ')!==out.join(' ')) out[lines-1]=out[lines-1].replace(/\s*\S*$/,'')+'…'; return out; }
-function cardText(x,p,f){ const D=DISTRICTS[p.district], acc=accentOf(p), sq=f==='square', W=CARD_FMT[f].W, H=CARD_FMT[f].H, F=(s,w=500)=>`${w} ${s}px Inter, system-ui, sans-serif`;
+function cardText(x,p,f){ const D=DISTRICTS[p.district], acc=accentOf(p), sq=f!=='og', W=CARD_FMT[f].W, H=CARD_FMT[f].H, F=(s,w=500)=>`${w} ${s}px Inter, system-ui, sans-serif`;
   // frame and header
   x.strokeStyle='rgba(255,255,255,.12)'; x.lineWidth=2; cardRoundRect(x,24,24,W-48,H-48,sq?40:30); x.stroke();
   const m=sq?72:52; cardLogo(x,m,m,sq?64:50); x.fillStyle='#fff'; x.font=F(sq?42:34,700); x.textBaseline='alphabetic'; x.fillText('Isomaker',m+(sq?84:66),m+(sq?36:30));
@@ -2547,7 +2547,7 @@ function cardText(x,p,f){ const D=DISTRICTS[p.district], acc=accentOf(p), sq=f==
   // name block
   const left=m, maxW= sq? (p.highlights?.length? 560 : W-2*m) : 500;
   // a tagline that wraps lifts the whole name block, so the byline never reaches the discover bar
-  x.font=F(sq?30:23); const tlN=cardWrap(x,p.tagline||p.desc,maxW,2).length, y0=(sq? 596 : 168)-(tlN-1)*(sq?40:30);
+  x.font=F(sq?30:23); const tlN=cardWrap(x,p.tagline||p.desc,maxW,2).length, y0=(sq? 596+H-1080 : 168)-(tlN-1)*(sq?40:30);
   x.font=F(sq?20:17,600); const chip=D.short.toUpperCase(), cw=x.measureText(chip).width+(sq?64:54), ch=sq?46:40;
   x.fillStyle='rgba(16,22,60,.7)'; cardRoundRect(x,left,y0,cw,ch,ch/2); x.fill(); x.strokeStyle='rgba(255,255,255,.14)'; x.stroke();
   x.fillStyle=D.color; x.beginPath(); x.arc(left+(sq?26:22),y0+ch/2,sq?8:7,0,7); x.fill(); x.fillStyle='rgba(235,238,255,.92)'; x.textBaseline='middle'; x.fillText(chip,left+(sq?44:38),y0+ch/2+1); x.textBaseline='alphabetic';
@@ -2575,7 +2575,7 @@ function cardText(x,p,f){ const D=DISTRICTS[p.district], acc=accentOf(p), sq=f==
   x.fillStyle='#b9a6ff'; x.textAlign='right'; x.fillText(url,bx2+bw-(sq?32:24),by2+bh2/2+(sq?9:7)); x.textAlign='left';
 }
 async function renderPlaceCard(p,f='square'){ const key=p.id+'|'+f; if(cardCache.has(key)) return cardCache.get(key);
-  const { W, H }=CARD_FMT[f], sq=f==='square';
+  const { W, H }=CARD_FMT[f], sq=f!=='og', tall=f==='portrait';
   await document.fonts.ready;
   const g=placeBuilding3D(p); if(p.curated && g.userData.slots) await personalize(p,g.userData.slots);
   const S=cardDiorama(p); S.add(g);
@@ -2583,7 +2583,7 @@ async function renderPlaceCard(p,f='square'){ const key=p.id+'|'+f; if(cardCache
   const prev=modeName; if(prev!=='night'){ setMode('night',true); stepMode(performance.now()); }
   const R=new THREE.WebGLRenderer({ antialias:false, preserveDrawingBuffer:true }); R.setPixelRatio(1); R.setSize(W,H,false);
   R.toneMapping=THREE.ACESFilmicToneMapping; R.shadowMap.enabled=true; R.shadowMap.type=THREE.PCFSoftShadowMap;
-  const bh=g.userData.h||4, cam=new THREE.OrthographicCamera(-1,1,1,-1,1,400), Hf= sq? Math.max(10.8,bh*1.75) : Math.max(9.6,bh*1.45), a=W/H;   // tall buildings pull the camera back
+  const bh=g.userData.h||4, cam=new THREE.OrthographicCamera(-1,1,1,-1,1,400), Hf= tall? Math.max(14.6,bh*2.45) : sq? Math.max(10.8,bh*1.75) : Math.max(9.6,bh*1.45), a=W/H;   // tall buildings pull the camera back
   cam.left=-Hf*a/2; cam.right=Hf*a/2; cam.top=Hf/2; cam.bottom=-Hf/2;
   const dir=V3(Math.sin(Math.PI/4)*Math.cos(ELEV),Math.sin(ELEV),Math.cos(Math.PI/4)*Math.cos(ELEV)), tgt=V3(.9,(g.userData.h||4)*(g.userData.h>6? .4 : .32),.9);
   cam.position.copy(tgt).addScaledVector(dir,120); cam.lookAt(tgt); cam.updateMatrixWorld();
@@ -2596,8 +2596,9 @@ async function renderPlaceCard(p,f='square'){ const key=p.id+'|'+f; if(cardCache
   fallUniforms.uTime.value=3.2; comp.render();
   const out=document.createElement('canvas'); out.width=W; out.height=H; const x=out.getContext('2d'); x.drawImage(R.domElement,0,0);
   // darken behind the type so it reads over the scene
-  const grad= sq? x.createLinearGradient(0,500,0,H) : x.createLinearGradient(0,0,W*.62,0);
-  if(sq){ grad.addColorStop(0,'rgba(7,10,32,0)'); grad.addColorStop(.3,'rgba(7,10,32,.78)'); grad.addColorStop(1,'rgba(7,10,32,.95)'); x.fillStyle=grad; x.fillRect(0,500,W,H-500); }
+  const g0= sq? 500+(H-1080) : 0;   // the shade behind the type starts lower on a portrait card
+  const grad= sq? x.createLinearGradient(0,g0,0,H) : x.createLinearGradient(0,0,W*.62,0);
+  if(sq){ grad.addColorStop(0,'rgba(7,10,32,0)'); grad.addColorStop(.3,'rgba(7,10,32,.78)'); grad.addColorStop(1,'rgba(7,10,32,.95)'); x.fillStyle=grad; x.fillRect(0,g0,W,H-g0); }
   else { const b=x.createLinearGradient(0,H-170,0,H); b.addColorStop(0,'rgba(7,10,32,0)'); b.addColorStop(1,'rgba(7,10,32,.85)'); x.fillStyle=b; x.fillRect(0,H-170,W,170); }
   if(!sq){ grad.addColorStop(0,'rgba(7,10,32,.92)'); grad.addColorStop(.7,'rgba(7,10,32,.6)'); grad.addColorStop(1,'rgba(7,10,32,0)'); x.fillStyle=grad; x.fillRect(0,0,W*.62,H); }
   const top=x.createLinearGradient(0,0,0,200); top.addColorStop(0,'rgba(7,10,32,.7)'); top.addColorStop(1,'rgba(7,10,32,0)'); x.fillStyle=top; x.fillRect(0,0,W,200);

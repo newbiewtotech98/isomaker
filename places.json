@@ -97,5 +97,128 @@
       "Zero-AI processing",
       "For iPhone"
     ]
+  },
+  {
+    "slug": "color-museum",
+    "district": "experiment",
+    "name": "The Color Museum",
+    "url": "https://the-color-museum.vercel.app/",
+    "tagline": "A walkable museum of art and colour",
+    "desc": "A digital museum you walk through: scroll to stroll the hall, tap a painting to learn its story, and listen along with an AI voice guide. A fun way to learn about art.",
+    "by": "Akash Soti",
+    "creatorUrl": "https://www.linkedin.com/in/akashsoti/",
+    "tags": [
+      "art",
+      "museum",
+      "learning"
+    ],
+    "added": "2026-10-28",
+    "screenshot": "/places/color-museum/screenshot.jpg",
+    "brandColor": "#d8b98c",
+    "highlights": [
+      "Scroll to walk",
+      "Tap a painting",
+      "AI voice guide",
+      "Art and colour"
+    ]
+  },
+  {
+    "slug": "libraries-dev",
+    "district": "maker",
+    "name": "Libraries.dev",
+    "url": "https://libraries.dev/",
+    "tagline": "Libraries and models for next-gen UI",
+    "desc": "UI effect libraries and on-device ML models, ready to use with your agents: animated borders, thinking indicators, voice visualizers, liquid metal and more, for React, SwiftUI and React Native.",
+    "by": "Jakub Antalik",
+    "creatorUrl": "https://x.com/jakubantalik",
+    "tags": [
+      "ui effects",
+      "react",
+      "swiftui"
+    ],
+    "added": "2026-10-28",
+    "logo": "/places/libraries-dev/logo.svg",
+    "screenshot": "/places/libraries-dev/screenshot.jpg",
+    "brandColor": "#e9e9ec",
+    "highlights": [
+      "Animated borders",
+      "Thinking indicators",
+      "On-device ML models",
+      "React · SwiftUI · RN"
+    ]
+  },
+  {
+    "slug": "bencho",
+    "district": "maker",
+    "name": "Bencho",
+    "url": "https://bencho.dev/",
+    "tagline": "Live, tweakable React micro-interactions",
+    "desc": "A library of interactive UI blocks you can explore, tweak, and take straight into your projects. Everything is live, not mocked.",
+    "by": "Lorenzo Cabral",
+    "creatorUrl": "https://x.com/cabralorenzo",
+    "tags": [
+      "react",
+      "components",
+      "micro-interactions"
+    ],
+    "added": "2026-10-28",
+    "logo": "/places/bencho/logo.svg",
+    "screenshot": "/places/bencho/screenshot.jpg",
+    "brandColor": "#e9e9ec",
+    "highlights": [
+      "Interactive UI blocks",
+      "Everything is live",
+      "Tweak, then take it",
+      "Built for React"
+    ]
+  },
+  {
+    "slug": "refero",
+    "district": "creative",
+    "name": "Refero",
+    "url": "https://refero.design/",
+    "tagline": "Design research from real product interfaces",
+    "desc": "A curated library of real product screens, flows and patterns for web and iOS, with a research mode and an MCP that lets your agent study real interfaces before it builds.",
+    "by": "Refero",
+    "tags": [
+      "design research",
+      "inspiration",
+      "mcp"
+    ],
+    "added": "2026-10-28",
+    "logo": "/places/refero/logo.png",
+    "screenshot": "/places/refero/screenshot.jpg",
+    "brandColor": "#f08aa0",
+    "highlights": [
+      "Real product screens",
+      "Web and iOS flows",
+      "Research mode",
+      "An MCP for agents"
+    ]
+  },
+  {
+    "slug": "transitions-dev",
+    "district": "maker",
+    "name": "Transitions.dev",
+    "url": "https://transitions.dev/",
+    "tagline": "Essential UI transitions for web apps",
+    "desc": "A collection of the most essential UI transitions for web apps. Copy and paste them, or let your coding agent add them through the skill.",
+    "by": "Jakub Antalik",
+    "creatorUrl": "https://x.com/jakubantalik",
+    "tags": [
+      "css",
+      "motion",
+      "agents"
+    ],
+    "added": "2026-10-28",
+    "logo": "/places/transitions-dev/logo.png",
+    "screenshot": "/places/transitions-dev/screenshot.jpg",
+    "brandColor": "#e9e9ec",
+    "highlights": [
+      "35 transitions",
+      "Copy and paste",
+      "A skill for agents",
+      "Reduced-motion ready"
+    ]
   }
 ]

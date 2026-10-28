@@ -2569,7 +2569,10 @@ function cardText(x,p,f){ const D=DISTRICTS[p.district], acc=accentOf(p), sq=f==
   x.fillStyle='rgba(12,16,46,.78)'; cardRoundRect(x,bx2,by2,bw,bh2,sq?22:18); x.fill(); x.strokeStyle='rgba(255,255,255,.14)'; x.lineWidth=2; x.stroke();
   cardLogo(x,bx2+(sq?28:22),by2+(bh2-(sq?48:40))/2,sq?48:40); x.fillStyle='#fff'; x.font=F(sq?26:21,600); x.fillText('Discover this place on Isomaker',bx2+(sq?96:78),by2+bh2/2-(sq?4:3));
   x.fillStyle='rgba(225,230,255,.62)'; x.font=F(sq?20:16); x.fillText('A living world of indie tools',bx2+(sq?96:78),by2+bh2/2+(sq?24:19));
-  x.font=F(sq?26:20,600); x.fillStyle='#b9a6ff'; x.textAlign='right'; x.fillText(url,bx2+bw-(sq?32:24),by2+bh2/2+(sq?9:7)); x.textAlign='left';
+  // a long address steps its size down to fit beside the title, never under it
+  x.font=F(sq?26:21,600); const room=bw-(sq?96:78)-x.measureText('Discover this place on Isomaker').width-(sq?32:24)-(sq?28:20);
+  let us=sq?26:20; x.font=F(us,600); while(x.measureText(url).width>room && us>13){ us-=1; x.font=F(us,600); }
+  x.fillStyle='#b9a6ff'; x.textAlign='right'; x.fillText(url,bx2+bw-(sq?32:24),by2+bh2/2+(sq?9:7)); x.textAlign='left';
 }
 async function renderPlaceCard(p,f='square'){ const key=p.id+'|'+f; if(cardCache.has(key)) return cardCache.get(key);
   const { W, H }=CARD_FMT[f], sq=f==='square';

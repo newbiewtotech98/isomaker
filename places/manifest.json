@@ -376,5 +376,50 @@
     "district": "creative",
     "districtName": "Creative District",
     "by": "Aakash Goel"
+  },
+  {
+    "slug": "color-museum",
+    "name": "The Color Museum",
+    "tagline": "A walkable museum of art and colour",
+    "desc": "A digital museum you walk through: scroll to stroll the hall, tap a painting to learn its story, and listen along with an AI voice guide. A fun way to learn about art.",
+    "district": "experiment",
+    "districtName": "Experiment District",
+    "by": "Akash Soti"
+  },
+  {
+    "slug": "libraries-dev",
+    "name": "Libraries.dev",
+    "tagline": "Libraries and models for next-gen UI",
+    "desc": "UI effect libraries and on-device ML models, ready to use with your agents: animated borders, thinking indicators, voice visualizers, liquid metal and more, for React, SwiftUI and React Native.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Jakub Antalik"
+  },
+  {
+    "slug": "bencho",
+    "name": "Bencho",
+    "tagline": "Live, tweakable React micro-interactions",
+    "desc": "A library of interactive UI blocks you can explore, tweak, and take straight into your projects. Everything is live, not mocked.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Lorenzo Cabral"
+  },
+  {
+    "slug": "refero",
+    "name": "Refero",
+    "tagline": "Design research from real product interfaces",
+    "desc": "A curated library of real product screens, flows and patterns for web and iOS, with a research mode and an MCP that lets your agent study real interfaces before it builds.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "Refero"
+  },
+  {
+    "slug": "transitions-dev",
+    "name": "Transitions.dev",
+    "tagline": "Essential UI transitions for web apps",
+    "desc": "A collection of the most essential UI transitions for web apps. Copy and paste them, or let your coding agent add them through the skill.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "Jakub Antalik"
   }
 ]

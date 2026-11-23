@@ -2,6 +2,7 @@
   {
     "slug": "hairline",
     "district": "creative",
+    "top": 1,
     "name": "Hairline",
     "url": "https://hairline.lucasmarkes.com",
     "tagline": "Line drawings that answer the pointer",
@@ -27,6 +28,7 @@
   {
     "slug": "artcraft",
     "district": "creative",
+    "top": 2,
     "name": "ArtCraft",
     "url": "https://getartcraft.com/apps",
     "tagline": "Thirteen open-source creative apps, built in Rust",
@@ -76,6 +78,7 @@
   {
     "slug": "lightmeter",
     "district": "creative",
+    "top": 3,
     "name": "Lightmeter",
     "url": "https://shotonlightmeter.com/",
     "appStore": "https://apps.apple.com/app/lightmeter-pocket-film-camera/id6800456535",
@@ -175,6 +178,7 @@
   {
     "slug": "refero",
     "district": "creative",
+    "top": 4,
     "name": "Refero",
     "url": "https://refero.design/",
     "tagline": "Design research from real product interfaces",

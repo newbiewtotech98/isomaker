@@ -213,7 +213,7 @@
   .sub .preview{vertical-align:1px}
 
   /* ---------- film mode ---------- */
-  body.film .tl, body.film .tr, body.film .blwrap, body.film .br, body.film #obsHint, body.film .ihint, body.film #tooltip, body.film #toast, body.film .ibar{display:none!important}
+  body.film .tl, body.film .dist-btn, body.film .tr, body.film .ctl-fab, body.film .ipill, body.film .blwrap, body.film .br, body.film #obsHint, body.film .ihint, body.film #tooltip, body.film #toast, body.film .ibar{display:none!important}
   body.film .side, body.film .modal, body.film .modal-card, body.film .fader, body.film .dlabel, body.film .ibar, body.film .irank{transition:none!important;animation:none!important}
   body.film, body.film *{cursor:none!important} body.film input, body.film textarea{caret-color:transparent}
   body.film #scene canvas{pointer-events:none}
@@ -272,10 +272,66 @@
   @media (max-width: 760px){
     body.in-interior .tl{display:none!important}
     .ibar{top:calc(16px + env(safe-area-inset-top,0px));max-width:calc(100vw - 32px)} .ititle span{display:none}
-    .irank{top:auto;bottom:calc(66px + env(safe-area-inset-bottom,0px));max-height:30vh;left:16px;right:16px;width:auto}
+    /* bottom row in a room: [top 10 pill][controls]; the pill opens the full list above the row */
+    #ihud .ipill{display:flex}
+    .irank{top:auto;bottom:calc(84px + env(safe-area-inset-bottom,0px));max-height:calc(100vh - 168px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));max-height:calc(100dvh - 168px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));left:16px;right:16px;width:auto;
+      opacity:0;visibility:hidden;transform:translateY(12px) scale(.98);transform-origin:bottom center;animation:none;
+      transition:opacity .2s,transform .3s cubic-bezier(.2,.9,.2,1),visibility 0s .3s}
+    body.rank-open .irank{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .3s cubic-bezier(.2,.9,.2,1),visibility 0s}
+    .irank .rlist{overflow:auto;min-height:0;flex:1 1 auto}
+    /* tighter rows so a full top 10 fits on one screen without scrolling */
+    .irank{padding:12px 6px 8px} .irank .rrow{padding:5px 8px} .irank .rrow .mono{width:28px;height:28px} .irank .rnote{margin-top:6px}
+    body.ctl-open #ihud .ipill{opacity:0;transform:translateX(-12px);pointer-events:none}
     .ihint{display:none}
     .ilabel{font-size:0;gap:0;padding:2px} .ilabel span{font-size:10px}
   }
+
+  /* ---------- top 10 pill (phones only) ---------- */
+  .ipill{display:none;position:fixed;left:16px;right:84px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:6;height:56px;padding:0 16px 0 18px;border-radius:var(--r-round);
+    align-items:center;gap:10px;color:var(--text);font:inherit;cursor:pointer;text-align:left;transition:opacity .2s,transform .25s cubic-bezier(.2,.9,.2,1)}
+  .ipill:active{transform:scale(.98)}
+  .ipill .pl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+  .ipill .stack{display:flex;flex:none} .ipill .stack .mono{width:24px;height:24px;font-size:11px;border-radius:7px;box-shadow:0 0 0 2px var(--glass-strong)} .ipill .stack .mono + .mono{margin-left:-6px}
+  .ipill .stack .mono.logo img{width:100%;height:100%;border-radius:7px;object-fit:cover}
+  .ipill .po{color:var(--faint);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .ipill svg.i{margin-left:auto;color:var(--muted);transition:transform .3s cubic-bezier(.2,.9,.2,1)}
+  body.rank-open .ipill svg.i{transform:rotate(180deg)}
+
+  /* ---------- view-controls toggle (phones only) ---------- */
+  .ctl-fab{display:none;position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:6;width:56px;height:56px;padding:0;border:0;border-radius:50%;place-items:center;
+    color:#edeef0;cursor:pointer;overflow:hidden;isolation:isolate;background:transparent;
+    box-shadow:0 12px 26px -10px rgba(37,84,220,.65),0 2px 6px rgba(20,40,120,.25);
+    -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
+    transition:transform .3s cubic-bezier(.19,1,.22,1),background .3s,box-shadow .3s}
+  .ctl-fab:active{transform:scale(.94)}
+  .ctl-fab:focus-visible{outline:2px solid #edeef0;outline-offset:3px}
+  /* the inner disc that rises when open */
+  .ctl-fab::before{content:"";position:absolute;inset:4px;border-radius:50%;opacity:0;transform:scale(.85);transition:opacity .3s,transform .45s cubic-bezier(.19,1,.22,1);
+    background:linear-gradient(#38363f,#292830);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 0 1px rgba(255,255,255,.08),0 2px 4px rgba(0,0,0,.35)}
+  body.ctl-open .ctl-fab{background:rgba(22,21,28,.82);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 12px 28px -14px rgba(0,0,0,.8)}
+  body.ctl-open .ctl-fab::before{opacity:1;transform:none}
+  /* the orb: a blue sphere with three drifting colour blobs and a glossy top-left highlight */
+  .fab-orb{position:absolute;inset:0;border-radius:50%;z-index:-1;overflow:hidden;transition:opacity .4s cubic-bezier(.19,1,.22,1);
+    background:radial-gradient(circle at 40% 35%,#4fa0ff 0%,#2a66ec 55%,#1b3bb4 100%)}
+  .fab-orb i{position:absolute;border-radius:50%;filter:blur(5px);will-change:transform}
+  .fab-orb i:nth-child(1){width:62%;height:62%;left:2%;top:40%;background:radial-gradient(circle,#3df5a0 0%,#2fe3b0 35%,rgba(47,227,176,0) 72%);animation:orbA 7s ease-in-out infinite alternate}
+  .fab-orb i:nth-child(2){width:60%;height:60%;left:38%;top:4%;background:radial-gradient(circle,#a6f0ff 0%,#6fd8ff 35%,rgba(111,216,255,0) 72%);animation:orbB 9s ease-in-out infinite alternate}
+  .fab-orb i:nth-child(3){z-index:-1;width:70%;height:70%;left:30%;top:42%;background:radial-gradient(circle,#2e5bff 0%,#2448e0 40%,rgba(36,72,224,0) 75%);animation:orbC 11s ease-in-out infinite alternate}
+  .fab-orb::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.42),rgba(255,255,255,0) 42%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),inset 0 -6px 12px rgba(10,20,80,.35)}
+  @keyframes orbA{0%{transform:translate(0,0) scale(1)}50%{transform:translate(30%,-25%) scale(1.15)}100%{transform:translate(55%,-5%) scale(.9)}}
+  @keyframes orbB{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-35%,30%) scale(1.2)}100%{transform:translate(-10%,55%) scale(.95)}}
+  @keyframes orbC{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-40%,-30%) scale(.85)}100%{transform:translate(-20%,-50%) scale(1.1)}}
+  body.ctl-open .fab-orb{opacity:0}
+  .ctl-fab .ic-open,.ctl-fab .ic-close{grid-area:1/1;position:relative;display:flex;align-items:center;justify-content:center;transition:opacity .3s,transform .45s cubic-bezier(.19,1,.22,1)}
+  .fab-eyes{gap:12px;filter:drop-shadow(0 1px 1px rgba(10,20,80,.35))}
+  .fab-eyes i{display:block;width:5px;height:15px;border-radius:4px;background:#0b1030;animation:eyesBlink 5s ease infinite}
+  @keyframes eyesBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.12)}}
+  .ctl-fab svg.i{width:18px;height:18px}
+  .ctl-fab .ic-close{opacity:0;transform:rotate(-90deg) scale(.6)}
+  body.ctl-open .ctl-fab .ic-open{opacity:0;transform:rotate(90deg) scale(.6)}
+  body.ctl-open .ctl-fab .ic-close{opacity:1;transform:none}
+  @media (prefers-reduced-motion: reduce){ .ctl-fab .ic-open, .ctl-fab .ic-close, .br, .tr, .ipill, .irank, .ipill svg.i{transition:none!important} .fab-orb i, .fab-eyes i{animation:none!important} }
 
   /* ---------- modal ---------- */
   .modal{position:fixed;inset:0;z-index:20;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;padding:16px;background:rgba(3,5,20,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:fade .25s}
@@ -354,7 +410,104 @@
     .brand{min-width:0}
     .side{top:auto;height:62vh;bottom:calc(66px + env(safe-area-inset-bottom,0px))}
     .row2{grid-template-columns:1fr}
-    .br{left:16px;right:16px;justify-content:center;flex-wrap:wrap}
+    /* view controls fold into a round button; tapping it swaps the actions pill for the controls */
+    .ctl-fab{display:grid}
+    .tr{bottom:calc(16px + env(safe-area-inset-bottom,0px));right:84px;height:56px;border-radius:var(--r-round);padding:0 7px;transition:opacity .2s,transform .25s cubic-bezier(.2,.9,.2,1)}
+    .tr .btn{height:40px;border-radius:var(--r-round);padding:0 13px}
+    .br{left:16px;right:84px;bottom:calc(16px + env(safe-area-inset-bottom,0px));height:56px;padding:0 6px;border-radius:var(--r-round);justify-content:space-between;gap:0;
+      opacity:0;visibility:hidden;transform:translateX(24px) scale(.96);transform-origin:right center;transition:opacity .2s,transform .3s cubic-bezier(.2,.9,.2,1),visibility 0s .3s}
+    .br .seg{display:contents} .br .icon-btn{flex:0 1 34px;min-width:24px;width:auto;height:auto;aspect-ratio:1;border-radius:50%} .br .sep{margin:0 2px;flex:none}
+    body.ctl-open .br{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .3s cubic-bezier(.2,.9,.2,1),visibility 0s}
+    body.ctl-open .tr{opacity:0;transform:translateX(-12px);pointer-events:none}
+    .search{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+    .side{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+    .toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  }
+  /* ---------- liquid glass, everywhere ----------
+     near-clear fill, a light blur that flattens the scene behind (contrast .68, brightness .92),
+     a rim of fine inset shadows; in Chromium a per-element lens (SVG displacement) bends the edges */
+  .panel{border:0;border-radius:22px;background:rgba(255,255,255,.045);
+    -webkit-backdrop-filter:blur(7px) saturate(1.5) brightness(.92) contrast(.68);backdrop-filter:blur(7px) saturate(1.5) brightness(.92) contrast(.68);
+    box-shadow:inset 0 0 0 .5px rgba(255,255,255,.22),inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1.5px rgba(0,0,0,.1),inset 0 0 5px rgba(0,0,0,.06),inset 0 0 9px rgba(255,255,255,.04),0 2px 22px rgba(0,0,8,.22),0 1px 3px rgba(0,0,8,.16)}
+  /* pills */
+  .tr.panel,.br.panel,.districts.panel,.ibar.panel,.ipill.panel,.toast.panel,.bl.panel{border-radius:999px}
+  /* sheets with reading in them get a deeper blur and a little tint, like the museum's pop-overs */
+  .irank.panel,.side.panel,.modal-card.panel,.search.panel,.info-pop.panel,.tooltip.panel{background:rgba(14,16,36,.42);
+    -webkit-backdrop-filter:blur(14px) saturate(1.5) brightness(.92) contrast(.68);backdrop-filter:blur(14px) saturate(1.5) brightness(.92) contrast(.68)}
+  .side.panel,.modal-card.panel{border-radius:22px} .irank.panel,.search.panel,.info-pop.panel{border-radius:18px}
+  body[data-mode="day"] .panel{background:rgba(255,255,255,.3);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1.5px rgba(0,0,0,.06),inset 0 0 5px rgba(0,0,0,.04),0 2px 22px rgba(30,24,18,.13),0 1px 3px rgba(30,24,18,.08)}
+  body[data-mode="day"] .irank.panel,body[data-mode="day"] .side.panel,body[data-mode="day"] .modal-card.panel,body[data-mode="day"] .search.panel,body[data-mode="day"] .info-pop.panel,body[data-mode="day"] .tooltip.panel{background:rgba(255,255,255,.6)}
+  /* buttons sit straight on the glass; the selected one is a raised lighter pill; Join keeps action/primary */
+  .tr .btn,.ibar .btn{border-radius:999px}
+  .tr .btn:not(.primary):hover,.ibar .btn:hover{background:rgba(255,255,255,.1)}
+  .seg .icon-btn,.br .icon-btn{border-radius:999px}
+  .chip{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1)}
+  .tr .btn.primary{box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 0 .5px rgba(255,255,255,.16),0 4px 14px rgba(0,0,10,.35)}
+  .tr{gap:4px}
+
+  /* ---------- desktop layout: actions dock bottom-centre, districts top-right ---------- */
+  .tr{top:auto;right:auto;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);padding:5px}
+  .districts{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;max-width:calc(100vw - 420px)}
+  .search{top:auto;right:auto;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column-reverse}
+  .search .results{margin:0 0 6px}
+  .toast{bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+  #obsHint{bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+
+  @media (max-width: 380px){ .brand .mb-made{font-size:11px} .brand b{font-size:13.5px} .brand{gap:6px!important} }
+  /* ---------- districts toggle (phones only) ---------- */
+  .dist-btn{display:none;position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:6;height:56px;padding:0 12px 0 14px;border-radius:999px!important;
+    align-items:center;gap:6px;color:var(--text);cursor:pointer;font:inherit}
+  .dist-btn .dots{display:grid;grid-template-columns:repeat(3,7px);gap:3px}
+  .dist-btn .dots i{width:7px;height:7px;border-radius:50%;box-shadow:0 0 6px currentColor}
+  .dist-btn svg.i{color:var(--muted);transition:transform .3s cubic-bezier(.19,1,.22,1)}
+  body.dist-open .dist-btn svg.i{transform:rotate(180deg)}
+
+  /* ---------- the Hi orb: eyes blink, then become H and I; tap for the world's info ---------- */
+  .blwrap{flex-direction:column;align-items:flex-start;gap:10px}
+  .hi-fab{position:relative;width:56px;height:56px;padding:0;border:0;border-radius:50%;cursor:pointer;display:grid;place-items:center;overflow:hidden;isolation:isolate;background:transparent;
+    box-shadow:0 12px 26px -10px rgba(37,84,220,.65),0 2px 6px rgba(20,40,120,.25);transition:transform .3s cubic-bezier(.19,1,.22,1)}
+  .hi-fab:hover{transform:translateY(-1px)} .hi-fab:active{transform:scale(.94)}
+  .hi-fab:focus-visible{outline:2px solid #edeef0;outline-offset:3px}
+  .hi{position:relative;width:22px;height:16px;filter:drop-shadow(0 1px 1px rgba(10,20,80,.35))}
+  .hi i{position:absolute;top:.5px;height:15px;border-radius:4px;background:#0b1030}
+  .hi .l{left:0;width:5px;animation:hiL 10s ease-in-out infinite}
+  .hi .r{left:17px;width:5px;animation:hiR 10s ease-in-out infinite}
+  .hi .h2{left:8px;width:3.5px;transform:scaleY(0);opacity:0;animation:hiH2 10s ease-in-out infinite}
+  .hi .x{left:-2px;top:6.5px;width:13.5px;height:3px;border-radius:2px;transform:scaleX(0);opacity:0;animation:hiX 10s ease-in-out infinite}
+  @keyframes hiL{0%,10%,13.5%,26%,29.5%,40%{left:0;width:5px;transform:scaleY(1)} 11.75%,27.75%{left:0;width:5px;transform:scaleY(.12)} 47%,78%{left:-2px;width:3.5px;transform:scaleY(1.07)} 86%,100%{left:0;width:5px;transform:scaleY(1)}}
+  @keyframes hiR{0%,10%,13.5%,26%,29.5%,40%{left:17px;width:5px;transform:scaleY(1)} 11.75%,27.75%{left:17px;width:5px;transform:scaleY(.12)} 47%,78%{left:17.5px;width:3.5px;transform:scaleY(1.07)} 86%,100%{left:17px;width:5px;transform:scaleY(1)}}
+  @keyframes hiH2{0%,41%{transform:scaleY(0);opacity:0} 47%,78%{transform:scaleY(1.07);opacity:1} 84%,100%{transform:scaleY(0);opacity:0}}
+  @keyframes hiX{0%,44%{transform:scaleX(0);opacity:0} 50%,77%{transform:scaleX(1);opacity:1} 82%,100%{transform:scaleX(0);opacity:0}}
+  .info-pop{display:flex;flex-direction:column;gap:2px;padding:8px;min-width:260px;transform-origin:bottom left;
+    opacity:0;visibility:hidden;transform:translateY(8px) scale(.97);transition:opacity .2s,transform .3s cubic-bezier(.19,1,.22,1),visibility 0s .3s}
+  body.info-open .info-pop{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .3s cubic-bezier(.19,1,.22,1),visibility 0s}
+  .info-pop .bl{padding:10px 10px 12px;border-bottom:1px solid var(--line);margin-bottom:4px}
+  .info-link{display:flex;align-items:center;gap:6px;padding:9px 10px;border-radius:12px;color:var(--text);text-decoration:none;font-weight:500;transition:background .15s}
+  .info-link:hover{background:var(--hover)} .info-link .arr{margin-left:auto;color:var(--muted)}
+  @media (prefers-reduced-motion: reduce){ .hi i, .fab-orb i{animation:none!important} .info-pop{transition:none!important} }
+
+  @media (max-width: 760px){
+    /* phones keep their bottom row: actions pill beside the controls orb, districts under the brand */
+    /* actions pill takes the row beside the orb; Join gets its words back */
+    .tr{left:16px;right:84px;transform:none;padding:0 6px}
+    .tr .btn{flex:none;width:44px;padding:0;justify-content:center}
+    .tr #addBtn{flex:1;width:auto;padding:0 14px} .tr #addBtn .t{display:inline}
+    /* districts drop down from a round toggle top-right */
+    .dist-btn{display:flex}
+    body.in-interior .dist-btn{display:none}
+    .tl{right:84px} .brand{width:100%;gap:8px;padding:10px 8px 10px 10px} .brand .mb-made{white-space:nowrap} .brand > div:not(.logo){min-width:0;flex:1;overflow:hidden} .brand > div:not(.logo) > *{overflow:hidden;text-overflow:ellipsis}
+    .dist-btn{width:56px;padding:0;justify-content:center} .brand .storylink{padding:3px 8px;font-size:12px;flex:none} .brand .icon-btn{flex:none;width:26px} .dist-btn svg.i{display:none}
+    .districts{position:fixed;top:calc(80px + env(safe-area-inset-top,0px));right:16px;left:auto;max-width:calc(100vw - 32px);width:220px;
+      flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:2px;padding:8px;
+      opacity:0;visibility:hidden;transform:translateY(-8px) scale(.97);transform-origin:top right;transition:opacity .2s,transform .3s cubic-bezier(.19,1,.22,1),visibility 0s .3s}
+    body.dist-open .districts{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .3s cubic-bezier(.19,1,.22,1),visibility 0s}
+    .districts.panel{border-radius:18px;background:rgba(14,16,36,.42)} body[data-mode="day"] .districts.panel{background:rgba(255,255,255,.6)}
+    .districts .lbl{padding:4px 8px 6px;margin:0}
+    .districts .chip{border:0;background:transparent;border-radius:12px;padding:10px 10px;font-size:14px;gap:10px}
+    .districts .chip:hover{background:var(--hover);transform:none}
+    /* pinch zooms on phones */
+    #zoomIn,#zoomOut{display:none}
+    .search{left:16px;right:16px;transform:none;width:auto}
   }
 </style>
 <script>
@@ -385,6 +538,7 @@
   </div>
   <div class="districts panel" id="districtChips"><span class="lbl">DISTRICTS:</span></div>
 </div>
+<button class="dist-btn panel" id="distBtn" aria-label="Districts" aria-expanded="false" aria-controls="districtChips"><span class="dots" aria-hidden="true"></span><span data-i="chevDown"></span></button>
 
 <div class="tr panel">
   <button class="btn" id="findBtn" title="Find a place (/)"><span data-i="search"></span><span class="t">Find place</span><span class="kbd">/</span></button>
@@ -397,9 +551,16 @@
   <div class="results" id="results"></div>
 </div>
 
-<div class="blwrap"><div class="bl panel"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div><a class="madeby panel" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a><a class="madeby panel" href="/story">The story</a></div>
+<div class="blwrap" id="infoWrap">
+  <div class="info-pop panel" id="infoPop" role="dialog" aria-label="About Isomaker">
+    <div class="bl"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div>
+    <a class="info-link" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a>
+    <a class="info-link" href="/story">The story <span class="arr">→</span></a>
+  </div>
+  <button class="hi-fab" id="infoBtn" aria-label="About Isomaker" aria-expanded="false" aria-controls="infoPop"><span class="fab-orb" aria-hidden="true"><i></i><i></i><i></i></span><span class="hi" aria-hidden="true"><i class="l"></i><i class="r"></i><i class="h2"></i><i class="x"></i></span></button>
+</div>
 
-<div class="br panel">
+<div class="br panel" id="viewCtl">
   <div class="seg">
     <button class="icon-btn night active" data-mode="night" title="Night"><span data-i="moon"></span></button>
     <button class="icon-btn dusk" data-mode="dusk" title="Dusk"><span data-i="sunrise"></span></button>
@@ -415,9 +576,11 @@
   <button class="icon-btn" id="soundBtn" title="Ambient sound"><span data-i="mute"></span></button>
 </div>
 
+<button class="ctl-fab" id="ctlBtn" aria-label="View controls" aria-expanded="false" aria-controls="viewCtl"><span class="fab-orb" aria-hidden="true"><i></i><i></i><i></i></span><span class="ic-open fab-eyes" aria-hidden="true"><i></i><i></i></span><span class="ic-close" aria-hidden="true"><span data-i="x"></span></span></button>
 <aside class="side panel" id="side" aria-live="polite"></aside>
 <div id="ihud" hidden>
   <div class="ibar panel"><button class="btn" id="backBtn"><svg class="i" viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to the world</button><div class="sep"></div><div class="ititle" id="ititle"></div><button class="icon-btn" id="shareRoom" title="Share this room"><span data-i="share"></span></button></div>
+  <button class="ipill panel" id="ipill" aria-expanded="false" aria-controls="irank"></button>
   <aside class="irank panel" id="irank"></aside>
   <div class="ihint">Drag to rotate · Scroll to zoom · Esc to leave</div>
 </div>
@@ -1540,9 +1703,11 @@ function build(){
     // an app's store links are kept only for the stores' own domains; an app with no website uses its store link
     const site=safeUrl(c.url||''), appStore=storeUrl(c.appStore,/^apps\.apple\.com$/), playStore=storeUrl(c.playStore,/^play\.google\.com$/);
     if(site||appStore||playStore) places.push({ ...c, id:'c-'+c.slug, url:site||appStore||playStore, site:!!site, appStore, playStore, seed:true, curated:true,
+    // a place with "top": n lives inside its landmark at #n of the top 10 instead of on the island
+    top: Number.isInteger(c.top) && c.top>=1 && c.top<=10? c.top : null,
     logo:/^\/places\//.test(c.logo||'')? c.logo : null, screenshot:/^\/places\//.test(c.screenshot||'')? c.screenshot : null }); }
   for(const p of loadUser()) places.push({ ...p, user:true });
-  for(const p of places) placeBuilding(p,false);
+  for(const p of places) if(!p.top) placeBuilding(p,false);
   if(Data.numbers) for(const k of ORDER){ const w=Data.lastWeekWinner(k); if(w) addCrown(w); }
   for(const k of ORDER) scatterDistrictTrees(k);
   scatterCommonsTrees();
@@ -1696,6 +1861,9 @@ const ICONS = {
   search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
   shuffle:'<path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
+  chevUp:'<path d="m6 15 6-6 6 6"/>',
+  chevDown:'<path d="m6 9 6 6 6-6"/>',
+  sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
   moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
   sunrise:'<path d="M12 2v6"/><path d="m4.9 10.9 1.4 1.4"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m17.7 12.3 1.4-1.4"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/>',
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
@@ -1726,7 +1894,11 @@ const $=id=>document.getElementById(id);
 const side=$('side');
 const chips=$('districtChips');
 for(const k of ORDER){ const d=DISTRICTS[k]; const b=document.createElement('button'); b.className='chip'; b.innerHTML=`<span class="dot" style="color:${d.color}"></span>${d.short}`;
-  b.onclick=()=>{ openDistrict(k); flyTo(V3(d.pos[0],0,d.pos[1]),1.9); panelOffset(); }; chips.appendChild(b); }
+  b.onclick=()=>{ setDist(false); openDistrict(k); flyTo(V3(d.pos[0],0,d.pos[1]),1.9); panelOffset(); }; chips.appendChild(b); }
+document.querySelector('#distBtn .dots').innerHTML=ORDER.map(k=>`<i style="background:${DISTRICTS[k].color}"></i>`).join('');
+function setDist(on){ document.body.classList.toggle('dist-open',on); $('distBtn').setAttribute('aria-expanded',on); }
+$('distBtn').onclick=e=>{ e.stopPropagation(); setDist(!document.body.classList.contains('dist-open')); };
+addEventListener('pointerdown',e=>{ if(document.body.classList.contains('dist-open') && !$('distBtn').contains(e.target) && !chips.contains(e.target)) setDist(false); });
 
 function mono(p){ const c=DISTRICTS[p.district]?.color||COMMONS.color;
   if(p.curated && p.logo) return `<div class="mono logo" style="--accent:${c}"><img src="${esc(p.logo)}" alt=""></div>`;
@@ -1751,6 +1923,8 @@ function nearbyPlaces(p,same=3,other=1){ if(!p.obj) return [];
   return [...ranked.filter(o=>o.x.district===p.district).slice(0,same), ...ranked.filter(o=>o.x.district!==p.district).slice(0,other)].map(o=>o.x); }
 function openPlace(p,opt={}){
   if(p.id==='observatory') return openAbout();
+  // a place that lives inside a landmark opens there
+  if(p.top && !(interior.active && interior.key===p.district)){ if(interior.active){ if(interior.busy) return; showInterior(p.district); } else return enterInterior(p.district,p); }
   exitObservatory();
   const d=DISTRICTS[p.district]; const url=safeUrl(p.url);
   const nearby=nearbyPlaces(p); const st=Data.stats(p);
@@ -1766,7 +1940,7 @@ function openPlace(p,opt={}){
     ${by?`<div class="byline">by ${byUrl?`<a href="${esc(byUrl)}" target="_blank" rel="noopener noreferrer">${esc(by)}</a>`:esc(by)}</div>`:''}
     ${p.seed && !p.curated?`<div class="cl-note">A hand-picked Classic. Classics aren’t ranked — the top 10 inside ${d.lm} is for makers.</div>`:''}
     ${p.desc?`<p class="desc">${esc(p.desc)}</p>`:''}
-    <dl class="meta">${appOnly?'':`<dt>Website</dt><dd>${esc(host(p.url))}</dd>`}${apps.length?`<dt>App</dt><dd>${[p.appStore&&'iPhone & iPad',p.playStore&&'Android'].filter(Boolean).join(' · ')}</dd>`:''}${p.by && !cu?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}${Data.numbers?`<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>`:''}${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
+    <dl class="meta">${appOnly?'':`<dt>Website</dt><dd>${esc(host(p.url))}</dd>`}${apps.length?`<dt>App</dt><dd>${[p.appStore&&'iPhone & iPad',p.playStore&&'Android'].filter(Boolean).join(' · ')}</dd>`:''}${p.by && !cu?`<dt>Made by</dt><dd>${esc(p.by)}</dd>`:''}${p.added?`<dt>Added</dt><dd>${esc(new Date(p.added).toLocaleDateString())}</dd>`:''}${Data.numbers?`<dt>This week</dt><dd id="weekStat">${weekLine(p,d)}</dd>`:''}${p.top?`<dt>Top 10</dt><dd>#${Data.rank(p)} in ${d.lm}</dd>`:''}${p.crowned?`<dt>Last week</dt><dd class="crowned">#1 in ${d.short}</dd>`:''}</dl>
     ${p.tags?.length?`<div class="tags">${p.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
     <div class="actions">
       ${appOnly? `<a class="btn primary" href="${esc(apps[0][1])}" ${ext}>${icon('phone')} Get the app ${icon('ext')}</a>`
@@ -1774,7 +1948,7 @@ function openPlace(p,opt={}){
       ${apps.slice(appOnly?1:0).map(([label,href])=>`<a class="btn ghost store" href="${esc(href)}" ${ext} title="${label}">${icon('phone')}${label}</a>`).join('')}
       ${p.seed?'':`<button class="btn ghost vote${st.voted?' on':''}" id="voteBtn" title="${st.voted?'Remove upvote':'Upvote'}">▲ ${Data.numbers?`<b>${st.upvotes}</b>`:'Upvote'}</button>`}
       <button class="btn ghost" id="shareBtn" title="Share this place">${icon('share')} Share</button>
-      ${interior.active?'':`<button class="btn ghost" id="focusBtn" title="Fly to">${icon('target')}</button>`}
+      ${interior.active||p.top?'':`<button class="btn ghost" id="focusBtn" title="Fly to">${icon('target')}</button>`}
     </div>
     ${p.user?`<button class="btn ghost danger" id="removeBtn">${icon('trash')} Remove my place</button>`:''}
     ${moreBy.length?`<div class="list"><h4>More by ${esc(by)}</h4>${moreBy.map(placeRow).join('')}</div>`:''}
@@ -1789,6 +1963,7 @@ function openPlace(p,opt={}){
   if($('voteBtn')) $('voteBtn').onclick=()=>{ const on=Data.toggleVote(p), s2=Data.stats(p), b=$('voteBtn'); b.classList.toggle('on',on); b.title=on?'Remove upvote':'Upvote'; if(b.querySelector('b')) b.querySelector('b').textContent=s2.upvotes; if(interior.active) renderRankList(); };
   if(p.user) $('removeBtn').onclick=()=>{ const b=$('removeBtn'); if(!b.dataset.confirm){ b.dataset.confirm='1'; b.innerHTML=`${icon('trash')} Click again to remove`; return; }
     removeBuilding(p); places.splice(places.indexOf(p),1); saveUser(); updateCount(); closeSide(); toast(p,'Removed',p.name); };
+  if(interior.active && innerWidth<=760) setRank(false);
   if(interior.active) focusInterior(p); else if(opt.keepCamera){ select(p); panelOffset(); } else { select(p); flyToPlace(p); }
   setUrl({ place:slugOf(p) });
 }
@@ -1820,6 +1995,40 @@ function updateMetrics(){ const show=Data.numbers; $('nowCount').hidden=!show; d
   for(const k of ORDER){ const el=world.districts[k]?.visitsEl; if(!el) continue; el.hidden=!show; if(show) el.textContent=`${kfmt(Data.districtVisits(k))} visits this week`; }
   if(obs.active) renderObservatoryCards(); }
 setInterval(updateMetrics,30000);
+/* the Hi orb opens the world's info; a click elsewhere or Esc closes it */
+function setInfo(on){ document.body.classList.toggle('info-open',on); $('infoBtn').setAttribute('aria-expanded',on); }
+$('infoBtn').onclick=e=>{ e.stopPropagation(); setInfo(!document.body.classList.contains('info-open')); };
+addEventListener('pointerdown',e=>{ if(document.body.classList.contains('info-open') && !$('infoWrap').contains(e.target)) setInfo(false); });
+
+/* Liquid-glass lens (Chromium): each glass panel gets its own SVG filter whose displacement map bends the
+   scene behind its rim inward, like the edge of a lens. Other browsers keep the plain frosted blur. */
+(()=>{ if(!window.chrome || matchMedia('(prefers-reduced-transparency: reduce)').matches) return;
+  const NS='http://www.w3.org/2000/svg', svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('width','0'); svg.setAttribute('height','0'); svg.style.position='absolute'; svg.setAttribute('aria-hidden','true'); document.body.appendChild(svg);
+  const maps=new Map(); let n=0;
+  function mapFor(w,h,r,bezel){ const key=w+'x'+h+'r'+r; if(maps.has(key)) return maps.get(key);
+    const c=document.createElement('canvas'); c.width=w; c.height=h; const x=c.getContext('2d'), im=x.createImageData(w,h), d=im.data;
+    for(let j=0;j<h;j++) for(let i=0;i<w;i++){ const px=i+.5-w/2, py=j+.5-h/2, ax=Math.abs(px)-(w/2-r), ay=Math.abs(py)-(h/2-r);
+      let dist, nx=0, ny=0;
+      if(ax>0 && ay>0){ const L=Math.hypot(ax,ay)||1; dist=r-L; nx=-Math.sign(px)*ax/L; ny=-Math.sign(py)*ay/L; }
+      else if(ax>ay){ dist=r-ax; nx=-Math.sign(px); } else { dist=r-ay; ny=-Math.sign(py); }
+      const m= dist>=0 && dist<bezel? Math.pow(1-dist/bezel,2) : 0, o=(j*w+i)*4;
+      d[o]=128+nx*m*127; d[o+1]=128+ny*m*127; d[o+2]=128; d[o+3]=255; }
+    x.putImageData(im,0,0); const url=c.toDataURL(); maps.set(key,url); return url; }
+  function lens(el){ const w=el.offsetWidth, h=el.offsetHeight; if(w<8||h<8) return;
+    const cs=getComputedStyle(el), r=Math.min(parseFloat(cs.borderTopLeftRadius)||0, h/2, w/2), bezel=Math.min(14, h/2.5);
+    let f=el._lens; if(!f){ f=document.createElementNS(NS,'filter'); f.id='lg-'+(++n); f.setAttribute('filterUnits','userSpaceOnUse'); f.setAttribute('color-interpolation-filters','sRGB');
+      f.innerHTML='<feImage result="map" preserveAspectRatio="none"/><feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G"/>'; svg.appendChild(f); el._lens=f; }
+    if(el._lensKey===w+'x'+h) return; el._lensKey=w+'x'+h;
+    for(const [k,v] of [['x',0],['y',0],['width',w],['height',h]]) f.setAttribute(k,v);
+    const img=f.firstChild; img.setAttribute('href',mapFor(w,h,Math.round(r),bezel)); for(const [k,v] of [['x',0],['y',0],['width',w],['height',h]]) img.setAttribute(k,v);
+    f.lastChild.setAttribute('scale', Math.min(40, h*.55));
+    const base=cs.backdropFilter.replace(/url\([^)]*\)\s*/g,''); const m=base.match(/^(blur\([^)]*\))\s*(.*)$/);
+    el.style.backdropFilter= m? `${m[1]} url(#${f.id}) ${m[2]}` : `url(#${f.id}) ${base}`; }
+  const ro=new ResizeObserver(es=>{ for(const e of es) lens(e.target); });
+  const watch=()=>document.querySelectorAll('.panel').forEach(el=>{ if(!el._lensWatched){ el._lensWatched=true; ro.observe(el); } lens(el); });
+  let q=0; watch(); new MutationObserver(()=>{ if(!q) q=requestAnimationFrame(()=>{ q=0; watch(); }); }).observe(document.body,{ childList:true, subtree:true });
+})();
 
 /* search */
 const search=$('search'), sInput=$('searchInput'), results=$('results'); let sel=0, found=[];
@@ -1841,10 +2050,14 @@ document.addEventListener('pointerdown',e=>{ if(!search.hidden && !search.contai
 /* wander */
 function startWander(){ if(wander) return stopWander(); $('wanderBtn').classList.add('on'); closeSide(); wander={ next:0, last:null }; }
 function stopWander(){ if(!wander) return; wander=null; $('wanderBtn').classList.remove('on'); }
-function stepWander(now){ if(!wander || now<wander.next) return; let p; do{ p=pickR(Math.random,places); }while(places.length>1 && p===wander.last);
+function stepWander(now){ if(!wander || now<wander.next) return; const pool=places.filter(x=>x.obj); let p; do{ p=pickR(Math.random,pool); }while(pool.length>1 && p===wander.last);
   wander.last=p; wander.next=now+5200; select(p); flyToPlace(p); goal.zoom=2.4; goal.az+=Math.PI/10;
   toast(p,p.name,`${DISTRICTS[p.district].short} · ${p.tagline||host(p.url)}`,{ label:'Open', fn:()=>{ stopWander(); openPlace(p); } }); }
 $('wanderBtn').onclick=startWander;
+function setCtl(on){ document.body.classList.toggle('ctl-open',on); $('ctlBtn').setAttribute('aria-expanded',on); $('ctlBtn').setAttribute('aria-label',on?'Close view controls':'View controls'); }
+$('ctlBtn').onclick=()=>{ const on=!document.body.classList.contains('ctl-open'); setCtl(on); if(on) setRank(false); };
+function setRank(on){ document.body.classList.toggle('rank-open',on); $('ipill').setAttribute('aria-expanded',on); }
+$('ipill').onclick=()=>setRank(!document.body.classList.contains('rank-open'));
 
 /* toolbar */
 document.querySelectorAll('.seg .icon-btn').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
@@ -1918,7 +2131,7 @@ $('copyRef').onclick=async()=>{ const b=$('copyRef'); try{ await navigator.clipb
 
 /* keyboard */
 addEventListener('keydown',e=>{ const typing=/INPUT|TEXTAREA/.test(document.activeElement?.tagName);
-  if(e.key==='Escape'){ if(!$('shareModal').hidden) closeShareCard(); else if(!modal.hidden) closeModal(); else if(!search.hidden) closeSearch(); else if(interior.active && !side.classList.contains('open')) exitInterior(); else { closeSide(); stopWander(); } return; }
+  if(e.key==='Escape'){ if(document.body.classList.contains('dist-open')) return setDist(false); if(document.body.classList.contains('info-open')) return setInfo(false); if(document.body.classList.contains('ctl-open')) return setCtl(false); if(document.body.classList.contains('rank-open') && !side.classList.contains('open')) return setRank(false); if(!$('shareModal').hidden) closeShareCard(); else if(!modal.hidden) closeModal(); else if(!search.hidden) closeSearch(); else if(interior.active && !side.classList.contains('open')) exitInterior(); else { closeSide(); stopWander(); } return; }
   if(typing || !modal.hidden) return;
   const k=e.key.toLowerCase(); const { R:Rv, F }=camVecs(goal.az); const step=12/goal.zoom;
   if(interior.active){ if(k==='q') interior.goalAz-=Math.PI/2; else if(k==='e') interior.goalAz+=Math.PI/2; else if(k==='+'||k==='=') izoom(1.3); else if(k==='-'||k==='_') izoom(1/1.3);
@@ -1979,7 +2192,9 @@ const Data = (() => {
     weekLabel:()=>`${fmt(weekStart)} – ${fmt(weekStart+6*DAY)}`,
     stats(p){ const s=sample(p), v=voted.has(p.id); return { visits:s.visits+(visits.byId[p.id]?.count||0), upvotes:s.upvotes+(v?1:0), voted:v }; },
     // only community-submitted tools are ranked; Classics (the hand-picked seeds) are not
-    top(k,n=10){ return rankBy(places.filter(p=>p.district===k && !p.seed),api.stats).slice(0,n); },
+    // places pinned into the landmark ("top" in places.json) lead, in their set order
+    top(k,n=10){ const pinned=places.filter(p=>p.district===k && p.top).sort((a,b)=>a.top-b.top);
+      return [...pinned, ...rankBy(places.filter(p=>p.district===k && !p.seed),api.stats)].slice(0,n); },
     rank(p){ const i=api.top(p.district,1e4).indexOf(p); return i<0? null : i+1; },
     toggleVote(p){ voted.has(p.id)? voted.delete(p.id) : voted.add(p.id); save(VOTE_KEY,[...voted]); return voted.has(p.id); },
     // one website visit per tool per device per day
@@ -2039,6 +2254,20 @@ function logoTex(p,rank,k){
   const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=8; logoCache.set(key,t); return t;
 }
 function faceMat(ctx,p,rank){ const m=new THREE.MeshBasicMaterial({ map:logoTex(p,rank,ctx.k) }); m.color.setScalar(.82); ctx.own.push(m); return m; }
+/* a place's real screenshot as a framed thumbnail: cover-fit, with its logo and name along the bottom.
+   The face starts with the letter tile and swaps once the image has loaded. */
+function thumbFace(ctx,p,rank,aspect){ const m=faceMat(ctx,p,rank); if(!p.screenshot) return m;
+  const H=512, W=Math.round(H*aspect);
+  Promise.all([loadImage(p.screenshot), p.logo? loadImage(p.logo).catch(()=>null) : null]).then(([shot,logo])=>{
+    if(ctx.dead) return;   // the room was left before the image arrived
+    const t=canvasTex(W,H,(x,w,h)=>{ const s=Math.max(w/shot.width,h/shot.height); x.drawImage(shot,(w-shot.width*s)/2,0,shot.width*s,shot.height*s);
+      const bar=Math.round(h*.2), g=x.createLinearGradient(0,h-bar*1.6,0,h); g.addColorStop(0,'rgba(10,8,20,0)'); g.addColorStop(1,'rgba(10,8,20,.88)'); x.fillStyle=g; x.fillRect(0,h-bar*1.6,w,bar*1.6);
+      const pad=Math.round(h*.05), ls=Math.round(bar*.72), ly=h-pad-ls; let tx=pad;
+      if(logo){ x.save(); x.beginPath(); x.roundRect(pad,ly,ls,ls,ls*.22); x.fillStyle='#fff'; x.fill(); x.clip(); x.drawImage(logo,pad,ly,ls,ls); x.restore(); tx=pad+ls+Math.round(pad*.6); }
+      x.fillStyle='#fff'; fitFont(x,p.name,w-tx-pad,Math.round(ls*.62),700); x.textBaseline='middle'; x.fillText(p.name,tx,ly+ls/2); });
+    m.map=t;   // the letter tile is shared through logoCache, so it stays
+    m.color.setScalar(rank===1? .6 : .8); m.needsUpdate=true;   /* unlit faces glow under bloom; the spotlit #1 needs it most */ ctx.own.push(t); }).catch(()=>{});
+  return m; }
 function badge(ctx,p,rank,size){ const f=faceMat(ctx,p,rank), e=glowMat(ctx.D.color,1.4,'neon');
   return new THREE.Mesh(new THREE.BoxGeometry(size,size,.08),[e,e,e,e,f,f]); }
 function floatBadge(ctx,g,p,rank,size,y){ const b=badge(ctx,p,rank,size); b.position.y=y; g.add(b); ctx.spin.push({ o:b, sy:.55, bob:y, ph:rank }); return b; }
@@ -2077,7 +2306,7 @@ const THEME={
       const L=y+h+.15; for(const s of [-1,1]){ const leg=box(.07,L,.07,legM); leg.position.set(s*w*.33,0,.12); leg.rotation.z=-s*.07; g.add(leg); }
       const back=box(.07,L*.95,.07,legM); back.position.set(0,0,-.55); back.rotation.x=.28; g.add(back);
       g.add(at(box(w*.8,.06,.22,legM),0,y-.06,.18));
-      const fr=stdMat('#2a2233',{ rough:.5 }), f=faceMat(ctx,p,rank);
+      const fr=stdMat('#2a2233',{ rough:.5 }), f=thumbFace(ctx,p,rank,w/h);
       const canvas=shadow(new THREE.Mesh(new THREE.BoxGeometry(w,h,.08),[fr,fr,fr,fr,f,f])); canvas.position.set(0,y+h/2,.2); canvas.rotation.x=-.08; g.add(canvas);
       if(big){ spotCone(ctx,g,5,1.9,'#ffd9f0'); for(let i=0;i<6;i++){ const a=i/6*Math.PI*2; g.add(at(cyl(.05,.07,.8,stdMat('#d8c38a',{ metal:.6, rough:.3 }),8),Math.cos(a)*2.2,0,Math.sin(a)*2.2)); }
         g.add(noPick(at(new THREE.Mesh(new THREE.TorusGeometry(2.2,.03,6,48).rotateX(Math.PI/2),stdMat('#b0305f')),0,.72,0))); }
@@ -2164,7 +2393,7 @@ function buildInterior(k){
   ctx.selRing=noPick(new THREE.Mesh(new THREE.RingGeometry(1.35,1.6,56).rotateX(-Math.PI/2),ringMat)); ctx.selRing.position.y=.05; ctx.selRing.visible=false; S.add(ctx.selRing);
   return { ctx, top };
 }
-function disposeInterior(){ const c=interior.ctx; if(!c) return;
+function disposeInterior(){ const c=interior.ctx; if(!c) return; c.dead=true;
   c.S.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.isCSS2DObject) o.element.remove(); });
   for(const m of c.own) m.dispose(); interior.ctx=null; interior.scene=null; }
 
@@ -2184,7 +2413,10 @@ function renderRankList(){ const k=interior.key, D=DISTRICTS[k], el=$('irank');
   if(open && rows.length) rows.push(`<div class="rrow empty" data-empty="1"><span class="rn">+</span><div class="mono ghost">+</div><div class="rt"><b>${open} open spot${open>1?'s':''}</b><small>Join the waitlist for ${D.short}</small></div></div>`);
   const body= rows.length? `<div class="rlist">${rows.join('')}</div>`
     : `<div class="rempty"><b>The top 10 is waiting for its first maker</b><p>Every spot in ${D.lm} goes to tools the community adds. Join the waitlist and yours could be among the first inside when makers are let in.</p><button class="btn primary" data-empty="1">${icon('plus')} Join the waitlist for ${D.short}</button></div>`;
-  el.innerHTML=`<div class="rhead"><h4>Top 10 this week</h4><small>${Data.weekLabel()}</small></div>${body}<p class="rnote">Community tools only, ranked by 3 × upvotes + website visits. Resets every Monday.</p>`;
+  const n=interior.top.length;
+  $('ipill').innerHTML=`<span class="pl">Top 10</span>${n?`<span class="stack">${interior.top.slice(0,4).map(mono).join('')}</span>`:''}<span class="po">${n? (open? `${open} open` : 'Full house') : 'Waiting for its first maker'}</span>${icon('chevUp')}`;
+  $('ipill').setAttribute('aria-label',`Top 10 this week: ${n} of 10 filled`);
+  el.innerHTML=`<div class="rhead"><h4>Top 10 this week</h4><small>${Data.weekLabel()}</small></div>${body}<p class="rnote">${interior.top.some(p=>p.top)?'Hand-picked tools lead; community tools follow':'Community tools only'}, ranked by 3 × upvotes + website visits. Resets every Monday.</p>`;
   el.querySelectorAll('.rrow[data-id]').forEach(r=>{ const p=places.find(x=>x.id===r.dataset.id);
     r.onmouseenter=()=>interiorHighlight(p); r.onmouseleave=()=>interiorHighlight(null); r.onclick=()=>openPlace(p); });
   el.querySelectorAll('[data-empty]').forEach(r=>r.onclick=()=>openModal(k));
@@ -2194,7 +2426,7 @@ function renderInteriorTitle(){ const D=DISTRICTS[interior.key];
   $('ititle').innerHTML=`<span class="dot" style="color:${D.color}"></span><div><b>${D.lm}</b><span>${D.name} · Top 10 this week</span></div>${Data.preview?'<span class="preview" title="Rankings use sample traffic until the shared backend is live">Preview data</span>':''}`; }
 
 function fadeTo(on){ $('fader').classList.toggle('on',on); }
-function enterInterior(k){
+function enterInterior(k,focus){
   if(interior.active||interior.busy) return; interior.busy=true;
   stopWander(); closeSide(); closeSearch(); hideTooltip(); setHover(null);
   interior.saved={ target:goal.target.clone(), zoom:goal.zoom, az:goal.az };
@@ -2202,7 +2434,7 @@ function enterInterior(k){
   setTimeout(()=>fadeTo(true),260);
   $('faderMsg').textContent=`Stepping into ${DISTRICTS[k].lm}…`;
   setTimeout(async()=>{ const built=buildInterior(k); try{ await renderer.compileAsync(built.ctx.S,interior.cam); }catch(e){}
-    showInterior(k,built); fadeTo(false); interior.busy=false; },720);
+    showInterior(k,built); fadeTo(false); interior.busy=false; if(focus) openPlace(focus); },720);
 }
 function showInterior(k,built){
   if(interior.active) disposeInterior();
@@ -2213,7 +2445,7 @@ function showInterior(k,built){
   setUrl({ inside:k });
 }
 function exitInterior(){
-  if(!interior.active||interior.busy) return; interior.busy=true; closeSide(); hideTooltip(); $('faderMsg').textContent=''; fadeTo(true);
+  if(!interior.active||interior.busy) return; interior.busy=true; closeSide(); setRank(false); hideTooltip(); $('faderMsg').textContent=''; fadeTo(true);
   setTimeout(()=>{
     interior.active=false; renderPass.scene=scene; renderPass.camera=camera; disposeInterior();
     document.body.classList.remove('in-interior'); $('ihud').hidden=true; setUrl(null);
@@ -2342,7 +2574,7 @@ function openDeepLink(){ const q=new URLSearchParams(location.search);
   if(q.has('ref')){ q.delete('ref'); setUrl(Object.fromEntries(q)); }
   const go=f=>setTimeout(f,1400);   // after the intro camera sweep
   if(inside && DISTRICTS[inside]) return go(()=>enterInterior(inside));
-  if(place){ const p=places.find(x=>slugOf(x)===place); if(p) return arriveAt(p); setUrl(null); }
+  if(place){ const p=places.find(x=>slugOf(x)===place); if(p) return p.top? go(()=>enterInterior(p.district,p)) : arriveAt(p); setUrl(null); }
   if(dist && DISTRICTS[dist]) return go(()=>{ const D=DISTRICTS[dist]; openDistrict(dist); flyTo(V3(D.pos[0],0,D.pos[1]),1.9); panelOffset(); });
   if(q.has('observatory')) return go(enterObservatory);
   if(q.has('reserve')){ const k=q.get('reserve'); setUrl(null); go(()=>openModal(DISTRICTS[k]? k : undefined)); }

@@ -45,15 +45,6 @@
     "by": "Framer"
   },
   {
-    "slug": "unicorn-studio",
-    "name": "Unicorn Studio",
-    "tagline": "WebGL effects, no code",
-    "desc": "Layer shaders, noise and motion into interactive WebGL scenes for your site.",
-    "district": "creative",
-    "districtName": "Creative District",
-    "by": "George Kedenburg"
-  },
-  {
     "slug": "shots",
     "name": "Shots",
     "tagline": "Mockups in seconds",
@@ -421,5 +412,50 @@
     "district": "maker",
     "districtName": "Maker District",
     "by": "Jakub Antalik"
+  },
+  {
+    "slug": "iso-glow",
+    "name": "Iso-glow",
+    "tagline": "Isometric figures that light up",
+    "desc": "A Claude skill that turns one request into a single HTML file: a fine-line isometric drawing where whatever is switched on glows, and every part you press does something. Ask for 3D and you can orbit it.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "April Zhu"
+  },
+  {
+    "slug": "colorfigures",
+    "name": "Colorfigures",
+    "tagline": "Hand-inked isometric objects that work",
+    "desc": "A Claude skill: describe an everyday object and get it drawn hand-inked and isometric, with buttons that actually work. Turn it all the way round, flip on see-through and watch the machine inside.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "April Zhu"
+  },
+  {
+    "slug": "tinycharts",
+    "name": "Tinycharts",
+    "tagline": "28 ways to draw how things work",
+    "desc": "Hand-drawn charts you can play. Each one has a real statechart behind it, so every button follows the rules of the thing it shows. A free Claude skill draws your own.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "April Zhu"
+  },
+  {
+    "slug": "unicorn-studio",
+    "name": "Unicorn Studio",
+    "tagline": "Shaders, 3D and motion on one canvas",
+    "desc": "A design studio for graphics that move, respond and ship. Direct shaders, 3D and motion on one canvas, by hand or with your AI agent over MCP.",
+    "district": "creative",
+    "districtName": "Creative District",
+    "by": "George Kedenburg"
+  },
+  {
+    "slug": "react-bits",
+    "name": "React Bits",
+    "tagline": "Animated components for React",
+    "desc": "Free, open-source React components for animated text, backgrounds, interactive cards and micro-interactions. Tune them yourself, add one with a single shadcn command, or hand them to your agent.",
+    "district": "maker",
+    "districtName": "Maker District",
+    "by": "David Haz"
   }
 ]

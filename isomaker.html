@@ -270,16 +270,17 @@
   .btn.vote b{font-weight:600} .btn.vote.on{background:rgba(255,120,80,.16);border-color:rgba(255,140,90,.55);color:#ff9d76}
   .meta .hint{color:var(--faint);font-size:11px}
   @media (max-width: 760px){
-    .ibar{top:calc(72px + env(safe-area-inset-top,0px));max-width:calc(100vw - 32px)} .ititle span{display:none}
+    body.in-interior .tl{display:none!important}
+    .ibar{top:calc(16px + env(safe-area-inset-top,0px));max-width:calc(100vw - 32px)} .ititle span{display:none}
     .irank{top:auto;bottom:calc(66px + env(safe-area-inset-bottom,0px));max-height:30vh;left:16px;right:16px;width:auto}
     .ihint{display:none}
     .ilabel{font-size:0;gap:0;padding:2px} .ilabel span{font-size:10px}
   }
 
   /* ---------- modal ---------- */
-  .modal{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px;background:rgba(3,5,20,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:fade .25s}
+  .modal{position:fixed;inset:0;z-index:20;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;padding:16px;background:rgba(3,5,20,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:fade .25s}
   @keyframes fade{from{opacity:0}}
-  .modal-card{width:520px;max-width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:22px;background:var(--glass-strong);animation:rise .35s cubic-bezier(.2,.9,.2,1)}
+  .modal-card{width:520px;max-width:100%;min-width:0;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:22px;background:var(--glass-strong);animation:rise .35s cubic-bezier(.2,.9,.2,1)}
   @keyframes rise{from{transform:translateY(16px) scale(.98);opacity:0}}
   .modal-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px}
   .modal-head h2{margin:0;font-size:20px;letter-spacing:-.02em}
@@ -319,6 +320,14 @@
   .form-error{color:#ff7a8a;margin:0;min-height:1em;font-size:12.5px}
   .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
   .hint{font-size:11.5px;color:var(--faint)}
+  label.f input,label.f textarea{min-width:0;width:100%}
+  @media (max-width: 560px){
+    .modal-card{padding:18px}
+    .row2{grid-template-columns:minmax(0,1fr)}
+    .modal-actions{flex-wrap:wrap}
+    .modal-actions .hint{flex-basis:100%;margin-right:0!important}
+    #addForm .modal-actions .btn{flex:1;justify-content:center}
+  }
 
   /* ---------- toast ---------- */
   .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:9;padding:10px 12px 10px 14px;display:flex;align-items:center;gap:12px;transition:all .35s cubic-bezier(.2,.9,.2,1);pointer-events:none;max-width:calc(100vw - 32px)}

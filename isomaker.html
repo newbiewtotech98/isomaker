@@ -213,7 +213,7 @@
   .sub .preview{vertical-align:1px}
 
   /* ---------- film mode ---------- */
-  body.film .tl, body.film .dist-btn, body.film .tr, body.film .ctl-fab, body.film .ipill, body.film .blwrap, body.film .br, body.film #obsHint, body.film .ihint, body.film #tooltip, body.film #toast, body.film .ibar{display:none!important}
+  body.film .tl, body.film .dist-btn, body.film .ptr, body.film .tr, body.film .ctl-fab, body.film .ipill, body.film .blwrap, body.film .br, body.film #obsHint, body.film .ihint, body.film #tooltip, body.film #toast, body.film .ibar{display:none!important}
   body.film .side, body.film .modal, body.film .modal-card, body.film .fader, body.film .dlabel, body.film .ibar, body.film .irank{transition:none!important;animation:none!important}
   body.film, body.film *{cursor:none!important} body.film input, body.film textarea{caret-color:transparent}
   body.film #scene canvas{pointer-events:none}
@@ -455,6 +455,14 @@
   #obsHint{bottom:calc(80px + env(safe-area-inset-bottom,0px))}
 
   @media (max-width: 380px){ .brand .mb-made{font-size:11px} .brand b{font-size:13.5px} .brand{gap:6px!important} }
+  /* ---------- pull to refresh (phones) ---------- */
+  .ptr{position:fixed;left:50%;top:calc(8px + env(safe-area-inset-top,0px));z-index:7;display:flex;align-items:center;gap:8px;height:38px;padding:0 14px 0 10px;
+    border-radius:999px!important;color:var(--text);font-size:12.5px;font-weight:500;white-space:nowrap;pointer-events:none;opacity:0;transform:translate(-50%,-30px)}
+  .ptr-ic{display:grid;place-items:center;width:22px;height:22px;transition:transform .25s cubic-bezier(.2,.9,.2,1)}
+  body.ptr-ready .ptr-ic{transform:rotate(180deg)}
+  .ptr-spin{display:none;width:16px;height:16px;margin:0 3px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:currentColor;animation:spin .7s linear infinite}
+  body.ptr-go .ptr-ic{display:none} body.ptr-go .ptr-spin{display:block}
+
   /* ---------- districts toggle (phones only) ---------- */
   .dist-btn{display:none;position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:6;height:56px;padding:0 12px 0 14px;border-radius:999px!important;
     align-items:center;gap:6px;color:var(--text);cursor:pointer;font:inherit}
@@ -539,6 +547,7 @@
   </div>
   <div class="districts panel" id="districtChips"><span class="lbl">DISTRICTS:</span></div>
 </div>
+<div class="ptr panel" id="ptr" aria-hidden="true"><span class="ptr-ic"><span data-i="arrowDown"></span></span><span class="ptr-spin"></span><span id="ptrT">Pull to refresh</span></div>
 <button class="dist-btn panel" id="distBtn" aria-label="Districts" aria-expanded="false" aria-controls="districtChips"><span class="dots" aria-hidden="true"></span><span data-i="chevDown"></span></button>
 
 <div class="tr panel">
@@ -1863,6 +1872,7 @@ const ICONS = {
   plus:'<path d="M12 5v14M5 12h14"/>',
   chevUp:'<path d="m6 15 6-6 6 6"/>',
   chevDown:'<path d="m6 9 6 6 6-6"/>',
+  arrowDown:'<path d="M12 5v14M6 13l6 6 6-6"/>',
   sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
   moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
   sunrise:'<path d="M12 2v6"/><path d="m4.9 10.9 1.4 1.4"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m17.7 12.3 1.4-1.4"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/>',
@@ -1896,6 +1906,27 @@ const chips=$('districtChips');
 for(const k of ORDER){ const d=DISTRICTS[k]; const b=document.createElement('button'); b.className='chip'; b.innerHTML=`<span class="dot" style="color:${d.color}"></span>${d.short}`;
   b.onclick=()=>{ setDist(false); openDistrict(k); flyTo(V3(d.pos[0],0,d.pos[1]),1.9); panelOffset(); }; chips.appendChild(b); }
 document.querySelector('#distBtn .dots').innerHTML=ORDER.map(k=>`<i style="background:${DISTRICTS[k].color}"></i>`).join('');
+/* Pull to refresh (phones): drag the top bar down and let go past the line to reload. The page blocks the
+   browser's own pull-to-refresh (the map owns every drag), so the top bar carries one of its own. */
+(()=>{ const ptr=$('ptr'), TH=70, MAX=118; let st=null, swallowUntil=0;
+  const bars=()=>[document.querySelector('.tl'),$('distBtn'),document.querySelector('.ibar')].filter(Boolean);
+  const ease='cubic-bezier(.2,.9,.2,1)';
+  const set=(d,anim)=>{ for(const el of bars()){ el.style.transition=anim? `translate .4s ${ease}` : 'none'; el.style.translate= d? `0 ${d}px` : ''; }
+    ptr.style.transition=anim? `transform .4s ${ease}, opacity .25s` : 'none'; ptr.style.transform=`translate(-50%,${d*.55-30}px)`; ptr.style.opacity=Math.min(1,Math.max(0,(d-12)/36)); };
+  addEventListener('touchstart',e=>{ if(innerWidth>760 || e.touches.length!==1 || film.on || document.body.classList.contains('ptr-go')) return;
+    if(!e.target.closest('.tl .brand, .ibar, #distBtn')) return; st={ x:e.touches[0].clientX, y:e.touches[0].clientY, d:0, on:false, ready:false }; },{ passive:true });
+  addEventListener('touchmove',e=>{ if(!st) return; const dx=e.touches[0].clientX-st.x, dy=e.touches[0].clientY-st.y;
+    if(!st.on){ if(dy>8 && dy>Math.abs(dx)*1.2) st.on=true; else { if(Math.abs(dx)>10 || dy<-10) st=null; return; } }
+    e.preventDefault(); st.d=Math.min(MAX, MAX*(1-Math.exp(-dy/170)));   // rubber band: it gives less the further it goes
+    set(st.d,false); const ready=st.d>=TH;
+    if(ready!==st.ready){ st.ready=ready; document.body.classList.toggle('ptr-ready',ready); $('ptrT').textContent= ready? 'Release to refresh' : 'Pull to refresh'; if(ready) navigator.vibrate?.(8); } },{ passive:false });
+  const end=()=>{ if(!st) return; const s=st; st=null; if(!s.on) return; swallowUntil=performance.now()+400;
+    if(s.ready){ document.body.classList.add('ptr-go'); $('ptrT').textContent='Refreshing…'; set(TH,true); setTimeout(()=>location.reload(),380); }
+    else { document.body.classList.remove('ptr-ready'); $('ptrT').textContent='Pull to refresh'; set(0,true); } };
+  addEventListener('touchend',end); addEventListener('touchcancel',end);
+  // a pull never counts as a tap on whatever it started on
+  addEventListener('click',e=>{ if(performance.now()<swallowUntil){ e.stopPropagation(); e.preventDefault(); } },true);
+})();
 function setDist(on){ document.body.classList.toggle('dist-open',on); $('distBtn').setAttribute('aria-expanded',on); }
 $('distBtn').onclick=e=>{ e.stopPropagation(); setDist(!document.body.classList.contains('dist-open')); };
 addEventListener('pointerdown',e=>{ if(document.body.classList.contains('dist-open') && !$('distBtn').contains(e.target) && !chips.contains(e.target)) setDist(false); });

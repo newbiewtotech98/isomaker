@@ -9,3 +9,14 @@ isomaker-promo.mp4
 .devtools/
 place/
 hairline-linkedin.mp4
+
+# built on deploy by npm run build (scripts/build-place-pages.mjs)
+home.html
+creative.html
+maker.html
+ai.html
+experiment.html
+personal.html
+robots.txt
+sitemap.xml
+llms.txt

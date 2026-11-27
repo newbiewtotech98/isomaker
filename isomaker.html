@@ -3,22 +3,25 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Isomaker — Living World of Indie Tools</title>
-<meta name="description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and submit your favourite tool." />
+<title>Isomaker — Find the best tools for any use case</title>
+<link rel="canonical" href="https://www.isomaker.club/" />
+<script>document.documentElement.classList.add('js')</script>
+<meta name="description" content="One place to find your favourite tools for any use case. Hand-picked design, developer, AI and everyday tools in an isometric world you can explore." />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Isomaker" />
 <meta property="og:url" content="https://www.isomaker.club/" />
-<meta property="og:title" content="Isomaker — Living World of Indie Tools" />
-<meta property="og:description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and submit your favourite tool." />
+<meta property="og:title" content="Isomaker — Find the best tools for any use case" />
+<meta property="og:description" content="One place to find your favourite tools for any use case. Hand-picked design, developer, AI and everyday tools in an isometric world you can explore." />
 <meta property="og:image" content="https://www.isomaker.club/og.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content="An isometric night-time world of glowing islands, each a district of indie tools, around a central observatory." />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Isomaker — Living World of Indie Tools" />
-<meta name="twitter:description" content="A living isometric world of indie tools, plugins and delightful websites. Explore five districts, step inside each landmark for the week’s top 10, and submit your favourite tool." />
+<meta name="twitter:title" content="Isomaker — Find the best tools for any use case" />
+<meta name="twitter:description" content="One place to find your favourite tools for any use case. Hand-picked design, developer, AI and everyday tools in an isometric world you can explore." />
 <meta name="twitter:image" content="https://www.isomaker.club/og.png" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff3d7f'/%3E%3Cstop offset='1' stop-color='%23ffcf5c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -64,9 +67,8 @@
   /* ---------- top-left ---------- */
   .tl{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:16px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;z-index:5}
   .brand{display:flex;align-items:center;gap:var(--sp);padding:10px 12px 10px 12px;min-width:250px}
-  .logo{width:32px;height:32px;border-radius:var(--r);flex:none;position:relative;
-    background:conic-gradient(from 210deg,#ff3d7f,#ff8a3d,#ffcf5c,#ff3d7f);box-shadow:0 0 18px rgba(255,90,120,.45)}
-  .logo::after{content:"";position:absolute;inset:9px;border-radius:50%;border:2.5px solid #fff}
+  /* ISOMAKER. cube (solid) — transparent PNG, black knocked out */
+  .logo{width:32px;height:32px;flex:none;position:relative;background:url(/logo.png) center/contain no-repeat}
   .brand b{display:block;font-size:14px;font-weight:600;letter-spacing:-.01em}
   .brand span{display:block;color:var(--muted);font-size:12px;margin-top:1px}
   .storylink{margin-left:auto;font-size:12px;font-weight:500;padding:5px 10px;border-radius:var(--r-round);border:1px solid var(--line);color:var(--muted);text-decoration:none;white-space:nowrap;transition:color .2s,border-color .2s}
@@ -222,7 +224,7 @@
   .film-cap span{display:block;margin-top:10px;font-size:19px;font-weight:500;color:rgba(225,230,255,.88);text-shadow:0 2px 16px rgba(0,0,24,.7)}
   .film-tag{position:fixed;top:24px;right:24px;z-index:40;opacity:0;font-size:15px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:40px;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);background:rgba(10,14,40,.6)}
   .film-end{position:fixed;inset:0;z-index:45;opacity:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(ellipse at 50% 50%, rgba(6,10,34,.55), rgba(3,5,18,.88));color:#fff;text-align:center}
-  .film-end .fe-row{display:flex;align-items:center;gap:18px} .film-end .logo{width:72px;height:72px;border-radius:18px} .film-end .logo::after{inset:20px;border-width:5px}
+  .film-end .fe-row{display:flex;align-items:center;gap:18px} .film-end .logo{width:72px;height:72px}
   .film-end b{font-size:60px;font-weight:700;letter-spacing:-.03em} .film-end span{font-size:30px;color:rgba(225,230,255,.9)}
   .film-end em{font-style:normal;font-size:34px;font-weight:600;margin-top:18px;padding:12px 26px;border-radius:14px;background:#242D43;border:1px solid rgba(255,255,255,.2)}
   .film-end i{font-style:normal;font-size:20px;color:rgba(225,230,255,.7);letter-spacing:.02em}
@@ -396,8 +398,8 @@
   .loader{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:#060a22;transition:opacity .9s .1s}
   .loader.done{opacity:0;pointer-events:none}
   .loader .inner{display:flex;flex-direction:column;align-items:center;gap:14px;color:#a2a8d0}
-  .loader .logo{width:44px;height:44px;animation:spin 2.4s linear infinite}
-  .loader .logo::after{inset:12px}
+  .loader .logo{width:56px;height:56px;animation:logoBob 1.8s ease-in-out infinite}
+  @keyframes logoBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
   @keyframes spin{to{transform:rotate(360deg)}}
   .err{max-width:420px;text-align:center;line-height:1.5;color:#ffb3bd}
 
@@ -462,6 +464,26 @@
   body.ptr-ready .ptr-ic{transform:rotate(180deg)}
   .ptr-spin{display:none;width:16px;height:16px;margin:0 3px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:currentColor;animation:spin .7s linear infinite}
   body.ptr-go .ptr-ic{display:none} body.ptr-go .ptr-spin{display:block}
+
+  /* ---------- directory: plain page without JavaScript, the "All tools" panel with it ---------- */
+  .dir{color:var(--text);font-size:15px;line-height:1.55}
+  .dir-in{max-width:760px;margin:0 auto;padding:28px 22px 40px}
+  .dir h1{font-size:34px;letter-spacing:-.02em;line-height:1.15;margin:8px 0 10px} .dir h2{font-size:22px;margin:34px 0 6px} .dir h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 0 6px}
+  .dir a{color:#cdbfff;text-decoration:none} .dir a:hover{text-decoration:underline} .dir h2 a,.dir h1 a{color:var(--text)}
+  .dir ol,.dir ul{padding-left:22px;margin:6px 0} .dir li{margin:3px 0;color:var(--muted)} .dir li a{color:var(--text);font-weight:500} .dir small{color:#e9a92e;font-size:11px;margin-left:4px}
+  .dir dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:16px 0} .dir dt{color:var(--faint)} .dir dd{margin:0}
+  .dir-lead{font-size:18px;color:var(--muted)} .dir-top{display:flex;align-items:center;justify-content:space-between} .dir-brand{font-weight:700;font-size:17px;color:var(--text)!important}
+  .dir-x{width:36px;height:36px;border-radius:50%;border:0;background:var(--hover);color:var(--text);font-size:22px;line-height:1;cursor:pointer}
+  .dir-crumbs{font-size:13px;color:var(--faint);margin-top:14px} .dir-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px} .dir-nav a{padding:6px 12px;border-radius:999px;background:var(--hover);color:var(--text)}
+  .dir-foot{margin-top:24px;font-size:13px;color:var(--faint)}
+  html:not(.js) body{overflow:auto;height:auto} html:not(.js) body > :not(.dir){display:none!important} html:not(.js) .dir-x{display:none}
+  html.js .dir{position:fixed;inset:16px;z-index:25;overflow:auto;border-radius:22px;background:rgba(10,12,32,.78);
+    -webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.22),0 30px 80px rgba(0,0,10,.6);
+    opacity:0;visibility:hidden;transform:translateY(12px) scale(.985);transition:opacity .2s,transform .3s cubic-bezier(.19,1,.22,1),visibility 0s .3s}
+  body.dir-open .dir{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .3s cubic-bezier(.19,1,.22,1),visibility 0s}
+  body[data-mode="day"] .dir{background:rgba(250,251,255,.86)} body[data-mode="day"] .dir a{color:#5b3fd0} body[data-mode="day"] .dir li a,body[data-mode="day"] .dir h1 a,body[data-mode="day"] .dir h2 a{color:var(--text)}
+  .dir-chip{margin-top:4px;justify-content:center;color:var(--text);text-decoration:none}
+  body.film .dir{display:none!important}
 
   /* ---------- districts toggle (phones only) ---------- */
   .dist-btn{display:none;position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:6;height:56px;padding:0 12px 0 14px;border-radius:999px!important;
@@ -565,6 +587,7 @@
   <div class="info-pop panel" id="infoPop" role="dialog" aria-label="About Isomaker">
     <div class="bl"><div class="pulse"></div><b id="count">39 places</b><span id="countSub">in 5 districts</span><span class="dotsep"></span><span id="nowCount" class="now" title="Sample figure until the shared backend is live"><b>–</b> exploring now</span></div>
     <a class="info-link" href="https://ruthvikvaidya.in/" target="_blank" rel="noopener">Made by Ruthvik <span class="heart">♥</span></a>
+    <a class="info-link" href="/" data-dir-open hidden>All tools, by use case <span class="arr">→</span></a>
     <a class="info-link" href="/story">The story <span class="arr">→</span></a>
   </div>
   <button class="hi-fab" id="infoBtn" aria-label="About Isomaker" aria-expanded="false" aria-controls="infoPop"><span class="fab-orb" aria-hidden="true"><i></i><i></i><i></i></span><span class="hi" aria-hidden="true"><i class="l"></i><i class="r"></i><i class="h2"></i><i class="x"></i></span></button>
@@ -1905,6 +1928,7 @@ const side=$('side');
 const chips=$('districtChips');
 for(const k of ORDER){ const d=DISTRICTS[k]; const b=document.createElement('button'); b.className='chip'; b.innerHTML=`<span class="dot" style="color:${d.color}"></span>${d.short}`;
   b.onclick=()=>{ setDist(false); openDistrict(k); flyTo(V3(d.pos[0],0,d.pos[1]),1.9); panelOffset(); }; chips.appendChild(b); }
+{ const a=document.createElement('a'); a.className='chip dir-chip'; a.href='/'; a.dataset.dirOpen=''; a.hidden=true; a.textContent='All tools →'; chips.appendChild(a); }
 document.querySelector('#distBtn .dots').innerHTML=ORDER.map(k=>`<i style="background:${DISTRICTS[k].color}"></i>`).join('');
 /* Pull to refresh (phones): drag the top bar down and let go past the line to reload. The page blocks the
    browser's own pull-to-refresh (the map owns every drag), so the top bar carries one of its own. */
@@ -1926,6 +1950,20 @@ document.querySelector('#distBtn .dots').innerHTML=ORDER.map(k=>`<i style="backg
   addEventListener('touchend',end); addEventListener('touchcancel',end);
   // a pull never counts as a tap on whatever it started on
   addEventListener('click',e=>{ if(performance.now()<swallowUntil){ e.stopPropagation(); e.preventDefault(); } },true);
+})();
+/* The directory (#dir) is built into every page by scripts/build-place-pages.mjs: the H1, the copy and every tool
+   by use case, as plain HTML for crawlers and for anyone without JavaScript. In the app it is the "All tools" panel;
+   its links open places and districts in the world instead of loading a new page. */
+(()=>{ const dir=$('dir'); if(!dir) return;
+  document.querySelectorAll('[data-dir-open]').forEach(el=>{ el.hidden=false; el.onclick=e=>{ e.preventDefault(); setDist(false); setInfo(false); setDirOpen(true); }; });
+  window.setDirOpen=on=>{ document.body.classList.toggle('dir-open',on); if(on) dir.scrollTop=0; };
+  dir.addEventListener('click',e=>{ if(e.target.closest('[data-dir-close]')){ setDirOpen(false); return; }
+    const a=e.target.closest('a[href]'); if(!a) return; const u=new URL(a.href,location.href); if(u.origin!==location.origin) return;
+    const pm=u.pathname.match(/^\/place\/([a-z0-9-]+)\/?$/), dm=u.pathname.match(/^\/(creative|maker|experiment|ai|personal)\/?$/);
+    if(pm){ const p=places.find(x=>slugOf(x)===pm[1]); if(p){ e.preventDefault(); setDirOpen(false); if(interior.active && !p.top) exitInterior(); setTimeout(()=>{ openPlace(p); if(!p.top) arrivalPulse(p); }, interior.active? 900 : 0); } }
+    else if(dm){ e.preventDefault(); setDirOpen(false); const k=dm[1], D=DISTRICTS[k]; if(interior.active) exitInterior(); setTimeout(()=>{ openDistrict(k); flyTo(V3(D.pos[0],0,D.pos[1]),1.9); panelOffset(); }, interior.active? 900 : 0); }
+    else if(u.pathname==='/'){ e.preventDefault(); setDirOpen(false); } });
+  addEventListener('keydown',e=>{ if(e.key==='Escape' && document.body.classList.contains('dir-open')){ e.stopImmediatePropagation(); setDirOpen(false); } },true);
 })();
 function setDist(on){ document.body.classList.toggle('dist-open',on); $('distBtn').setAttribute('aria-expanded',on); }
 $('distBtn').onclick=e=>{ e.stopPropagation(); setDist(!document.body.classList.contains('dist-open')); };
@@ -2607,6 +2645,7 @@ function openDeepLink(){ const q=new URLSearchParams(location.search);
   const go=f=>setTimeout(f,1400);   // after the intro camera sweep
   if(inside && DISTRICTS[inside]) return go(()=>enterInterior(inside));
   if(place){ const p=places.find(x=>slugOf(x)===place); if(p) return p.top? go(()=>enterInterior(p.district,p)) : arriveAt(p); setUrl(null); }
+  const dm=location.pathname.match(/^\/(creative|maker|experiment|ai|personal)\/?$/); if(dm && !dist){ const k=dm[1]; return go(()=>{ const D=DISTRICTS[k]; openDistrict(k); flyTo(V3(D.pos[0],0,D.pos[1]),1.9); panelOffset(); }); }
   if(dist && DISTRICTS[dist]) return go(()=>{ const D=DISTRICTS[dist]; openDistrict(dist); flyTo(V3(D.pos[0],0,D.pos[1]),1.9); panelOffset(); });
   if(q.has('observatory')) return go(enterObservatory);
   if(q.has('reserve')){ const k=q.get('reserve'); setUrl(null); go(()=>openModal(DISTRICTS[k]? k : undefined)); }
@@ -2717,7 +2756,7 @@ function filmStart(){ if(film.started) return; film.started=true; film.t0=film.l
    Every action is driven by film time, CSS animations are pinned to the same clock, and the capture script
    resizes the viewport from desktop to phone. Taps are reported so the compositor can draw a finger. */
 const T10={ scene:FILM_Q.get('film')==='top10', done:{}, tap:null,
-  taps:[[10.9,'#ctlBtn'],[12.0,'#ctlBtn'],[12.5,'#distBtn'],[13.15,'#districtChips .chip'],[15.6,'#ipill'],[17.3,'#ipill']] };
+  taps:[[9.9,'#distBtn'],[10.6,'#districtChips .chip'],[13.25,'#ipill'],[14.5,'#ipill']] };
 function t10Init(){ stopWander(); closeSide(); setMode('night',true); stepMode(performance.now());
   document.querySelectorAll('.ihint').forEach(e=>e.style.display='none'); }
 function t10Anims(t){ for(const a of document.getAnimations()){ if(a._t0===undefined) a._t0=t; a.pause();
@@ -2729,41 +2768,37 @@ function t10Apply(t){
   const lmP=(()=>{ const v=new THREE.Vector3(); world.districts.creative.landmark.obj.getWorldPosition(v); return v; })();
   // the finger: whichever tap is live right now, in CSS pixels
   T10.tap=null; for(const [tt,sel] of T10.taps){ if(t>=tt-.3 && t<=tt+.45){ const el=document.querySelector(sel); if(el){ const r=el.getBoundingClientRect(); T10.tap={ x:r.left+r.width/2, y:r.top+r.height/2, p:(t-tt) }; } } }
-  if(t<13.4){ // the world: a slow drift from the whole map toward the Creative island
-    filmWorldCam(HOME.clone().lerp(D('creative'),fss(5,12.8,t)), flerp(A-.45,A+.08,fss(0,13.4,t)), fit*flerp(1.12,2.1,fss(4.5,12.8,t)));
-    // search on the desktop: "iso"
-    if(t>=5.6) once('search',()=>openSearch());
-    if(t>=5.6 && t<8.1){ const v='iso'.slice(0,Math.round(3*fss(6,6.9,t))); if(sInput.value!==v){ sInput.value=v; renderResults(); } }
-    if(t>=8.1) once('searchOff',()=>{ closeSearch(); sInput.blur(); });
-    // on the phone: the orb opens the controls and closes them; then the districts list, Creative
-    if(t>=10.95) once('ctlOn',()=>setCtl(true));
-    if(t>=12.05) once('ctlOff',()=>setCtl(false));
-    if(t>=12.55) once('distOn',()=>setDist(true));
-    if(t>=13.2) once('distOff',()=>setDist(false));
-  } else if(t<14.9){ // dive into The Canvas
-    const e=fss(13.4,14.85,t), from=HOME.clone().lerp(D('creative'),1), tg=from.lerp(lmP,e);
+  if(t<10.65){ // the world: a drift from the whole map toward the Creative island
+    filmWorldCam(HOME.clone().lerp(D('creative'),fss(4.5,10.55,t)), flerp(A-.45,A+.08,fss(0,10.65,t)), fit*flerp(1.12,2.1,fss(4.5,10.55,t)));
+    // on the phone: the districts list, then Creative
+    if(t>=9.95) once('distOn',()=>setDist(true));
+  } else if(t<12.05){ // dive into The Canvas
+    const e=fss(10.65,12,t), tg=D('creative').lerp(lmP,e);
     filmWorldCam(tg,flerp(A+.08,A,e),Math.exp(flerp(Math.log(fit*2.1),Math.log(fit*5.2),e)));
   } else { // inside
     once('enter',()=>showInterior('creative'));
     const c=interior.ctx, s9=c.slots[8], s10=c.slots[9], mid=V3((s9.x+s10.x)/2,.6,(s9.z+s10.z)/2);
-    // the room settles, the list opens and closes
-    if(t<17.6){ const e=fss(14.9,16.2,t); interior.az=interior.goalAz=flerp(A-.7,A,e); interior.zoom=interior.goalZoom=intFit()*flerp(.8,1.25,e); }
-    if(t>=15.65) once('rankOn',()=>setRank(true));
-    if(t>=17.35) once('rankOff',()=>setRank(false));
-    // one slow turn of the room, easing out facing the two open spots
-    if(t>=17.6){ let end=Math.atan2(mid.x,mid.z); while(end<A+Math.PI*1.6) end+=Math.PI*2; while(end>A+Math.PI*2.4) end-=Math.PI*2;
-      const e=fss(17.6,22.4,t); interior.az=interior.goalAz=flerp(A,end,e);
-      const z=fss(21.4,23.2,t); interior.zoom=interior.goalZoom=intFit()*Math.exp(flerp(Math.log(1.3),Math.log(2.3),z));
+    // the room settles and is given a moment; then the list opens and closes
+    if(t<14.7){ const e=fss(12.05,13,t); interior.az=interior.goalAz=flerp(A-.7,A,e); interior.zoom=interior.goalZoom=intFit()*flerp(.8,1.25,e); }
+    if(t>=13.3) once('rankOn',()=>setRank(true));
+    if(t>=14.55) once('rankOff',()=>setRank(false));
+    // one quick, fluid turn of the room, easing out facing the two open spots as the camera moves in
+    if(t>=14.7){ let end=Math.atan2(mid.x,mid.z); while(end<A+Math.PI*1.6) end+=Math.PI*2; while(end>A+Math.PI*2.4) end-=Math.PI*2;
+      const u=Math.min(1,Math.max(0,(t-14.7)/2.3)), e=u<.5? 4*u*u*u : 1-Math.pow(-2*u+2,3)/2;   // ease in-out cubic
+      interior.az=interior.goalAz=flerp(A,end,e);
+      const z=fss(15.6,17.3,t); interior.zoom=interior.goalZoom=intFit()*Math.exp(flerp(Math.log(1.25),Math.log(2.3),z));
       interior.look=mid; interior.lookW=z; }
     // the two open spots: rings, and a question
-    if(t>=21.9){ once('open',()=>{ interior.sel=null; markSlot(c.selRing,s9); markSlot(c.hover,s10);
+    if(t>=16.4){ once('open',()=>{ interior.sel=null; markSlot(c.selRing,s9); markSlot(c.hover,s10);
         c.S.traverse(o=>{ if(!o.isCSS2DObject) return; const sp=o.element.querySelector('span'); if(sp && (sp.textContent==='#9'||sp.textContent==='#10')){
           o.element.innerHTML=`<span>${sp.textContent}</span>Your favourite tool?`; o.element.classList.add('t10-open'); } }); });
       c.hover.scale.setScalar(1+.09*Math.sin(t*5)); }
   }
+  if(t>=10.65) once('distOff',()=>setDist(false));   // the tap on Creative closes the list as the dive begins
   // into the room
-  $('fader').style.opacity=fss(14.2,14.85,t)*(1-fss(14.9,15.5,t)); $('faderMsg').textContent= t>=14 && t<15.2? 'Stepping into The Canvas…' : '';
+  $('fader').style.opacity=fss(11.4,12,t)*(1-fss(12.05,12.55,t)); $('faderMsg').textContent= t>=11.25 && t<12.35? 'Stepping into The Canvas…' : '';
 }
+
 
 /* ?templates — a review sheet of every place template, five districts by four templates */
 let tplGallery=null;

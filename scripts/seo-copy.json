@@ -1,0 +1,54 @@
+{
+  "site": "https://www.isomaker.club",
+  "name": "Isomaker",
+  "valueProp": "One place to find your favourite tools, for any use case",
+  "home": {
+    "title": "Isomaker — Find the best tools for any use case",
+    "description": "One place to find your favourite tools for any use case. Hand-picked design, developer, AI and everyday tools in an isometric world you can explore.",
+    "h1": "One place to find your favourite tools, for any use case",
+    "intro": "Isomaker is a living, isometric world of hand-picked tools. Each district is a use case: design, development, AI, play and everyday life. Every tool is a building you can visit, and every district's landmark holds its weekly top 10. Found a great tool? Submit it, and it could take one of the open spots."
+  },
+  "districts": {
+    "creative": {
+      "path": "/creative", "useCase": "design and creative tools",
+      "title": "Best design & creative tools — Isomaker",
+      "description": "Hand-picked tools for design, motion, colour, type and illustration. See this week's top 10 in The Canvas, Isomaker's Creative District.",
+      "h1": "Design and creative tools",
+      "intro": "Tools for design, motion, colour, type and illustration that make the internet a little more beautiful. The Canvas is the district's landmark, and its top 10 is below."
+    },
+    "maker": {
+      "path": "/maker", "useCase": "developer tools",
+      "title": "Best developer tools & UI libraries — Isomaker",
+      "description": "Hand-picked developer tools, UI libraries, infrastructure and hardware for people who ship. See this week's top 10 in The Foundry on Isomaker.",
+      "h1": "Developer and maker tools",
+      "intro": "Developer tools, UI libraries, infrastructure and hardware for people who ship things. The Foundry is the district's landmark, and its top 10 is below."
+    },
+    "ai": {
+      "path": "/ai", "useCase": "AI tools",
+      "title": "Best AI tools, assistants & skills — Isomaker",
+      "description": "Hand-picked AI tools, assistants, Claude skills and AI-native apps. See this week's top 10 in The Neural Dome, Isomaker's AI District.",
+      "h1": "AI tools, assistants and skills",
+      "intro": "Models, assistants, Claude skills and AI-native tools that are reshaping how we make things. The Neural Dome is the district's landmark, and its top 10 is below."
+    },
+    "experiment": {
+      "path": "/experiment", "useCase": "playful and experimental websites",
+      "title": "Playful & experimental websites — Isomaker",
+      "description": "Weird, playful and wonderful corners of the web, from walkable museums to toys and experiments. Explore the top 10 in The Orb on Isomaker.",
+      "h1": "Playful and experimental web",
+      "intro": "Weird, playful and wonderful corners of the web. Nothing here needs a reason to exist. The Orb is the district's landmark, and its top 10 is below."
+    },
+    "personal": {
+      "path": "/personal", "useCase": "notes, journaling and personal tools",
+      "title": "Best notes, journaling & personal apps — Isomaker",
+      "description": "Hand-picked apps for notes, journals, collections and your own little life. See this week's top 10 in The Greenhouse on Isomaker.",
+      "h1": "Notes, journaling and personal tools",
+      "intro": "Notes, journals, collections and cozy software for your own little life. The Greenhouse is the district's landmark, and its top 10 is below."
+    }
+  },
+  "story": {
+    "title": "The story behind Isomaker",
+    "description": "Why Isomaker exists: we are a collection of our tools. One place to bring them together, and to make discovering great tools feel like play again."
+  },
+  "order": ["creative", "maker", "ai", "experiment", "personal"],
+  "landmarks": { "creative": "The Canvas", "maker": "The Foundry", "ai": "The Neural Dome", "experiment": "The Orb", "personal": "The Greenhouse" }
+}

@@ -6,7 +6,22 @@
     "desc": "Design and publish interactive 3D scenes right in the browser — no code, real-time collaboration.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Spline"
+    "by": "Spline",
+    "url": "https://spline.design",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "3D",
+      "design"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "rive",
@@ -15,7 +30,22 @@
     "desc": "Build state-machine driven animations that run anywhere: web, mobile and games.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Rive"
+    "by": "Rive",
+    "url": "https://rive.app",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "motion",
+      "animation"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "coolors",
@@ -24,7 +54,21 @@
     "desc": "Hit the spacebar, get a palette. Lock the colors you love and reroll the rest.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Fabrizio Bianchi"
+    "by": "Fabrizio Bianchi",
+    "url": "https://coolors.co",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "color"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "excalidraw",
@@ -33,7 +77,22 @@
     "desc": "Open-source virtual whiteboard for diagrams that feel sketched by hand.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Excalidraw"
+    "by": "Excalidraw",
+    "url": "https://excalidraw.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "whiteboard",
+      "open source"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "framer",
@@ -42,7 +101,22 @@
     "desc": "Design and publish responsive websites on a canvas that feels like a design tool.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Framer"
+    "by": "Framer",
+    "url": "https://framer.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "web",
+      "no-code"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "shots",
@@ -51,7 +125,21 @@
     "desc": "Turn plain screenshots into polished device mockups and social visuals.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Shots"
+    "by": "Shots",
+    "url": "https://shots.so",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "mockups"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "fontjoy",
@@ -60,7 +148,21 @@
     "desc": "Generates balanced font pairings using deep learning. Lock one, shuffle the rest.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Jack Qiao"
+    "by": "Jack Qiao",
+    "url": "https://fontjoy.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "type"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "claude",
@@ -69,7 +171,22 @@
     "desc": "An AI assistant for writing, coding, analysis and deep, careful work.",
     "district": "ai",
     "districtName": "AI District",
-    "by": "Anthropic"
+    "by": "Anthropic",
+    "url": "https://claude.ai",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "assistant",
+      "llm"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "hugging-face",
@@ -78,7 +195,22 @@
     "desc": "Discover, share and run open-source models, datasets and Spaces.",
     "district": "ai",
     "districtName": "AI District",
-    "by": "Hugging Face"
+    "by": "Hugging Face",
+    "url": "https://huggingface.co",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "models",
+      "open source"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "replicate",
@@ -87,7 +219,22 @@
     "desc": "Run and fine-tune open-source models in the cloud with a single API call.",
     "district": "ai",
     "districtName": "AI District",
-    "by": "Replicate"
+    "by": "Replicate",
+    "url": "https://replicate.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "api",
+      "inference"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "elevenlabs",
@@ -96,7 +243,22 @@
     "desc": "Text to speech, voice design and dubbing across dozens of languages.",
     "district": "ai",
     "districtName": "AI District",
-    "by": "ElevenLabs"
+    "by": "ElevenLabs",
+    "url": "https://elevenlabs.io",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "voice",
+      "audio"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "ollama",
@@ -105,7 +267,22 @@
     "desc": "Get up and running with large language models on your own machine.",
     "district": "ai",
     "districtName": "AI District",
-    "by": "Ollama"
+    "by": "Ollama",
+    "url": "https://ollama.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "local",
+      "llm"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "perplexity",
@@ -114,7 +291,21 @@
     "desc": "Ask anything and get a direct answer with sources cited from the web.",
     "district": "ai",
     "districtName": "AI District",
-    "by": "Perplexity"
+    "by": "Perplexity",
+    "url": "https://perplexity.ai",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "search"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "cursor",
@@ -123,7 +314,22 @@
     "desc": "An editor built around AI pair-programming — from autocomplete to agents.",
     "district": "ai",
     "districtName": "AI District",
-    "by": "Anysphere"
+    "by": "Anysphere",
+    "url": "https://cursor.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "code",
+      "editor"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "v0",
@@ -132,7 +338,22 @@
     "desc": "Describe an interface and get working React + Tailwind code you can ship.",
     "district": "ai",
     "districtName": "AI District",
-    "by": "Vercel"
+    "by": "Vercel",
+    "url": "https://v0.dev",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "ui",
+      "generation"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "github",
@@ -141,7 +362,22 @@
     "desc": "Host repositories, review pull requests and build together in the open.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "GitHub"
+    "by": "GitHub",
+    "url": "https://github.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "git",
+      "collab"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "raycast",
@@ -150,7 +386,22 @@
     "desc": "Blazingly fast, extendable launcher for macOS with a thriving extension store.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Raycast"
+    "by": "Raycast",
+    "url": "https://raycast.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "productivity",
+      "mac"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "vercel",
@@ -159,7 +410,22 @@
     "desc": "Deploy web apps with previews on every push and a global edge network.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Vercel"
+    "by": "Vercel",
+    "url": "https://vercel.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "hosting",
+      "deploy"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "supabase",
@@ -168,7 +434,22 @@
     "desc": "Database, auth, storage and realtime — an open-source backend in minutes.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Supabase"
+    "by": "Supabase",
+    "url": "https://supabase.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "database",
+      "backend"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "linear",
@@ -177,7 +458,21 @@
     "desc": "A fast, keyboard-first tool for planning and building products.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Linear"
+    "by": "Linear",
+    "url": "https://linear.app",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "planning"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "tailwind-css",
@@ -186,7 +481,21 @@
     "desc": "Build any design directly in your markup with composable utility classes.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Tailwind Labs"
+    "by": "Tailwind Labs",
+    "url": "https://tailwindcss.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "css"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "val-town",
@@ -195,7 +504,21 @@
     "desc": "Write and deploy small TypeScript functions, APIs and crons right on the web.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Val Town"
+    "by": "Val Town",
+    "url": "https://val.town",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "serverless"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "arduino",
@@ -204,7 +527,21 @@
     "desc": "Boards, IDE and a huge community for building interactive hardware.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Arduino"
+    "by": "Arduino",
+    "url": "https://arduino.cc",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "hardware"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "neal-fun",
@@ -213,7 +550,22 @@
     "desc": "A collection of playful, surprising little websites and games.",
     "district": "experiment",
     "districtName": "Experiment District",
-    "by": "Neal Agarwal"
+    "by": "Neal Agarwal",
+    "url": "https://neal.fun",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "toys",
+      "games"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "chrome-music-lab",
@@ -222,7 +574,22 @@
     "desc": "Hands-on experiments that make learning music fun and approachable.",
     "district": "experiment",
     "districtName": "Experiment District",
-    "by": "Google Creative Lab"
+    "by": "Google Creative Lab",
+    "url": "https://musiclab.chromeexperiments.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "music",
+      "learning"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "patatap",
@@ -231,7 +598,22 @@
     "desc": "Press any key and make music with shapes, color and sound.",
     "district": "experiment",
     "districtName": "Experiment District",
-    "by": "Jono Brandel"
+    "by": "Jono Brandel",
+    "url": "https://patatap.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "music",
+      "toy"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "shadertoy",
@@ -240,7 +622,22 @@
     "desc": "Build and share GLSL shaders that run live in your browser.",
     "district": "experiment",
     "districtName": "Experiment District",
-    "by": "Beautypi"
+    "by": "Beautypi",
+    "url": "https://shadertoy.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "graphics",
+      "glsl"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "radio-garden",
@@ -249,7 +646,22 @@
     "desc": "Spin the globe and tune into thousands of live stations worldwide.",
     "district": "experiment",
     "districtName": "Experiment District",
-    "by": "Radio Garden"
+    "by": "Radio Garden",
+    "url": "https://radio.garden",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "radio",
+      "globe"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "windows-93",
@@ -258,7 +670,21 @@
     "desc": "A fake operating system full of jokes, games and glitches.",
     "district": "experiment",
     "districtName": "Experiment District",
-    "by": "Jankenpopp & Zombectro"
+    "by": "Jankenpopp & Zombectro",
+    "url": "https://windows93.net",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "nostalgia"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "the-useless-web",
@@ -267,7 +693,21 @@
     "desc": "One button, infinite pointless and wonderful websites.",
     "district": "experiment",
     "districtName": "Experiment District",
-    "by": "Tim Holman"
+    "by": "Tim Holman",
+    "url": "https://theuselessweb.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "random"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "obsidian",
@@ -276,7 +716,22 @@
     "desc": "A private, local-first knowledge base built on plain Markdown files.",
     "district": "personal",
     "districtName": "Personal District",
-    "by": "Obsidian"
+    "by": "Obsidian",
+    "url": "https://obsidian.md",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "notes",
+      "pkm"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "are-na",
@@ -285,7 +740,21 @@
     "desc": "A calm place to gather images, links and thoughts into channels.",
     "district": "personal",
     "districtName": "Personal District",
-    "by": "Are.na"
+    "by": "Are.na",
+    "url": "https://are.na",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "collections"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "bear",
@@ -294,7 +763,22 @@
     "desc": "A focused, gorgeous writing and note-taking app for Apple devices.",
     "district": "personal",
     "districtName": "Personal District",
-    "by": "Shiny Frog"
+    "by": "Shiny Frog",
+    "url": "https://bear.app",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "notes",
+      "writing"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "poolsuite",
@@ -303,7 +787,22 @@
     "desc": "Retro internet radio playing the best vibes from a pool somewhere.",
     "district": "personal",
     "districtName": "Personal District",
-    "by": "Poolsuite"
+    "by": "Poolsuite",
+    "url": "https://poolsuite.net",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "music",
+      "radio"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "cosmos",
@@ -312,7 +811,21 @@
     "desc": "Save, organize and discover images and ideas — ad-free.",
     "district": "personal",
     "districtName": "Personal District",
-    "by": "Cosmos"
+    "by": "Cosmos",
+    "url": "https://cosmos.so",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "inspiration"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "things",
@@ -321,7 +834,21 @@
     "desc": "A delightful personal task manager with a clean, calm design.",
     "district": "personal",
     "districtName": "Personal District",
-    "by": "Cultured Code"
+    "by": "Cultured Code",
+    "url": "https://culturedcode.com/things",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "tasks"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "day-one",
@@ -330,7 +857,21 @@
     "desc": "Capture memories with photos, places and prompts in a private journal.",
     "district": "personal",
     "districtName": "Personal District",
-    "by": "Day One"
+    "by": "Day One",
+    "url": "https://dayoneapp.com",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "journal"
+    ],
+    "highlights": [],
+    "top": null,
+    "curated": false,
+    "logo": "",
+    "screenshot": "",
+    "added": ""
   },
   {
     "slug": "hairline",
@@ -339,7 +880,28 @@
     "desc": "Thirty-three isometric line figures that answer the pointer. SVG, no dependencies, for React and for everything else.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Lucas Markes"
+    "by": "Lucas Markes",
+    "url": "https://hairline.lucasmarkes.com/",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://lucasmarkes.com",
+    "tags": [
+      "illustration",
+      "motion",
+      "react"
+    ],
+    "highlights": [
+      "33 line figures",
+      "Answers the pointer",
+      "SVG, no dependencies",
+      "React or any DOM"
+    ],
+    "top": 1,
+    "curated": true,
+    "logo": "/places/hairline/logo.svg",
+    "screenshot": "/places/hairline/screenshot.png",
+    "added": "2026-10-08"
   },
   {
     "slug": "artcraft",
@@ -348,7 +910,28 @@
     "desc": "Image editing, vector illustration, video, photography, PDFs, motion graphics, page layout, interface design and more: thirteen native, open-source apps from the ArtCraft team, built in Rust and free to use.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "ArtCraft team"
+    "by": "ArtCraft team",
+    "url": "https://getartcraft.com/apps",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://github.com/storytold",
+    "tags": [
+      "open source",
+      "rust",
+      "creative suite"
+    ],
+    "highlights": [
+      "13 creative apps",
+      "Open source",
+      "Built in Rust",
+      "Free to use"
+    ],
+    "top": 2,
+    "curated": true,
+    "logo": "/places/artcraft/logo.svg",
+    "screenshot": "/places/artcraft/screenshot.jpg",
+    "added": "2026-10-17"
   },
   {
     "slug": "anatomy",
@@ -357,7 +940,28 @@
     "desc": "A skill for Claude Code: name an idea in one line, and Claude invents the machine that does it, drawn as a live isometric figure you can turn, press and read.",
     "district": "ai",
     "districtName": "AI District",
-    "by": "Ryan"
+    "by": "Ryan",
+    "url": "https://skills.wheresryan.sh/anatomy",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://x.com/wheresryan22",
+    "tags": [
+      "claude",
+      "skill",
+      "isometric"
+    ],
+    "highlights": [
+      "One-line prompts",
+      "Live isometric figures",
+      "Turn, press and read",
+      "A skill for Claude Code"
+    ],
+    "top": null,
+    "curated": true,
+    "logo": "",
+    "screenshot": "/places/anatomy/screenshot.jpg",
+    "added": "2026-10-17"
   },
   {
     "slug": "lightmeter",
@@ -366,7 +970,28 @@
     "desc": "A real light meter when you carry film, and a film camera when you don't. Zero-AI processing, authentic grain, and film looks inspired by real films and artists.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Aakash Goel"
+    "by": "Aakash Goel",
+    "url": "https://shotonlightmeter.com/",
+    "site": true,
+    "appStore": "https://apps.apple.com/app/lightmeter-pocket-film-camera/id6800456535",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "photography",
+      "film",
+      "iphone"
+    ],
+    "highlights": [
+      "A real light meter",
+      "Authentic film grain",
+      "Zero-AI processing",
+      "For iPhone"
+    ],
+    "top": 3,
+    "curated": true,
+    "logo": "/places/lightmeter/logo.png",
+    "screenshot": "/places/lightmeter/screenshot.jpg",
+    "added": "2026-10-17"
   },
   {
     "slug": "color-museum",
@@ -375,7 +1000,28 @@
     "desc": "A digital museum you walk through: scroll to stroll the hall, tap a painting to learn its story, and listen along with an AI voice guide. A fun way to learn about art.",
     "district": "experiment",
     "districtName": "Experiment District",
-    "by": "Akash Soti"
+    "by": "Akash Soti",
+    "url": "https://the-color-museum.vercel.app/",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://www.linkedin.com/in/akashsoti/",
+    "tags": [
+      "art",
+      "museum",
+      "learning"
+    ],
+    "highlights": [
+      "Scroll to walk",
+      "Tap a painting",
+      "AI voice guide",
+      "Art and colour"
+    ],
+    "top": null,
+    "curated": true,
+    "logo": "",
+    "screenshot": "/places/color-museum/screenshot.jpg",
+    "added": "2026-10-28"
   },
   {
     "slug": "libraries-dev",
@@ -384,7 +1030,28 @@
     "desc": "UI effect libraries and on-device ML models, ready to use with your agents: animated borders, thinking indicators, voice visualizers, liquid metal and more, for React, SwiftUI and React Native.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Jakub Antalik"
+    "by": "Jakub Antalik",
+    "url": "https://libraries.dev/",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://x.com/jakubantalik",
+    "tags": [
+      "ui effects",
+      "react",
+      "swiftui"
+    ],
+    "highlights": [
+      "Animated borders",
+      "Thinking indicators",
+      "On-device ML models",
+      "React · SwiftUI · RN"
+    ],
+    "top": null,
+    "curated": true,
+    "logo": "/places/libraries-dev/logo.svg",
+    "screenshot": "/places/libraries-dev/screenshot.jpg",
+    "added": "2026-10-28"
   },
   {
     "slug": "bencho",
@@ -393,7 +1060,28 @@
     "desc": "A library of interactive UI blocks you can explore, tweak, and take straight into your projects. Everything is live, not mocked.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Lorenzo Cabral"
+    "by": "Lorenzo Cabral",
+    "url": "https://bencho.dev/",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://x.com/cabralorenzo",
+    "tags": [
+      "react",
+      "components",
+      "micro-interactions"
+    ],
+    "highlights": [
+      "Interactive UI blocks",
+      "Everything is live",
+      "Tweak, then take it",
+      "Built for React"
+    ],
+    "top": null,
+    "curated": true,
+    "logo": "/places/bencho/logo.svg",
+    "screenshot": "/places/bencho/screenshot.jpg",
+    "added": "2026-10-28"
   },
   {
     "slug": "refero",
@@ -402,7 +1090,28 @@
     "desc": "A curated library of real product screens, flows and patterns for web and iOS, with a research mode and an MCP that lets your agent study real interfaces before it builds.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "Refero"
+    "by": "Refero",
+    "url": "https://refero.design/",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "design research",
+      "inspiration",
+      "mcp"
+    ],
+    "highlights": [
+      "Real product screens",
+      "Web and iOS flows",
+      "Research mode",
+      "An MCP for agents"
+    ],
+    "top": 4,
+    "curated": true,
+    "logo": "/places/refero/logo.png",
+    "screenshot": "/places/refero/screenshot.jpg",
+    "added": "2026-10-28"
   },
   {
     "slug": "transitions-dev",
@@ -411,7 +1120,28 @@
     "desc": "A collection of the most essential UI transitions for web apps. Copy and paste them, or let your coding agent add them through the skill.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "Jakub Antalik"
+    "by": "Jakub Antalik",
+    "url": "https://transitions.dev/",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://x.com/jakubantalik",
+    "tags": [
+      "css",
+      "motion",
+      "agents"
+    ],
+    "highlights": [
+      "35 transitions",
+      "Copy and paste",
+      "A skill for agents",
+      "Reduced-motion ready"
+    ],
+    "top": null,
+    "curated": true,
+    "logo": "/places/transitions-dev/logo.png",
+    "screenshot": "/places/transitions-dev/screenshot.jpg",
+    "added": "2026-10-28"
   },
   {
     "slug": "iso-glow",
@@ -420,7 +1150,28 @@
     "desc": "A Claude skill that turns one request into a single HTML file: a fine-line isometric drawing where whatever is switched on glows, and every part you press does something. Ask for 3D and you can orbit it.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "April Zhu"
+    "by": "April Zhu",
+    "url": "https://isoglow.dev/",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://april-zhu.com",
+    "tags": [
+      "illustration",
+      "isometric",
+      "claude skill"
+    ],
+    "highlights": [
+      "One HTML file per figure",
+      "Whatever is on glows",
+      "Press any part",
+      "2D, or orbit it in 3D"
+    ],
+    "top": 5,
+    "curated": true,
+    "logo": "/places/iso-glow/logo.svg",
+    "screenshot": "/places/iso-glow/screenshot.jpg",
+    "added": "2026-11-23"
   },
   {
     "slug": "colorfigures",
@@ -429,7 +1180,28 @@
     "desc": "A Claude skill: describe an everyday object and get it drawn hand-inked and isometric, with buttons that actually work. Turn it all the way round, flip on see-through and watch the machine inside.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "April Zhu"
+    "by": "April Zhu",
+    "url": "https://april-zhu.com/colorfigures",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://april-zhu.com",
+    "tags": [
+      "illustration",
+      "isometric",
+      "claude skill"
+    ],
+    "highlights": [
+      "One sentence in",
+      "Buttons that work",
+      "Turn it all the way round",
+      "See inside, with labels"
+    ],
+    "top": 6,
+    "curated": true,
+    "logo": "/places/colorfigures/logo.svg",
+    "screenshot": "/places/colorfigures/screenshot.jpg",
+    "added": "2026-11-23"
   },
   {
     "slug": "tinycharts",
@@ -438,7 +1210,28 @@
     "desc": "Hand-drawn charts you can play. Each one has a real statechart behind it, so every button follows the rules of the thing it shows. A free Claude skill draws your own.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "April Zhu"
+    "by": "April Zhu",
+    "url": "https://april-zhu.com/tinycharts",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://april-zhu.com",
+    "tags": [
+      "diagrams",
+      "illustration",
+      "claude skill"
+    ],
+    "highlights": [
+      "28 chart types",
+      "Every chart plays",
+      "Real statecharts",
+      "Free skill"
+    ],
+    "top": 7,
+    "curated": true,
+    "logo": "",
+    "screenshot": "/places/tinycharts/screenshot.jpg",
+    "added": "2026-11-23"
   },
   {
     "slug": "unicorn-studio",
@@ -447,7 +1240,28 @@
     "desc": "A design studio for graphics that move, respond and ship. Direct shaders, 3D and motion on one canvas, by hand or with your AI agent over MCP.",
     "district": "creative",
     "districtName": "Creative District",
-    "by": "George Kedenburg"
+    "by": "George Kedenburg",
+    "url": "https://www.unicorn.studio/",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "",
+    "tags": [
+      "webgl",
+      "motion",
+      "design"
+    ],
+    "highlights": [
+      "Shaders, 3D and motion",
+      "Interactive graphics",
+      "Embed on any site",
+      "Agents via MCP"
+    ],
+    "top": 8,
+    "curated": true,
+    "logo": "/places/unicorn-studio/logo.png",
+    "screenshot": "/places/unicorn-studio/screenshot.jpg",
+    "added": "2026-11-23"
   },
   {
     "slug": "react-bits",
@@ -456,6 +1270,27 @@
     "desc": "Free, open-source React components for animated text, backgrounds, interactive cards and micro-interactions. Tune them yourself, add one with a single shadcn command, or hand them to your agent.",
     "district": "maker",
     "districtName": "Maker District",
-    "by": "David Haz"
+    "by": "David Haz",
+    "url": "https://reactbits.dev/",
+    "site": true,
+    "appStore": "",
+    "playStore": "",
+    "creatorUrl": "https://x.com/davidhaz",
+    "tags": [
+      "react",
+      "motion",
+      "open source"
+    ],
+    "highlights": [
+      "200+ components",
+      "Free and open source",
+      "One shadcn command",
+      "Micro-interactions"
+    ],
+    "top": 1,
+    "curated": true,
+    "logo": "/places/react-bits/logo.png",
+    "screenshot": "/places/react-bits/screenshot.jpg",
+    "added": "2026-11-23"
   }
 ]

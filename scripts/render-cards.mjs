@@ -35,7 +35,10 @@ await send('Emulation.setDeviceMetricsOverride', { width:1280, height:800, devic
 // wait for the world to finish building
 for(let i=0; i<240; i++){ if(await run(`!!(window.__iso && document.getElementById('loader').classList.contains('done'))`).catch(()=>false)) break; await new Promise(r=>setTimeout(r,500)); }
 
-const list = await run(`__iso.places.map(p=>({ slug:__iso.slugOf(p), name:p.name, tagline:p.tagline||'', desc:p.desc||'', district:p.district, districtName:__iso.DISTRICTS[p.district].name, by:p.by||'' }))`);
+// the manifest feeds the crawlable pages (scripts/build-place-pages.mjs): everything a page about the place needs
+const list = await run(`__iso.places.filter(p=>!p.user && !p.demo).map(p=>({ slug:__iso.slugOf(p), name:p.name, tagline:p.tagline||'', desc:p.desc||'', district:p.district, districtName:__iso.DISTRICTS[p.district].name, by:p.by||'',
+  url:p.url||'', site:p.site!==false, appStore:p.appStore||'', playStore:p.playStore||'', creatorUrl:p.creatorUrl||'', tags:p.tags||[], highlights:p.highlights||[], top:p.top||null,
+  curated:!!p.curated, logo:p.logo||'', screenshot:p.screenshot||'', added:p.added||'' }))`);
 const todo = only.length ? list.filter(p => only.includes(p.slug)) : list;
 if(only.length && todo.length !== only.length) console.warn('Unknown slugs skipped:', only.filter(s => !list.some(p => p.slug === s)).join(', '));
 for(const [i, p] of todo.entries()){

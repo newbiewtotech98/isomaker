@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISOMAKER. logo sandbox</title>
+<link rel="icon" id="favicon" href="isomaker-logo-solid.png">
+<style>
+  :root{
+    --bg:#000; --ink:#eef0ff; --muted:#a2a8d0; --line:rgba(255,255,255,.12);
+    --glass:rgba(14,18,46,.66); --action:#242D43; --on-action:#fff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:Inter,-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;
+    background:var(--bg); color:var(--ink);
+    display:grid; grid-template-columns:300px 1fr; min-height:100vh;
+    transition:background-color .25s ease, color .25s ease;
+  }
+  body.light{--ink:#161b36;--muted:#535a80;--line:rgba(0,0,0,.12);--glass:rgba(255,255,255,.72)}
+
+  /* ---------- controls ---------- */
+  aside{
+    border-right:1px solid var(--line); padding:20px; display:flex; flex-direction:column; gap:22px;
+    position:sticky; top:0; height:100vh; overflow:auto; background:var(--glass); backdrop-filter:blur(16px);
+  }
+  h1{font-size:14px;letter-spacing:.02em;margin:0}
+  .group{display:flex;flex-direction:column;gap:8px}
+  .label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;justify-content:space-between}
+  .seg{display:flex;padding:3px;border-radius:8px;background:rgba(127,127,127,.15);gap:2px}
+  .seg button{
+    flex:1;border:0;background:transparent;color:inherit;font:inherit;font-size:13px;
+    padding:7px 6px;border-radius:6px;cursor:pointer;transition:background-color .15s ease
+  }
+  .seg button[aria-pressed="true"]{background:var(--action);color:var(--on-action)}
+  .swatches{display:flex;gap:8px;flex-wrap:wrap}
+  .swatches button{
+    width:32px;height:32px;border-radius:8px;border:1px solid var(--line);cursor:pointer;padding:0;
+  }
+  .swatches button[aria-pressed="true"]{outline:2px solid #3f8cff;outline-offset:2px}
+  .swatches input{width:32px;height:32px;border:0;padding:0;background:none;cursor:pointer}
+  input[type=range]{width:100%}
+  .check{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.35;cursor:pointer}
+  .check small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .btn{
+    border:0;border-radius:8px;background:var(--action);color:var(--on-action);font:inherit;font-size:13px;
+    padding:9px 12px;cursor:pointer
+  }
+  .hint{font-size:11.5px;color:var(--muted);line-height:1.45;margin:0}
+  kbd{font:inherit;font-size:11px;border:1px solid var(--line);border-radius:4px;padding:0 4px}
+
+  /* ---------- stage ---------- */
+  main{padding:28px;display:flex;flex-direction:column;gap:28px;min-width:0}
+  section > h2{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 12px;font-weight:500}
+  .hero{
+    display:grid;place-items:center;min-height:58vh;border-radius:16px;border:1px solid var(--line);
+    position:relative;overflow:hidden
+  }
+  .hero.grid-on{
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:32px 32px;
+  }
+  .logo{display:block;width:var(--size,420px);height:auto;user-select:none;-webkit-user-drag:none;
+        transition:opacity .2s ease, transform .2s ease}
+  .knockout .logo{mix-blend-mode:screen}       /* drops the black square on dark backgrounds */
+  .light.knockout .logo{mix-blend-mode:normal}  /* screen can't work on light — show as-is */
+  .logo.swap{opacity:0;transform:scale(.98)}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .compare figure{
+    margin:0;border-radius:16px;border:1px solid var(--line);padding:20px;display:grid;place-items:center;gap:10px;cursor:pointer;
+    transition:border-color .15s ease
+  }
+  .compare figure.active{border-color:#3f8cff}
+  .compare figure .logo{width:min(100%,280px)}
+  .compare figcaption{font-size:12px;color:var(--muted)}
+
+  .ladder{display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap;border:1px solid var(--line);border-radius:16px;padding:20px}
+  .ladder div{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
+
+  .contexts{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+  .ctx{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  /* browser tab mock */
+  .tabbar{background:#202124;padding:8px 8px 0;display:flex;gap:4px}
+  .tab{background:#35363a;color:#e8eaed;font-size:12px;border-radius:8px 8px 0 0;padding:8px 12px;display:flex;align-items:center;gap:8px;max-width:220px}
+  .tab.dim{background:transparent;color:#9aa0a6}
+  .tab img{width:16px;height:16px;border-radius:3px}
+  .urlbar{background:#35363a;padding:8px 12px;font-size:12px;color:#9aa0a6}
+  /* site header mock */
+  .sitebar{
+    display:flex;align-items:center;justify-content:space-between;padding:12px 14px;
+    background:var(--glass);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)
+  }
+  .brandmark{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em;font-size:14px}
+  .brandmark img{width:34px;height:34px;border-radius:8px}
+  .sitebar .btn{padding:7px 12px;font-size:12px}
+  .sitebody{height:120px;background:linear-gradient(180deg,rgba(63,140,255,.12),transparent)}
+  /* app icon / avatar */
+  .icons{display:flex;gap:18px;align-items:center;justify-content:center;padding:24px}
+  .icons img{width:72px;height:72px}
+  .icons .r16{border-radius:16px}.icons .r40{border-radius:50%}
+  .icons .r16-sm{width:44px;height:44px;border-radius:10px}
+
+  /* ---------- site nav previews (styles copied from isomaker.html, scoped to .site) ---------- */
+  .navbar-ctl{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .navbar-ctl .seg{min-width:0}
+  .navs{display:grid;grid-template-columns:1fr;gap:20px;align-items:start}
+  .navbar-ctl .seg button{white-space:nowrap;padding:7px 12px}
+  .site.desktop{container-type:inline-size}
+  @container (max-width:820px){ .site .districts{display:none} }
+  .navs .cap{font-size:12px;color:var(--muted);margin-top:8px}
+  .site{
+    --glass:rgba(14,18,46,.66);--line:rgba(255,255,255,.09);--line-strong:rgba(255,255,255,.17);
+    --text:#eef0ff;--muted:#a2a8d0;--hover:rgba(255,255,255,.07);--r:8px;--r-round:40px;--sp:12px;
+    position:relative;overflow:hidden;border-radius:16px;border:1px solid var(--line);
+    background:
+      radial-gradient(60% 80% at 20% 20%, rgba(255,79,139,.30), transparent 60%),
+      radial-gradient(50% 70% at 80% 30%, rgba(63,140,255,.35), transparent 60%),
+      radial-gradient(60% 80% at 55% 100%, rgba(62,224,143,.22), transparent 60%),
+      #060a22;
+    color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;font-size:13px;
+  }
+  .site.day{
+    --line:rgba(30,40,90,.10);--line-strong:rgba(30,40,90,.2);--text:#161b36;--muted:#535a80;--hover:rgba(20,30,80,.06);
+    background:
+      radial-gradient(60% 80% at 20% 20%, rgba(255,79,139,.25), transparent 60%),
+      radial-gradient(50% 70% at 80% 30%, rgba(63,140,255,.25), transparent 60%),
+      radial-gradient(60% 80% at 55% 100%, rgba(62,224,143,.25), transparent 60%),
+      #e9eefc;
+  }
+  .site.desktop{height:220px}
+  .site.mobile{height:200px;width:390px}
+  .site .panel{border-radius:22px;background:rgba(255,255,255,.045);
+    -webkit-backdrop-filter:blur(7px) saturate(1.5) brightness(.92) contrast(.68);backdrop-filter:blur(7px) saturate(1.5) brightness(.92) contrast(.68);
+    box-shadow:inset 0 0 0 .5px rgba(255,255,255,.22),inset 0 1px 0 rgba(255,255,255,.12),inset 0 0 0 1.5px rgba(0,0,0,.1),inset 0 0 5px rgba(0,0,0,.06),inset 0 0 9px rgba(255,255,255,.04),0 2px 22px rgba(0,0,8,.22),0 1px 3px rgba(0,0,8,.16)}
+  .site.day .panel{background:rgba(255,255,255,.3);box-shadow:inset 0 0 0 .5px rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1.5px rgba(0,0,0,.06),inset 0 0 5px rgba(0,0,0,.04),0 2px 22px rgba(30,24,18,.13),0 1px 3px rgba(30,24,18,.08)}
+  .site .tl{position:absolute;top:16px;left:16px}
+  .site .brand{display:flex;align-items:center;gap:var(--sp);padding:10px 12px;min-width:250px}
+  .site .brand b{display:block;font-size:14px;font-weight:600;letter-spacing:-.01em}
+  .site .brand .sub,.site .brand .mb-made{display:block;color:var(--muted);font-size:12px;margin-top:1px;text-decoration:none}
+  .site .heart{color:#ff4f8b}
+  .site .icon-btn{width:30px;height:30px;display:grid;place-items:center;border-radius:var(--r);border:0;background:transparent;color:var(--muted);cursor:pointer}
+  .site .icon-btn:hover{background:var(--hover);color:var(--text)}
+  .site svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .site .storylink{margin-left:auto;font-size:12px;font-weight:500;padding:3px 8px;border-radius:var(--r-round);border:1px solid var(--line);color:var(--muted);text-decoration:none;white-space:nowrap;flex:none}
+  .site .districts{position:absolute;top:16px;right:16px;display:flex;align-items:center;gap:6px;padding:7px 8px 7px 14px;border-radius:999px}
+  .site .districts .lbl{font-size:11px;letter-spacing:.1em;color:var(--muted);margin-right:4px;font-weight:500}
+  .site .chip{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:var(--r-round);border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);font-weight:500;font-size:12.5px;color:inherit;font-family:inherit}
+  .site .dot{width:8px;height:8px;border-radius:50%;flex:none;box-shadow:0 0 10px currentColor;background:currentColor}
+  /* mobile: brand stretches to 84px from the right; districts fold into a round button */
+  .site.mobile .tl{right:84px}
+  .site.mobile .brand{width:100%;min-width:0;gap:8px;padding:10px 8px 10px 10px}
+  .site.mobile .brand > .txt{min-width:0;flex:1;overflow:hidden}
+  .site.mobile .brand > .txt > *{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .site.mobile .brand .icon-btn{flex:none;width:26px}
+  .site .dist-btn{position:absolute;top:16px;right:16px;width:56px;height:56px;border-radius:999px;border:0;display:flex;align-items:center;justify-content:center;color:var(--text);cursor:pointer}
+  .site .dist-btn .dots{display:grid;grid-template-columns:repeat(3,7px);gap:3px}
+  .site .dist-btn .dots i{width:7px;height:7px;border-radius:50%;box-shadow:0 0 6px currentColor}
+  /* the logo slot: 32×32 in both layouts */
+  .nlogo{width:32px;height:32px;flex:none;position:relative;display:grid;place-items:center}
+  .nlogo img{width:100%;height:100%;display:block}
+  .nlogo.tile{border-radius:8px;overflow:hidden}
+  .nlogo.tile img{transform:scale(1.35)}   /* the PNG has a wide black margin; zoom into the cube */
+  .nlogo.current{border-radius:8px;background:conic-gradient(from 210deg,#ff3d7f,#ff8a3d,#ffcf5c,#ff3d7f);box-shadow:0 0 18px rgba(255,90,120,.45)}
+  .nlogo.current::after{content:"";position:absolute;inset:9px;border-radius:50%;border:2.5px solid #fff}
+  .nlogo.current img{display:none}
+
+  .drop{outline:2px dashed #3f8cff;outline-offset:-8px}
+  @media (max-width:820px){
+    body{grid-template-columns:1fr}
+    aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+    .compare{grid-template-columns:1fr}
+    .navs{grid-template-columns:1fr}
+    .site.mobile{width:100%;max-width:390px}
+  }
+</style>
+</head>
+<body class="knockout">
+<aside>
+  <h1>ISOMAKER. logo sandbox</h1>
+
+  <div class="group">
+    <div class="label"><span>Logo</span><span><kbd>1</kbd> <kbd>2</kbd> · <kbd>Space</kbd></span></div>
+    <div class="seg" id="variantSeg">
+      <button data-v="solid" aria-pressed="true">Solid</button>
+      <button data-v="outline" aria-pressed="false">Outline</button>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="label"><span>Background</span><span id="bgName">Black</span></div>
+    <div class="swatches" id="bgSwatches">
+      <button data-bg="#000000" data-name="Black" style="background:#000" aria-pressed="true"></button>
+      <button data-bg="#0b0e24" data-name="Site dark" style="background:#0b0e24" aria-pressed="false"></button>
+      <button data-bg="#242D43" data-name="Action navy" style="background:#242D43" aria-pressed="false"></button>
+      <button data-bg="#1a1a1a" data-name="Charcoal" style="background:#1a1a1a" aria-pressed="false"></button>
+      <button data-bg="#F9FAFB" data-name="Light" style="background:#F9FAFB" aria-pressed="false"></button>
+      <button data-bg="#ffffff" data-name="White" style="background:#fff" aria-pressed="false"></button>
+      <input type="color" id="bgCustom" value="#3f8cff" title="Custom colour">
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="label"><span>Hero size</span><span id="sizeVal">420px</span></div>
+    <input type="range" id="size" min="64" max="900" value="420">
+  </div>
+
+  <div class="group">
+    <label class="check"><input type="checkbox" id="knockout" checked>
+      <span>Remove black square<small>Blends the PNG's black away so the cube sits on the page colour. Dark backgrounds only.</small></span></label>
+    <label class="check"><input type="checkbox" id="gridToggle">
+      <span>Show grid</span></label>
+  </div>
+
+  <div class="group">
+    <div class="label"><span>Test a new version</span></div>
+    <input type="file" id="file" accept="image/*" hidden>
+    <button class="btn" id="upload">Replace current logo…</button>
+    <p class="hint">Or drop an image anywhere on the page. It replaces whichever logo is selected (this tab only). <a href="#" id="reset" style="color:inherit">Reset</a></p>
+  </div>
+</aside>
+
+<main>
+  <section>
+    <h2>Preview</h2>
+    <div class="hero" id="hero"><img class="logo" id="heroLogo" alt="ISOMAKER. logo"></div>
+  </section>
+
+  <section>
+    <h2>Site top nav — desktop &amp; mobile</h2>
+    <div class="navbar-ctl">
+      <div class="seg" id="navStyleSeg" title="How the logo sits in the 32px nav slot">
+        <button data-s="cube" aria-pressed="true">Cube</button>
+        <button data-s="tile" aria-pressed="false">Black tile</button>
+        <button data-s="current" aria-pressed="false">Current logo</button>
+      </div>
+      <div class="seg" id="navModeSeg" style="min-width:160px">
+        <button data-m="night" aria-pressed="true">Night</button>
+        <button data-m="day" aria-pressed="false">Day</button>
+      </div>
+    </div>
+    <div class="navs">
+      <div>
+        <div class="site desktop">
+          <div class="tl">
+            <div class="brand panel">
+              <div class="nlogo"><img data-nav alt=""></div>
+              <div class="txt"><b>Isomaker</b><span class="sub">Things worth discovering</span></div>
+              <button class="icon-btn" title="About"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button>
+            </div>
+          </div>
+          <div class="districts panel"><span class="lbl">DISTRICTS:</span></div>
+        </div>
+        <div class="cap">Desktop: top-left brand panel (districts sit top-right)</div>
+      </div>
+      <div>
+        <div class="site mobile">
+          <div class="tl">
+            <div class="brand panel">
+              <div class="nlogo"><img data-nav alt=""></div>
+              <div class="txt"><b>Isomaker</b><a class="mb-made" href="#">Made by Ruthvik <span class="heart">♥</span></a></div>
+              <a class="storylink" href="#">The story</a>
+              <button class="icon-btn" title="About"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button>
+            </div>
+          </div>
+          <button class="dist-btn panel" aria-label="Districts"><span class="dots"></span></button>
+        </div>
+        <div class="cap">Mobile (390px): brand panel + districts button</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Side by side — click to select</h2>
+    <div class="compare">
+      <figure data-v="solid"><img class="logo" data-slot="solid" alt="Solid logo"><figcaption>Solid</figcaption></figure>
+      <figure data-v="outline"><img class="logo" data-slot="outline" alt="Outline logo"><figcaption>Outline</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>Size ladder</h2>
+    <div class="ladder" id="ladder"></div>
+  </section>
+
+  <section>
+    <h2>In context</h2>
+    <div class="contexts">
+      <div class="ctx">
+        <div class="tabbar">
+          <div class="tab"><img data-slot="current" alt="">ISOMAKER. — build in iso</div>
+          <div class="tab dim">New Tab</div>
+        </div>
+        <div class="urlbar">isomaker.app</div>
+      </div>
+      <div class="ctx">
+        <div class="sitebar">
+          <div class="brandmark"><img data-slot="current" alt="">ISOMAKER.</div>
+          <button class="btn">Join waitlist</button>
+        </div>
+        <div class="sitebody"></div>
+      </div>
+      <div class="ctx">
+        <div class="icons">
+          <img class="r16" data-slot="current" alt="">
+          <img class="r40" data-slot="current" alt="">
+          <img class="r16-sm" data-slot="current" alt="">
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const DEFAULTS = { solid: 'isomaker-logo-solid.png', outline: 'isomaker-logo-outline.png' };
+  const src = { ...DEFAULTS };
+  // transparent, tightly cropped versions (black → alpha) for the 32px nav slot
+  const CUBE_DEFAULTS = { solid: 'isomaker-logo-solid-cube.png', outline: 'isomaker-logo-outline-cube.png' };
+  const cube = { ...CUBE_DEFAULTS };
+  const state = { v: 'solid', bg: '#000000', navStyle: 'cube', navMode: 'night' };
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+
+  // site nav: district chips + dots, same colours as isomaker.html
+  const DISTRICTS = [['Creative','#ff4f8b'],['Maker','#ffb547'],['Experiment','#b074ff'],['AI','#3f8cff'],['Personal','#3ee08f']];
+  $('.site.desktop .districts').insertAdjacentHTML('beforeend',
+    DISTRICTS.map(([n,c]) => `<button class="chip"><span class="dot" style="color:${c}"></span>${n}</button>`).join(''));
+  $('.site.mobile .dots').innerHTML = DISTRICTS.map(([,c]) => `<i style="background:${c};color:${c}"></i>`).join('');
+
+  function renderNav(){
+    $$('.nlogo').forEach(el => {
+      el.className = 'nlogo ' + state.navStyle;
+      el.querySelector('img').src = state.navStyle === 'tile' ? src[state.v] : cube[state.v];
+    });
+    $$('.site').forEach(el => el.classList.toggle('day', state.navMode === 'day'));
+    $$('#navStyleSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === state.navStyle));
+    $$('#navModeSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === state.navMode));
+  }
+  $$('#navStyleSeg button').forEach(b => b.onclick = () => { state.navStyle = b.dataset.s; renderNav(); });
+  $$('#navModeSeg button').forEach(b => b.onclick = () => { state.navMode = b.dataset.m; renderNav(); });
+
+  // make a cube version of an uploaded image: black → transparent, crop to content, square
+  function toCube(url){
+    return new Promise(res => {
+      const im = new Image();
+      im.onload = () => {
+        const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight;
+        const x = c.getContext('2d'); x.drawImage(im, 0, 0);
+        const d = x.getImageData(0, 0, c.width, c.height), p = d.data;
+        let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+        for (let i = 0; i < p.length; i += 4){
+          const a = Math.max(p[i], p[i+1], p[i+2]) * (p[i+3] / 255);
+          if (a > 0){ p[i] = p[i]*255/a; p[i+1] = p[i+1]*255/a; p[i+2] = p[i+2]*255/a; }
+          p[i+3] = a;
+          if (a > 8){ const k = i/4, px = k % c.width, py = (k / c.width) | 0;
+            if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py; }
+        }
+        x.putImageData(d, 0, 0);
+        if (x1 < x0) return res(url);
+        const s = Math.max(x1 - x0, y1 - y0) + 8, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+        const o = document.createElement('canvas'); o.width = o.height = 512;
+        o.getContext('2d').drawImage(c, cx - s/2, cy - s/2, s, s, 0, 0, 512, 512);
+        o.toBlob(b => res(URL.createObjectURL(b)));
+      };
+      im.src = url;
+    });
+  }
+
+  const ladderSizes = [256, 128, 64, 48, 32, 16];
+  $('#ladder').innerHTML = ladderSizes.map(s =>
+    `<div><img class="logo" data-slot="current" style="width:${s}px" alt="">${s}px</div>`).join('');
+
+  function isLight(hex){
+    const n = parseInt(hex.slice(1), 16), r = n>>16, g = n>>8&255, b = n&255;
+    return (0.299*r + 0.587*g + 0.114*b) > 150;
+  }
+
+  function render(animate){
+    const cur = src[state.v];
+    const hero = $('#heroLogo');
+    const apply = () => {
+      $$('img[data-slot]').forEach(img => {
+        const slot = img.dataset.slot;
+        img.src = slot === 'current' ? cur : src[slot];
+      });
+      hero.src = cur;
+      $('#favicon').href = cur;
+      renderNav();
+      hero.classList.remove('swap');
+    };
+    if (animate && hero.src) { hero.classList.add('swap'); setTimeout(apply, 140); } else apply();
+
+    $$('#variantSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === state.v));
+    $$('.compare figure').forEach(f => f.classList.toggle('active', f.dataset.v === state.v));
+    document.body.style.setProperty('--bg', state.bg);
+    document.body.classList.toggle('light', isLight(state.bg));
+  }
+
+  // variant switching
+  const setVariant = v => { if (v !== state.v) { state.v = v; render(true); } };
+  $$('#variantSeg button').forEach(b => b.onclick = () => setVariant(b.dataset.v));
+  $$('.compare figure').forEach(f => f.onclick = () => setVariant(f.dataset.v));
+  addEventListener('keydown', e => {
+    if (e.target.matches('input')) return;
+    if (e.key === '1') setVariant('solid');
+    if (e.key === '2') setVariant('outline');
+    if (e.key === ' ') { e.preventDefault(); setVariant(state.v === 'solid' ? 'outline' : 'solid'); }
+  });
+
+  // backgrounds
+  function setBg(hex, name, btn){
+    state.bg = hex; $('#bgName').textContent = name;
+    $$('#bgSwatches button').forEach(b => b.setAttribute('aria-pressed', b === btn));
+    render(false);
+  }
+  $$('#bgSwatches button').forEach(b => b.onclick = () => setBg(b.dataset.bg, b.dataset.name, b));
+  $('#bgCustom').oninput = e => setBg(e.target.value, e.target.value.toUpperCase(), null);
+
+  // size, knockout, grid
+  $('#size').oninput = e => {
+    $('#heroLogo').style.setProperty('--size', e.target.value + 'px');
+    $('#sizeVal').textContent = e.target.value + 'px';
+  };
+  $('#knockout').onchange = e => document.body.classList.toggle('knockout', e.target.checked);
+  $('#gridToggle').onchange = e => $('#hero').classList.toggle('grid-on', e.target.checked);
+
+  // replace with a new version
+  function useFile(file){
+    if (!file || !file.type.startsWith('image/')) return;
+    const v = state.v, url = URL.createObjectURL(file);
+    src[v] = url; cube[v] = url;
+    render(true);
+    toCube(url).then(c => { cube[v] = c; renderNav(); });
+  }
+  $('#upload').onclick = () => $('#file').click();
+  $('#file').onchange = e => useFile(e.target.files[0]);
+  $('#reset').onclick = e => { e.preventDefault(); Object.assign(src, DEFAULTS); Object.assign(cube, CUBE_DEFAULTS); render(true); };
+  addEventListener('dragover', e => { e.preventDefault(); document.body.classList.add('drop'); });
+  addEventListener('dragleave', e => { if (!e.relatedTarget) document.body.classList.remove('drop'); });
+  addEventListener('drop', e => { e.preventDefault(); document.body.classList.remove('drop'); useFile(e.dataTransfer.files[0]); });
+
+  render(false);
+</script>
+</body>
+</html>
